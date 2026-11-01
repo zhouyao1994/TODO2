@@ -1,7 +1,7 @@
 import type { TodoItem } from '../models/todo-item'
 import { parseDatePhrase } from './date-phrase'
-import { formatDateNumeric, formatDateWith, MS_PER_DAY, startOfDay } from './date'
-import { t } from '../i18n'
+import { formatDateNumeric, monthNameShort, MS_PER_DAY, startOfDay, weekdayName } from './date'
+import { locale, t } from '../i18n'
 
 /**
  * Follow-up dates. `nextFollowupAt` is a calendar day stored at local
@@ -186,21 +186,35 @@ export function isFollowupOverdue(
   return dayDiff(t.nextFollowupAt, today) < 0
 }
 
-const weekday = (d: Date) => formatDateWith(d, { weekday: 'short' })
-const monthShort = (d: Date) => formatDateWith(d, { month: 'short' })
+const weekday = weekdayName
+const monthShort = monthNameShort
 
-/** `Tue 13` (this month) / `Tue 10 Nov` (other month) / `Tue 10 Nov 2027` (other year). */
+/** `13日 星期二` — the zh day order (`Tue 13` stays for English). */
+function zhDay(date: Date): string {
+  return `${date.getDate()}日 ${weekday(date)}`
+}
+
+/** `Tue 13` (this month) / `Tue 10 Nov` (other month) / `Tue 10 Nov 2027` (other year); zh `13日 星期二` / `11月10日 星期二` / `2027年11月10日 星期二`. */
 export function formatFollowupDay(date: Date, today: Date): string {
   const d = new Date(date)
+  if (locale() === 'zh-CN') {
+    if (d.getFullYear() !== today.getFullYear()) return `${d.getFullYear()}年${d.getMonth() + 1}月${zhDay(d)}`
+    if (d.getMonth() !== today.getMonth()) return `${d.getMonth() + 1}月${zhDay(d)}`
+    return zhDay(d)
+  }
   const base = `${weekday(d)} ${d.getDate()}`
   if (d.getFullYear() !== today.getFullYear()) return `${base} ${monthShort(d)} ${d.getFullYear()}`
   if (d.getMonth() !== today.getMonth()) return `${base} ${monthShort(d)}`
   return base
 }
 
-/** `Tue 13 Oct` — always with the month (year when not this year). */
+/** `Tue 13 Oct` — always with the month (year when not this year); zh `11月13日 星期二` (+ year). */
 export function formatFollowupDate(date: Date, today: Date): string {
   const d = new Date(date)
+  if (locale() === 'zh-CN') {
+    const base = `${d.getMonth() + 1}月${zhDay(d)}`
+    return d.getFullYear() !== today.getFullYear() ? `${d.getFullYear()}年${base}` : base
+  }
   const base = `${weekday(d)} ${d.getDate()} ${monthShort(d)}`
   return d.getFullYear() !== today.getFullYear() ? `${base} ${d.getFullYear()}` : base
 }
@@ -210,59 +224,66 @@ export function formatWeekdayNumeric(date: Date): string {
   return `${weekday(new Date(date))} ${formatDateNumeric(date)}`
 }
 
+/** The compact interval as displayed: `1w` / `1周` (the input syntax itself stays `1w`). */
+export function formatFollowupIntervalDisplay(i: FollowupInterval): string {
+  if (locale() !== 'zh-CN') return formatFollowupInterval(i)
+  const unit = i.unit === 'd' ? '天' : i.unit === 'w' ? '周' : i.unit === 'm' ? '月' : '年'
+  return `${i.count}${unit}`
+}
+
+function countWords(n: number, one: 'ui.days_count_one' | 'ui.weeks_count_one' | 'ui.months_count_one' | 'ui.years_count_one', many: 'ui.days_count_many' | 'ui.weeks_count_many' | 'ui.months_count_many' | 'ui.years_count_many'): string {
+  return n === 1 ? t(one) : t(many, { n })
+}
+
 /** Pill label: `Today` or the day (`Tue 13`) — overdue too (the pill's colour and tooltip say it's late). */
 export function followupPillLabel(
-  t: Pick<TodoItem, 'nextFollowupAt' | 'isCompleted'>,
+  todo: Pick<TodoItem, 'nextFollowupAt' | 'isCompleted'>,
   today: Date,
 ): string {
-  if (!t.nextFollowupAt) return ''
-  if (dayDiff(t.nextFollowupAt, today) === 0 && !t.isCompleted) return 'Today'
-  return formatFollowupDay(t.nextFollowupAt, today)
+  if (!todo.nextFollowupAt) return ''
+  if (dayDiff(todo.nextFollowupAt, today) === 0 && !todo.isCompleted) return t('ui.today')
+  return formatFollowupDay(todo.nextFollowupAt, today)
 }
 
 /**
  * Relative distance in words: `today`, `tomorrow`, `yesterday`, `in 3 days`,
- * `in 2 weeks`, `in 1 month`, `4 weeks ago`, `2 months ago`.
+ * `in 2 weeks`, `in 1 month`, `4 weeks ago`, `2 months ago` (zh: 今天 / 明天 /
+ * 昨天 / 3 天后 / 2 周后 / 1 个月后 / 4 周前 / 2 个月前).
  */
 export function relativeDayPhrase(date: Date, today: Date): string {
   const diff = dayDiff(date, today)
-  if (diff === 0) return 'today'
-  if (diff === 1) return 'tomorrow'
-  if (diff === -1) return 'yesterday'
+  if (diff === 0) return t('ui.rel_today')
+  if (diff === 1) return t('ui.rel_tomorrow')
+  if (diff === -1) return t('ui.rel_yesterday')
   const abs = Math.abs(diff)
-  let amount: string
-  if (abs < 14) amount = `${abs} days`
-  else if (abs < 28) {
-    const w = Math.round(abs / 7)
-    amount = `${w} week${w === 1 ? '' : 's'}`
-  } else if (abs < 730) {
-    const m = Math.round(abs / 30.44)
-    amount = `${m} month${m === 1 ? '' : 's'}`
-  } else {
-    const y = Math.round(abs / 365.25)
-    amount = `${y} year${y === 1 ? '' : 's'}`
-  }
-  return diff > 0 ? `in ${amount}` : `${amount} ago`
+  const amount = abs < 14
+    ? countWords(abs, 'ui.days_count_one', 'ui.days_count_many')
+    : abs < 28
+      ? countWords(Math.round(abs / 7), 'ui.weeks_count_one', 'ui.weeks_count_many')
+      : abs < 730
+        ? countWords(Math.round(abs / 30.44), 'ui.months_count_one', 'ui.months_count_many')
+        : countWords(Math.round(abs / 365.25), 'ui.years_count_one', 'ui.years_count_many')
+  return diff > 0 ? t('ui.in_amount', { amount }) : t('ui.ago_amount', { amount })
 }
 
 /** Two-line tooltip for the row pill (next, then last follow-up). */
 export function followupTooltip(
-  t: Pick<TodoItem, 'nextFollowupAt' | 'lastFollowupAt' | 'isCompleted'>,
+  todo: Pick<TodoItem, 'nextFollowupAt' | 'lastFollowupAt' | 'isCompleted'>,
   today: Date,
 ): string {
   const lines: string[] = []
-  if (t.nextFollowupAt) {
-    const date = formatFollowupDate(t.nextFollowupAt, today)
-    lines.push(isFollowupOverdue(t, today) ? `Follow-up overdue · ${date}` : `Next follow-up · ${date}`)
+  if (todo.nextFollowupAt) {
+    const date = formatFollowupDate(todo.nextFollowupAt, today)
+    lines.push(isFollowupOverdue(todo, today) ? t('ui.followup_overdue_line', { date }) : t('ui.next_followup_line', { date }))
   }
-  lines.push(lastFollowupLine(t.lastFollowupAt, today))
+  lines.push(lastFollowupLine(todo.lastFollowupAt, today))
   return lines.join('\n')
 }
 
 /** `Last followed up Sun 13 Sep, 4 weeks ago` / `Never followed up`. */
 export function lastFollowupLine(last: Date | undefined, today: Date): string {
-  if (!last) return 'Never followed up'
-  return `Last followed up ${formatFollowupDate(last, today)}, ${relativeDayPhrase(last, today)}`
+  if (!last) return t('ui.never_followed_up')
+  return t('ui.last_followed_up_line', { date: formatFollowupDate(last, today), phrase: relativeDayPhrase(last, today) })
 }
 
 /** True when `d` falls on a day after today (last follow-up can't be in the future). */

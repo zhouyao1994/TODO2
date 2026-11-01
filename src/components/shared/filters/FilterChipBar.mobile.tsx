@@ -3,7 +3,7 @@ import { ClearableField } from '../ClearableField'
 import { datesValue, filterChips } from '../../../utils/filter-chips'
 import { HotIcon, MarkerIcon } from '../MarkerIcons'
 import { MARKER_KEYS } from '../../../models'
-import { activeMarkers, hasExcludedMarker, HOT_LABEL, isHotFilter, MARKER_COLOR, MARKER_LABELS, MARKERS_LABEL, markersValue, toggleHot } from '../../../utils/markers'
+import { activeMarkers, hasExcludedMarker, hotName, isHotFilter, MARKER_COLOR, markerName, markersName, markersValue, toggleHot } from '../../../utils/markers'
 import sheet from './FilterChipBarMobile.module.css'
 import { DateFilterPanel } from './DateFilterPanel'
 import { FilterModeToggle, MarkerConditionToggle } from './FilterPanels'
@@ -247,7 +247,7 @@ export function FilterChipBarMobile({
     <>
       {/* Priority section */}
       <AccordionSection
-        label={MARKERS_LABEL}
+        label={markersName()}
         badge={markersNot ? undefined : markersActiveCount}
         value={markersNot ? markersValue(p.markers) : undefined}
         valueOn
@@ -260,7 +260,7 @@ export function FilterChipBarMobile({
           <div className={sheet.filterRow}>
             <span className={sheet.filterLabel}>
               <span className={sheet.filterLabelIcon} style={{ color: 'var(--color-danger)' }}><HotIcon /></span>
-              {HOT_LABEL}
+              {hotName()}
             </span>
             <button
               className={`${sheet.toggle} ${hot ? sheet.toggleActive : ''}`}
@@ -274,7 +274,7 @@ export function FilterChipBarMobile({
             <div key={key} className={`${sheet.filterRow} ${hot ? sheet.filterRowDisabled : ''}`}>
               <span className={sheet.filterLabel} aria-hidden>
                 <span className={sheet.filterLabelIcon} style={{ color: MARKER_COLOR[key] }}><MarkerIcon marker={key} /></span>
-                {MARKER_LABELS[key]}
+                {markerName(key)}
               </span>
               <MarkerConditionToggle marker={key} value={p.markers} onChange={(markers) => update({ markers })} touch disabled={hot} />
             </div>

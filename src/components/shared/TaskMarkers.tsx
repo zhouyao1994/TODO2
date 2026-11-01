@@ -63,7 +63,7 @@ export function TaskMarkers({ todo, today, size = 14, className }: {
     ) : urgent === 'date' && (
       <Marker
         label={t('ui.urgent_due_soon')}
-        tooltip={reason ? `Urgent: due soon\n${reason}` : 'Urgent: due soon'}
+        tooltip={reason ? `${t('ui.urgent_due_soon')}\n${reason}` : t('ui.urgent_due_soon')}
         color="var(--color-marker-urgent)"
         testId="urgent-clock-marker"
       >

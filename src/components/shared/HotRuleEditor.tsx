@@ -12,7 +12,7 @@ import {
   normalizeHotRule,
   type HotRule,
 } from '../../utils/hot'
-import { MARKER_LABELS } from '../../utils/markers'
+import { markerName } from '../../utils/markers'
 import { FocusIcon, ImportantIcon, UrgentIcon } from './MarkerIcons'
 import styles from './HotRuleEditor.module.css'
 import { t as tr } from '../../i18n'
@@ -38,7 +38,7 @@ function hasAnyMarker(lines: readonly MarkerSet[]): boolean {
 /** `4 open tasks are hot right now.` */
 function totalLine(n: number) {
   if (n === 0) return <>{tr('ui.no_open_tasks_are_hot_right')}</>
-  return <><b>{n} {tr('ui.open_2')}{' '}{n === 1 ? 'task' : 'tasks'}</b> {n === 1 ? 'is' : 'are'} {tr('ui.hot_right_now')}</>
+  return <><b>{n === 1 ? tr('ui.hot_count_one', { n }) : tr('ui.hot_count_many', { n })}</b>{n === 1 ? tr('ui.hot_total_tail_one') : tr('ui.hot_total_tail_many')}</>
 }
 
 /**
@@ -119,7 +119,7 @@ export function HotRuleEditor({ variant = 'settings' }: { variant?: 'settings' |
         return (
           <div key={index} className={styles.lineWrap}>
             {index > 0 && <div className={styles.or}>{tr('ui.or_2')}</div>}
-            <div className={styles.line} role="group" aria-label={`Hot rule line ${index + 1}`}>
+            <div className={styles.line} role="group" aria-label={tr('ui.hot_rule_line_aria', { n: index + 1 })}>
               {!flyout && <span className={styles.hasAll}>{tr('ui.has_all')}</span>}
               {MARKER_KEYS.map((key) => {
                 const on = line[key] === true
@@ -131,22 +131,22 @@ export function HotRuleEditor({ variant = 'settings' }: { variant?: 'settings' |
                     className={`${styles.chip} ${on ? CHIP_ON_CLASS[key] ?? '' : ''}`}
                     aria-pressed={on}
                     aria-disabled={locked || undefined}
-                    title={locked ? 'The Hot rule needs at least one of Focus, Urgent or Important.' : undefined}
+                    title={locked ? tr('ui.hot_locked_chip_title') : undefined}
                     onClick={() => { if (!locked) toggle(index, key) }}
                   >
                     <ChipIcon marker={key} on={on} />
-                    {MARKER_LABELS[key]}
+                    {markerName(key)}
                   </button>
                 )
               })}
               <span className={styles.count}>
-                {flyout ? '' : markers.length > 0 ? `${lineCounts[index] ?? 0} now` : 'Pick some'}
+                {flyout ? '' : markers.length > 0 ? tr('ui.marker_count_now', { n: lineCounts[index] ?? 0 }) : tr('ui.pick_some')}
               </span>
               {canRemove ? (
                 <button
                   type="button"
                   className={styles.remove}
-                  aria-label={`Remove line ${index + 1}`}
+                  aria-label={tr('ui.remove_line', { n: index + 1 })}
                   onClick={() => removeLine(index)}
                 >
                   <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden>
@@ -164,7 +164,7 @@ export function HotRuleEditor({ variant = 'settings' }: { variant?: 'settings' |
         <>
           <div className={styles.flyoutFooter}>
             {addLine}
-            <span className={styles.hotNow} data-testid="hot-rule-total">{total} {tr('ui.hot_now')}</span>
+            <span className={styles.hotNow} data-testid="hot-rule-total">{tr('ui.hot_now_count', { n: total })}</span>
           </div>
           <div className={styles.footnote}>{tr('ui.one_rule_for_the_whole_app')}</div>
         </>

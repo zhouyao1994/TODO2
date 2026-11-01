@@ -1,6 +1,7 @@
 import type { CalendarView } from '../models/workspace-layout'
 import type { WeekStart } from './effective-date'
-import { addDays } from './date'
+import { locale, t } from '../i18n'
+import { addDays, weekdayName } from './date'
 
 /**
  * Calendar grid math: which days a month / week view shows, its toolbar
@@ -48,9 +49,11 @@ export function calendarRange(view: CalendarView, offset: number, today: Date, w
   return { view, start, days: Array.from({ length: 7 }, (_, i) => addDays(start, i)) }
 }
 
-/** Weekday names in grid order. */
+/** Weekday names in grid order (`Mon …` / `星期一 …`). */
 export function weekdayLabels(weekStartsOn: WeekStart): string[] {
-  const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const names = locale() === 'zh-CN'
+    ? ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   return Array.from({ length: 7 }, (_, i) => names[(i + weekStartsOn) % 7] ?? '')
 }
 
@@ -58,10 +61,12 @@ const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
 const LONG_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 export function shortMonth(d: Date): string {
+  if (locale() === 'zh-CN') return `${d.getMonth() + 1}月`
   return SHORT_MONTHS[d.getMonth()] ?? ''
 }
 
 export function longMonth(d: Date): string {
+  if (locale() === 'zh-CN') return `${d.getMonth() + 1}月`
   return LONG_MONTHS[d.getMonth()] ?? ''
 }
 
@@ -71,11 +76,19 @@ export function longMonth(d: Date): string {
  * `short`; a week across New Year names both years.
  */
 export function calendarRangeLabel(range: CalendarRange, short: boolean): string {
+  const zh = locale() === 'zh-CN'
   if (range.view === 'month') {
-    return `${short ? shortMonth(range.start) : longMonth(range.start)} ${range.start.getFullYear()}`
+    const month = `${range.start.getMonth() + 1}月`
+    return zh ? `${range.start.getFullYear()}年${month}` : `${short ? shortMonth(range.start) : longMonth(range.start)} ${range.start.getFullYear()}`
   }
   const first = range.days[0] ?? range.start
   const last = range.days[range.days.length - 1] ?? range.start
+  if (zh) {
+    const from = `${first.getMonth() + 1}月${first.getDate()}日`
+    const to = `${last.getMonth() + 1}月${last.getDate()}日`
+    if (first.getFullYear() !== last.getFullYear()) return `${first.getFullYear()}年${from} – ${last.getFullYear()}年${to}`
+    return first.getMonth() === last.getMonth() ? `${from} – ${last.getDate()}日` : `${from} – ${to}`
+  }
   if (first.getFullYear() !== last.getFullYear()) {
     return short
       ? `${shortMonth(first)} ${first.getDate()} – ${shortMonth(last)} ${last.getDate()}`
@@ -90,11 +103,16 @@ export function calendarRangeLabel(range: CalendarRange, short: boolean): string
 /** What an empty view is called in its note: `October` / `this week` / `the week of Oct 12`. */
 export function calendarRangeName(range: CalendarRange, today: Date, weekStartsOn: WeekStart): string {
   if (range.view === 'month') {
+    if (locale() === 'zh-CN') {
+      const month = `${range.start.getMonth() + 1}月`
+      return range.start.getFullYear() === today.getFullYear() ? month : `${range.start.getFullYear()}年${month}`
+    }
     const name = longMonth(range.start)
     return range.start.getFullYear() === today.getFullYear() ? name : `${name} ${range.start.getFullYear()}`
   }
-  if (range.start.getTime() === weekStartOf(today, weekStartsOn).getTime()) return 'this week'
-  return `the week of ${shortMonth(range.start)} ${range.start.getDate()}`
+  if (range.start.getTime() === weekStartOf(today, weekStartsOn).getTime()) return t('ui.this_week')
+  const day = locale() === 'zh-CN' ? `${range.start.getMonth() + 1}月${range.start.getDate()}日` : `${shortMonth(range.start)} ${range.start.getDate()}`
+  return t('ui.week_of_range', { day })
 }
 
 /**
@@ -176,14 +194,16 @@ export function weekRowsFit(height: number, counts: readonly number[]): number {
   return 1
 }
 
-/** `Thu 15 Oct`. */
+/** `Thu 15 Oct` / `10月15日 星期四`. */
 export function dayLabel(d: Date): string {
+  if (locale() === 'zh-CN') return `${shortMonth(d)}${d.getDate()}日 ${weekdayName(d)}`
   const wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] ?? ''
   return `${wd} ${d.getDate()} ${shortMonth(d)}`
 }
 
-/** `Thu 15` — a date near today, as the drop chooser's "was …" hint shows it. */
+/** `Thu 15` / `星期四 15日` — a date near today, as the drop chooser's "was …" hint shows it. */
 export function shortDayLabel(d: Date): string {
+  if (locale() === 'zh-CN') return `${weekdayName(d)} ${d.getDate()}日`
   const wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] ?? ''
   return `${wd} ${d.getDate()}`
 }

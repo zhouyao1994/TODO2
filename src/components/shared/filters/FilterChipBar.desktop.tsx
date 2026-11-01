@@ -6,7 +6,7 @@ import { entityPickerSelection } from '../../../utils/filter-negation'
 import type { TodoPredicate } from '../../../models'
 import picker from './FilterPicker.module.css'
 import { ImportantIcon } from '../MarkerIcons'
-import { hasMarkers, MARKERS_LABEL } from '../../../utils/markers'
+import { hasMarkers, markersName } from '../../../utils/markers'
 import { useUIStore } from '../../../stores/ui-store'
 import { sendPersonCheckin } from '../../../services/checkin-email/person-checkin'
 import {
@@ -22,7 +22,7 @@ import {
 } from '../icons'
 import { EntityDropdownItems, MarkersPanelBody, SelectionPanelBody, type FilterModeProps } from './FilterPanels'
 import { DateFilterPanel } from './DateFilterPanel'
-import { DATE_FILTER_DIALOG_LABEL, DATE_FILTER_POPOVER_CLASS } from './date-filter-popover'
+import { DATE_FILTER_POPOVER_CLASS } from './date-filter-popover'
 import { useTooltip } from '../use-tooltip'
 import { useReturnFocus } from '../use-popover-focus'
 import {
@@ -577,7 +577,7 @@ export function FilterChipBarDesktop({
     panel: {
       kind: 'custom',
       className: DATE_FILTER_POPOVER_CLASS,
-      dialogLabel: DATE_FILTER_DIALOG_LABEL,
+      dialogLabel: t('ui.date_filters'),
       // Picking a type or clearing keeps the panel open.
       render: () => <DateFilterPanel dates={p.dates} onChange={(dates) => update({ dates })} autoFocus />,
     },
@@ -617,7 +617,7 @@ export function FilterChipBarDesktop({
   }
   fields.push({
     key: 'markers',
-    label: MARKERS_LABEL,
+    label: markersName(),
     icon: <ImportantIcon outline />,
     highlighted: hasMarkers(p.markers),
     value: values.markers ?? null,

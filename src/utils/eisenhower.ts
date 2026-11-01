@@ -5,9 +5,10 @@ import { filterChips, type FilterChipField, type FilterChipNames } from './filte
 import { predicateToCriteria, type FilterCriteria } from './filter-criteria'
 import { DATE_FIELD_LABELS_SHORT } from './filter-labels'
 import { matchesFilterWithLookups, type FilterSettings } from './filter-match'
-import { isHotFilter, MARKER_LABELS } from './markers'
-import { isEffectivelyUrgent, isUrgentByDate, URGENT_BY_DATE_HINT, urgentByDateSentence, type UrgentDueWithinDays } from './urgency'
-import { paneWrites, QUADRANT_ADD_HINT, QUADRANT_NAME, type EisenhowerPane, type PaneEntityField } from './eisenhower-panes'
+import { isHotFilter, markerName } from './markers'
+import { isEffectivelyUrgent, isUrgentByDate, urgentByDateHint, urgentByDateSentence, type UrgentDueWithinDays } from './urgency'
+import { joinList, t, translateText } from '../i18n'
+import { paneWrites, quadrantAddHint, QUADRANT_NAME, type EisenhowerPane, type PaneEntityField } from './eisenhower-panes'
 
 /**
  * The Eisenhower matrix: a task shows in the first pane (in position order)
@@ -327,12 +328,12 @@ function firstWrites(changes: readonly PaneChange[]) {
 export function dropPreviewLabel(changes: readonly PaneChange[], names?: PaneNames): string {
   const w = firstWrites(changes)
   const parts: string[] = []
-  if (w.urgent !== undefined) parts.push(`${w.urgent ? '+' : '−'} ${MARKER_LABELS.urgent}`)
-  if (w.important !== undefined) parts.push(`${w.important ? '+' : '−'} ${MARKER_LABELS.important}`)
-  if (w.focus !== undefined) parts.push(`${w.focus ? '+' : '−'} ${MARKER_LABELS.focus}`)
-  if (w.statusId !== undefined) parts.push(`→ ${(names && nameIn(names.statuses, w.statusId)) ?? 'status'}`)
-  if (w.personId !== undefined) parts.push(`+ ${(names && nameIn(names.people, w.personId)) ?? 'person'}`)
-  if (w.tagId !== undefined) parts.push(`+ #${(names && nameIn(names.tags, w.tagId)) ?? 'tag'}`)
+  if (w.urgent !== undefined) parts.push(`${w.urgent ? '+' : '−'} ${markerName('urgent')}`)
+  if (w.important !== undefined) parts.push(`${w.important ? '+' : '−'} ${markerName('important')}`)
+  if (w.focus !== undefined) parts.push(`${w.focus ? '+' : '−'} ${markerName('focus')}`)
+  if (w.statusId !== undefined) parts.push(`→ ${(names && nameIn(names.statuses, w.statusId)) ?? t('ui.status_word')}`)
+  if (w.personId !== undefined) parts.push(`+ ${(names && nameIn(names.people, w.personId)) ?? t('ui.person_word')}`)
+  if (w.tagId !== undefined) parts.push(`+ #${(names && nameIn(names.tags, w.tagId)) ?? t('ui.tag_word')}`)
   return parts.join(' · ')
 }
 
@@ -343,7 +344,7 @@ export function dropPreviewLabel(changes: readonly PaneChange[], names?: PaneNam
  * starts without the flag).
  */
 export function paneAddHint(pane: EisenhowerPane, names: PaneNames): string {
-  if (!pane.customFilter) return QUADRANT_ADD_HINT[pane.id]
+  if (!pane.customFilter) return quadrantAddHint(pane.id)
   const w = paneWrites(pane.filter, names)
   const what = dropPreviewLabel([{
     todoId: 0,
@@ -354,7 +355,7 @@ export function paneAddHint(pane: EisenhowerPane, names: PaneNames): string {
     ...(w.personId !== undefined ? { personId: w.personId } : {}),
     ...(w.tagId !== undefined ? { tagId: w.tagId } : {}),
   }], names)
-  return what ? `Opens Quick Add with ${what}.` : 'Opens Quick Add.'
+  return what ? t('ui.quad_add_with', { what }) : t('ui.quad_add_plain')
 }
 
 /**
@@ -369,21 +370,21 @@ export function dropDescription(
 ): string {
   const w = firstWrites(changes)
   const flags: string[] = []
-  if (w.urgent !== undefined) flags.push(w.urgent ? 'urgent' : 'not urgent')
-  if (w.important !== undefined) flags.push(w.important ? 'important' : 'not important')
-  if (w.focus !== undefined) flags.push(w.focus ? 'focus' : 'not focus')
-  const parts = flags.length > 0 ? [`marked ${flags.join(', ')}`] : []
-  if (w.statusId !== undefined) parts.push(`status ${(names && nameIn(names.statuses, w.statusId)) ?? 'set'}`)
-  if (w.personId !== undefined) parts.push(`assigned to ${(names && nameIn(names.people, w.personId)) ?? 'a person'}`)
-  if (w.tagId !== undefined) parts.push(`tagged #${(names && nameIn(names.tags, w.tagId)) ?? 'tag'}`)
+  if (w.urgent !== undefined) flags.push(w.urgent ? t('ui.flag_urgent') : t('ui.flag_not_urgent'))
+  if (w.important !== undefined) flags.push(w.important ? t('ui.flag_important') : t('ui.flag_not_important'))
+  if (w.focus !== undefined) flags.push(w.focus ? t('ui.flag_focus') : t('ui.flag_not_focus'))
+  const parts = flags.length > 0 ? [t('ui.marked_flags', { flags: joinList(flags) })] : []
+  if (w.statusId !== undefined) parts.push(t('ui.desc_status', { name: (names && nameIn(names.statuses, w.statusId)) ?? t('ui.set_word') }))
+  if (w.personId !== undefined) parts.push(t('ui.desc_assigned', { name: (names && nameIn(names.people, w.personId)) ?? t('ui.a_person_word') }))
+  if (w.tagId !== undefined) parts.push(t('ui.desc_tagged', { name: (names && nameIn(names.tags, w.tagId)) ?? t('ui.tag_word') }))
   const text = parts.join(', ')
   const first = changes[0]
-  const what = changes.length === 1 && first ? (titleOf(first.todoId) ?? 'task') : `${changes.length} tasks`
+  const what = changes.length === 1 && first ? (titleOf(first.todoId) ?? t('ui.task_word')) : t('ui.n_tasks_label', { n: changes.length })
   return `${text.charAt(0).toUpperCase()}${text.slice(1)} · ${what}`
 }
 
 function withinPhrase(range: number): string {
-  return range === 0 ? 'due today or overdue' : `due within ${range} ${range === 1 ? 'day' : 'days'}`
+  return range === 0 ? t('ui.due_today_or_overdue') : range === 1 ? t('ui.due_within_one', { n: range }) : t('ui.due_within_many', { n: range })
 }
 
 /** The refusal lines for tasks kept urgent by their due dates. */
@@ -396,34 +397,41 @@ function dueDateLines(
 ): [string, string, string] {
   const only = blocked.length === 1 && total === 1 ? blocked[0] : undefined
   const onlyWhy = only ? urgentByDateSentence(only, today, range) : ''
-  if (onlyWhy) return [title, onlyWhy, URGENT_BY_DATE_HINT]
+  if (onlyWhy) return [title, onlyWhy, urgentByDateHint()]
   const n = blocked.length
-  const verb = n === 1 ? 'is' : 'are'
-  const they = n === 1 ? 'it counts' : 'they count'
-  const why = `${n} of ${total} ${total === 1 ? 'task' : 'tasks'} ${verb} ${range == null ? 'due soon' : withinPhrase(range)}, so ${they} as urgent.`
-  return [title, why, `Change ${n === 1 ? 'its due date' : 'their due dates'} or the due-soon range first.`]
+  const why = t('ui.ddl_why', {
+    n,
+    total,
+    noun: total === 1 ? t('ui.task_word') : t('ui.tasks_word'),
+    verb: n === 1 ? t('ui.verb_is') : t('ui.verb_are'),
+    phrase: range == null ? t('ui.due_soon') : withinPhrase(range),
+    they: n === 1 ? t('ui.they_count_one') : t('ui.they_count_many'),
+  })
+  return [title, why, urgentByDateHint(n !== 1)]
 }
 
 /** A clause's name in a refusal (`Priority`, `People`, `Due`, …). */
 function clauseName(field: FilterChipField | DateField): string {
   switch (field) {
-    case 'markers': return 'Priority'
-    case 'status': return 'Status'
-    case 'people': return 'People'
-    case 'tags': return 'Tags'
-    case 'text': return 'Text'
+    case 'markers': return t('ui.priority')
+    case 'status': return t('ui.status')
+    case 'people': return t('ui.people')
+    case 'tags': return t('ui.tags')
+    case 'text': return t('ui.text_word')
     case 'dates':
     case 'completed':
-      return 'date'
-    default: return DATE_FIELD_LABELS_SHORT[field]
+      return t('ui.date_word')
+    default: return translateText(DATE_FIELD_LABELS_SHORT[field])
   }
 }
 
 /** Why a pane's drop is refused when what its clause names was deleted. */
-const DELETED_SENTENCE: Record<PaneEntityField, string> = {
-  status: 'The status this pane sets no longer exists.',
-  people: 'The person this pane adds no longer exists.',
-  tags: 'The tag this pane adds no longer exists.',
+function deletedSentence(field: PaneEntityField): string {
+  switch (field) {
+    case 'status': return t('ui.del_status')
+    case 'people': return t('ui.del_person')
+    case 'tags': return t('ui.del_tag')
+  }
 }
 
 /** Why one task wouldn't land in `pane`, as a sentence. */
@@ -436,17 +444,17 @@ function missSentence(
 ): string {
   if (miss.kind === 'earlier') {
     const first = panes.find((p) => p.id === miss.pane)?.name ?? QUADRANT_NAME[miss.pane]
-    return `${task.title} matches “${first}” first.`
+    return t('ui.miss_earlier', { title: task.title, name: first })
   }
-  if (miss.kind === 'deleted') return DELETED_SENTENCE[miss.field]
+  if (miss.kind === 'deleted') return deletedSentence(miss.field)
   if (miss.kind === 'clause' && miss.field === 'status') {
     const status = task.statusId != null ? nameIn(names.statuses, task.statusId) : undefined
-    return status ? `${task.title} is still ${status}.` : `${task.title} has no status.`
+    return status ? t('ui.miss_status', { title: task.title, status }) : t('ui.miss_no_status', { title: task.title })
   }
   const field = miss.kind === 'clause' ? miss.field : 'markers'
   const chip = filterChips(pane.filter, names).find((c) => c.field === field || c.dateField === field)
   const value = chip ? ` (${chip.value})` : ''
-  return `${task.title} doesn’t match its ${clauseName(field)} filter${value}.`
+  return t('ui.miss_clause', { title: task.title, field: clauseName(field), value })
 }
 
 /**
@@ -464,17 +472,17 @@ export function blockedPaneLines<T extends PersistedTodoItem>(
   ctx: Pick<PaneContext, 'today' | 'settings'>,
   names: PaneNames,
 ): [string, string, string] {
-  const title = `Can’t move to ${pane.name}`
+  const title = t('ui.cant_move_to', { name: pane.name })
   if (blocked.every((b) => b.miss.kind === 'urgent-date')) {
     return dueDateLines(title, blocked.map((b) => b.task), total, ctx.today, ctx.settings.urgentRange)
   }
   const first = blocked.find((b) => b.miss.kind !== 'urgent-date') ?? blocked[0]
   const why = first ? missSentence(first.task, first.miss, pane, panes, names) : ''
   const hint = first?.miss.kind === 'deleted'
-    ? 'Edit the pane first.'
+    ? t('ui.hint_edit_pane')
     : first?.miss.kind === 'clause' && first.miss.field === 'status'
-      ? `Change ${blocked.length === 1 ? 'its status' : 'their statuses'} first, or edit the pane.`
-      : `Change ${blocked.length === 1 ? 'the task' : 'the tasks'} first, or edit the panes.`
+      ? blocked.length === 1 ? t('ui.hint_status_one') : t('ui.hint_status_many')
+      : blocked.length === 1 ? t('ui.hint_tasks_one') : t('ui.hint_tasks_many')
   if (blocked.length === 1 && total === 1) return [title, why, hint]
   const n = blocked.length
   return [title, `${n} of ${total} ${total === 1 ? 'task' : 'tasks'} wouldn’t land in “${pane.name}”: ${why}`, hint]

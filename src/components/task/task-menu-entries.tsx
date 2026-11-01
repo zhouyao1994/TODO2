@@ -1,6 +1,7 @@
 import { MARKER_KEYS, type MarkerKey, type PersistedTodoItem } from '../../models'
 import { isUrgentByDate, urgentToggleHint, type UrgentDueWithinDays } from '../../utils/urgency'
-import { MARKER_COLOR, MARKER_LABELS, MARKERS_LABEL } from '../../utils/markers'
+import { MARKER_COLOR, markerName, markersName } from '../../utils/markers'
+import { t } from '../../i18n'
 import {
   addFollowupInterval,
   describeFollowupInterval,
@@ -61,7 +62,7 @@ const MARKER_ICON: Record<MarkerKey, React.ReactNode> = {
 }
 
 /** The menu's marker items, in display order. */
-const MARKERS = MARKER_KEYS.map((key) => ({ key, label: MARKER_LABELS[key], icon: MARKER_ICON[key], color: MARKER_COLOR[key] }))
+const MARKERS = MARKER_KEYS.map((key) => ({ key, icon: MARKER_ICON[key], color: MARKER_COLOR[key] }))
 
 /**
  * Markers group shared by the task menu, the list bulk bar's ⋯ More and the
@@ -80,8 +81,8 @@ export function markerMenuEntries(
 ): MenuEntry[] {
   const n = targets.length
   return [
-    { kind: 'label', text: MARKERS_LABEL },
-    ...MARKERS.map(({ key, label, icon, color }): MenuEntry => {
+    { kind: 'label', text: markersName() },
+    ...MARKERS.map(({ key, icon, color }): MenuEntry => {
       const count = targets.filter((t) => t[key] === true).length
       const checked = n > 0 && count === n ? true : count > 0 ? 'mixed' : false
       const urgent = key === 'urgent'
@@ -89,11 +90,11 @@ export function markerMenuEntries(
       const hint = urgent ? urgentToggleHint(targets, today, range) : ''
       return {
         kind: 'item',
-        label,
+        label: markerName(key),
         icon: <span style={{ display: 'inline-flex', color }}>{icon}</span>,
         checkbox: true,
         checked,
-        note: checked === 'mixed' ? `${count} of ${n}` : byDateNote ? 'By due date' : undefined,
+        note: checked === 'mixed' ? t('ui.count_of', { a: count, b: n }) : byDateNote ? t('ui.by_due_date_note') : undefined,
         title: hint || undefined,
         onSelect: () => onSetMarker(key, checked !== true),
       }
@@ -110,10 +111,10 @@ export function followedUpMenuEntry(
   const doneToday = targets.length > 0 && targets.every((t) => isFollowedUpToday(t, today))
   return {
     kind: 'item',
-    label: 'Mark followed up',
+    label: t('ui.marked_followed_up'),
     icon: <FollowedUpIcon />,
     dim: doneToday,
-    note: doneToday ? 'Today' : undefined,
+    note: doneToday ? t('ui.today') : undefined,
     onSelect: onFollowedUp,
   }
 }
@@ -142,7 +143,7 @@ export function buildTaskMenuEntries({ todo, targets, today, urgentRange, handle
     }),
     ...(h.onPickFollowup || hasFollowup ? [{ kind: 'separator' } as const] : []),
     ...(h.onPickFollowup ? [{
-      kind: 'item', label: 'Pick a date or interval…', icon: <WidgetKindIcon kind="calendar" />, onSelect: h.onPickFollowup,
+      kind: 'item', label: t('ui.pick_date_interval'), icon: <WidgetKindIcon kind="calendar" />, onSelect: h.onPickFollowup,
     } as const] : []),
     ...(hasFollowup ? [{
       kind: 'item', label: 'Clear follow-up', icon: <CloseIcon size={14} strokeWidth={1.6} />, onSelect: () => h.onSetFollowup(null),
@@ -150,12 +151,12 @@ export function buildTaskMenuEntries({ todo, targets, today, urgentRange, handle
   ]
 
   const entries: MenuEntry[] = []
-  if (several) entries.push({ kind: 'label', text: `${targets.length} tasks` })
-  else if (h.onOpen) entries.push({ kind: 'item', label: 'Open', icon: <OpenIcon />, onSelect: h.onOpen })
+  if (several) entries.push({ kind: 'label', text: t('ui.n_tasks_label', { n: targets.length }) })
+  else if (h.onOpen) entries.push({ kind: 'item', label: t('ui.open_menu'), icon: <OpenIcon />, onSelect: h.onOpen })
   entries.push(
     {
       kind: 'item',
-      label: todo.isCompleted ? 'Mark incomplete' : 'Mark complete',
+      label: todo.isCompleted ? t('ui.mark_incomplete') : t('ui.mark_complete'),
       icon: <CheckCircleIcon />,
       kbd: 'Space',
       onSelect: h.onToggleComplete,
@@ -164,7 +165,7 @@ export function buildTaskMenuEntries({ todo, targets, today, urgentRange, handle
   if (h.onCopy) {
     entries.push({
       kind: 'item',
-      label: several ? `Copy ${targets.length} tasks` : 'Copy',
+      label: several ? t('ui.copy_n_tasks', { n: targets.length }) : t('ui.copy_menu'),
       icon: <CopyIcon />,
       kbd: copyKbd,
       onSelect: h.onCopy,
@@ -174,7 +175,7 @@ export function buildTaskMenuEntries({ todo, targets, today, urgentRange, handle
   if (h.onSetDueDate) {
     entries.push({
       kind: 'item',
-      label: 'Set due date…',
+      label: t('ui.set_due_date_menu'),
       icon: <StatusIcon icon="calendar" />,
       note: !several && todo.dueDate ? formatFollowupDay(todo.dueDate, today) : undefined,
       onSelect: h.onSetDueDate,
@@ -183,7 +184,7 @@ export function buildTaskMenuEntries({ todo, targets, today, urgentRange, handle
   entries.push(
     {
       kind: 'item',
-      label: 'Follow-up',
+      label: t('ui.followup'),
       icon: <FlagIcon />,
       note: !several && todo.nextFollowupAt ? formatFollowupDay(todo.nextFollowupAt, today) : undefined,
       children: followupChildren,
@@ -191,15 +192,15 @@ export function buildTaskMenuEntries({ todo, targets, today, urgentRange, handle
     },
     followedUpMenuEntry(targets, today, h.onFollowedUp),
   )
-  if (h.onAssignPeople) entries.push({ kind: 'item', label: 'Assign people…', icon: <PersonIcon />, onSelect: h.onAssignPeople })
-  if (h.onAddTag) entries.push({ kind: 'item', label: 'Add tag…', icon: <HashIcon />, onSelect: h.onAddTag })
+  if (h.onAssignPeople) entries.push({ kind: 'item', label: t('ui.assign_people_menu'), icon: <PersonIcon />, onSelect: h.onAssignPeople })
+  if (h.onAddTag) entries.push({ kind: 'item', label: t('ui.add_tag_menu'), icon: <HashIcon />, onSelect: h.onAddTag })
   entries.push(
     { kind: 'separator' },
     ...markerMenuEntries(targets, today, urgentRange, h.onSetMarker),
     { kind: 'separator' },
     {
       kind: 'item',
-      label: several ? `Delete ${targets.length} tasks` : 'Delete',
+      label: several ? t('ui.delete_n_tasks', { n: targets.length }) : t('ui.delete_menu'),
       icon: <TrashIcon />,
       danger: true,
       kbd: 'Del',

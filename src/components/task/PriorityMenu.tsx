@@ -4,7 +4,8 @@ import { useUIStore } from '../../stores/ui-store'
 import { useTodoStore } from '../../stores/todo-store'
 import { useSettingsStore } from '../../stores/settings-store'
 import { useToday } from '../../hooks/use-today'
-import { MARKERS_LABEL } from '../../utils/markers'
+import { markersName } from '../../utils/markers'
+import { t } from '../../i18n'
 import { MenuPopover } from '../shared/MenuPopover'
 import { markerMenuEntries } from './task-menu-entries'
 
@@ -33,7 +34,7 @@ export function PriorityMenu({ todo, anchorRef, onSetMarker, onClose }: {
       anchorRef={anchorRef}
       placement="bottom-start"
       entries={entries}
-      label={targets.length > 1 ? `${MARKERS_LABEL} · ${targets.length} tasks` : MARKERS_LABEL}
+      label={targets.length > 1 ? t('ui.markers_count_label', { label: markersName(), n: targets.length }) : markersName()}
       width={200}
       closeOnScroll
       onClose={onClose}

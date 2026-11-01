@@ -12,12 +12,12 @@ import { entityPickerSelection, isNegated, withIdFilter } from '../../../utils/f
 import { MARKERS_LABEL } from '../../../utils/markers'
 import { EntityDropdownItems, MarkersPanelBody, SelectionPanelBody } from './FilterPanels'
 import { DateFilterPanel } from './DateFilterPanel'
-import { DATE_FILTER_DIALOG_LABEL, DATE_FILTER_POPOVER_CLASS } from './date-filter-popover'
+import { DATE_FILTER_POPOVER_CLASS } from './date-filter-popover'
 import { DEFAULT_PREDICATE, ENTITY_ID_FIELD } from './FilterChipBar.shared'
 import { ClearableField } from '../ClearableField'
 import picker from './FilterPicker.module.css'
 import styles from './ListFilterChips.module.css'
-import { t } from '../../../i18n'
+import { t, translateText } from '../../../i18n'
 
 type EntityField = 'people' | 'tags' | 'status'
 
@@ -70,7 +70,7 @@ export function PredicateFieldPicker({ field, predicate: stored, onChange, at, a
       className={dates ? DATE_FILTER_POPOVER_CLASS : `${picker.dropdownPanel} ${styles.pickerPanel}`}
       style={{ position: style.position, left: style.left, top: style.top, maxHeight: style.maxHeight }}
       role="dialog"
-      aria-label={dates ? DATE_FILTER_DIALOG_LABEL : `${PICKER_TITLE[field]} filter`}
+      aria-label={dates ? t('ui.date_filters') : t('ui.field_filter_aria', { field: translateText(PICKER_TITLE[field]) })}
       data-testid="list-filter-picker"
     >
       {dates ? (
@@ -159,7 +159,7 @@ function EntityPicker({ field, predicate, adding, replace, onClose }: {
         <EntityDropdownItems
           searchText={searchText}
           entities={entities}
-          label={PICKER_TITLE[field]}
+          label={translateText(PICKER_TITLE[field])}
           isChecked={sel.isChecked}
           onToggle={toggle}
           namePrefix={field === 'people' ? '@' : field === 'tags' ? '#' : undefined}

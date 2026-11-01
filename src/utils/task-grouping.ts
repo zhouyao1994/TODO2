@@ -1,5 +1,6 @@
 import type { PersistedTodoItem, Person, Status, Tag, TodoGroupBy } from '../models'
 import type { WeekStart } from './effective-date'
+import { translateText } from '../i18n'
 import { bySortOrder } from './sort-order'
 import { DATE_BUCKET_LABELS, DATE_BUCKET_ORDER, dateBucketKey, isDateBucketKey } from './bucket-by-date'
 import { NEUTRAL_PERSON_COLOR } from '../constants'
@@ -146,7 +147,7 @@ export function getGroupLabel(
       return isDateBucketKey(key) ? DATE_BUCKET_LABELS[key] : ''
     case 'priority': {
       const group = priorityGroupOfKey(key)
-      return group ? PRIORITY_GROUP_LABEL[group] : ''
+      return group ? translateText(PRIORITY_GROUP_LABEL[group]) : ''
     }
     case 'none':
       return ''

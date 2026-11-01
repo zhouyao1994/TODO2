@@ -1,5 +1,6 @@
 import { HOT_MARKERS, MARKER_KEYS, type MarkerConditions, type MarkerKey, type MarkersFilter } from '../models/filter-predicate'
 import { hasMarker, isHot, type HotRule, type MarkerFields } from './hot'
+import { joinList, joinListOr, t, translateText } from '../i18n'
 import { urgentByDateReason, urgentMark, type UrgentDueWithinDays, type UrgentMark } from './urgency'
 
 /** Display names of the task markers. */
@@ -35,6 +36,21 @@ export interface MarkerSummary {
 }
 
 /** What the marker gutter shows for `todo`, in marker order (Focus › Urgent › Important). */
+/** The marker's display name in the UI language: `Urgent` / `紧急`. */
+export function markerName(key: MarkerKey): string {
+  return translateText(MARKER_LABELS[key])
+}
+
+/** The markers group's display name: `Priority` / `优先级`. */
+export function markersName(): string {
+  return translateText(MARKERS_LABEL)
+}
+
+/** The Hot choice's display name: `Hot` / `热`. */
+export function hotName(): string {
+  return translateText(HOT_LABEL)
+}
+
 export function markerSummary(
   todo: MarkerFields,
   today: Date,
@@ -42,12 +58,12 @@ export function markerSummary(
 ): MarkerSummary {
   const urgent = urgentMark(todo, today, range)
   const on: Record<MarkerKey, string | null> = {
-    focus: todo.focus === true ? MARKER_LABELS.focus : null,
-    urgent: urgent === 'flag' ? MARKER_LABELS.urgent : urgent === 'date' ? `${MARKER_LABELS.urgent} (due soon)` : null,
-    important: todo.important === true ? MARKER_LABELS.important : null,
+    focus: todo.focus === true ? markerName('focus') : null,
+    urgent: urgent === 'flag' ? markerName('urgent') : urgent === 'date' ? t('ui.urgent_due_soon_value') : null,
+    important: todo.important === true ? markerName('important') : null,
   }
-  const names = MARKER_KEYS.flatMap((k) => on[k] ?? [])
-  const label = names.length > 0 ? `${MARKERS_LABEL}: ${names.join(', ')}` : `No ${MARKERS_LABEL.toLowerCase()}`
+  const names = joinList(MARKER_KEYS.flatMap((k) => on[k] ?? []))
+  const label = names.length > 0 ? t('ui.priority_names', { label: markersName(), names }) : t('ui.no_priority')
   const reason = urgent === 'date' ? urgentByDateReason(todo, today, range) : ''
   return {
     focus: on.focus !== null,
@@ -156,15 +172,8 @@ export function markersEqual(a: MarkersFilter | null | undefined, b: MarkersFilt
  * `not <marker>`.
  */
 export function markersValue(m: MarkersFilter | null | undefined): string {
-  if (isHotFilter(m)) return HOT_LABEL
-  return activeMarkers(m)
-    .map((k) => (markerCondition(m, k) === false ? `not ${MARKER_LABELS[k]}` : MARKER_LABELS[k]))
-    .join(', ')
-}
-
-/** `a`, `a or b`, `a, b or c`. */
-function orNames(names: readonly string[]): string {
-  return names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} or ${names.at(-1)}`
+  if (isHotFilter(m)) return hotName()
+  return joinList(activeMarkers(m).map((k) => (markerCondition(m, k) === false ? t('ui.not_marker', { name: markerName(k) }) : markerName(k))))
 }
 
 /** The markers a Priority filter wants a task not to have (No). */
@@ -185,8 +194,8 @@ export function hasExcludedMarker(m: MarkersFilter | null | undefined): boolean 
 export function markersTooltip(m: MarkersFilter | null | undefined): string | null {
   const excluded = excludedMarkers(m)
   if (excluded.length === 0) return null
-  const names = excluded.map((k) => (k === 'urgent' ? `${MARKER_LABELS[k]} (flagged or due soon)` : MARKER_LABELS[k]))
-  return `${MARKERS_LABEL}: ${markersValue(m)}\nHides tasks that are ${orNames(names)}`
+  const names = excluded.map((k) => (k === 'urgent' ? t('ui.urgent_flagged_or_due') : markerName(k)))
+  return `${markersName()}: ${markersValue(m)}\n${t('ui.hides_tasks_that_are', { names: joinListOr(names) })}`
 }
 
 /**

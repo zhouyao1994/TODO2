@@ -1,3 +1,4 @@
+import { t } from '../../i18n'
 import { useCallback, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import {
@@ -198,7 +199,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
   const hasBottom = useWorkspaceStore((s) => s.working?.bottom != null)
   const drag = useWorkspaceDrag()
   const urgentRangeSetting = useUrgentRangeSetting()
-  const noun = band ? 'band' : 'cell'
+  const noun = t(band ? 'ui.noun_band' : 'ui.noun_cell')
 
   const active = getActiveTab(cell)
   const activeTitle = useTabTitle(active)
@@ -337,7 +338,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
       style={style}
       data-ws-cell={cell.id}
       data-ws-band={band}
-      aria-label={`${activeTitle} ${noun}`}
+      aria-label={t('ui.cell_aria', { title: activeTitle, noun })}
     >
       <div
         className={`${styles.header} ${cellMenuOpen ? styles.headerMenuOpen : ''}`}
@@ -364,9 +365,9 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
           <button
             type="button"
             className={styles.expand}
-            aria-label={`Expand ${noun}`}
+            aria-label={t('ui.expand_noun', { noun })}
             aria-expanded={false}
-            title={`Expand ${noun}`}
+            title={t('ui.expand_noun', { noun })}
             onClick={() => { void setCellCollapsed(cell.id, false) }}
           >
             <ChevronDownIcon size={14} />
@@ -376,7 +377,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
             <button
               type="button"
               className={styles.action}
-              aria-label={`Collapse ${noun}`}
+              aria-label={t('ui.collapse_noun', { noun })}
               aria-expanded={true}
               title={tr('ui.collapse')}
               onClick={() => { void setCellCollapsed(cell.id, true) }}

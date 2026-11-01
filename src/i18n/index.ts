@@ -95,6 +95,24 @@ export function locale(): string {
   return currentLanguage === 'zh-CN' ? 'zh-CN' : 'en-US'
 }
 
+/** The separator a name list uses: `a, b` / `a、b`. */
+export function listSeparator(): string {
+  return currentLanguage === 'zh-CN' ? '、' : ', '
+}
+
+/** Join names the locale's way: `a, b` / `a、b`. */
+export function joinList(items: readonly string[]): string {
+  return items.join(listSeparator())
+}
+
+/** `a or b` / `a、b或c` — a name list joined by "or". */
+export function joinListOr(items: readonly string[]): string {
+  if (items.length <= 1) return items.join('')
+  const head = items.slice(0, -1).join(listSeparator())
+  const last = items[items.length - 1] ?? ''
+  return currentLanguage === 'zh-CN' ? `${head}或${last}` : `${head} or ${last}`
+}
+
 /** The localized name of a language, for a picker. */
 export function languageName(language: Language): string {
   return language === 'zh-CN' ? '简体中文' : 'English'

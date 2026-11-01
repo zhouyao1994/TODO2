@@ -6,7 +6,8 @@ import { ESCAPE_CLEARS_ATTR } from '../../../hooks/use-popover-anchor'
 import { PickerEntityMenu } from '../EntityMenu'
 import picker from './FilterPicker.module.css'
 import { HotIcon, MarkerIcon } from '../MarkerIcons'
-import { HOT_LABEL, MARKER_COLOR, MARKER_LABELS, MARKERS_LABEL, isHotFilter, markerCondition, toggleHot, withMarkerCondition } from '../../../utils/markers'
+import { MARKER_COLOR, hotName, isHotFilter, markerCondition, markerName, markersName, toggleHot, withMarkerCondition } from '../../../utils/markers'
+import { t as tr } from '../../../i18n'
 import markerStyles from './MarkersPanel.module.css'
 import { byName } from '../../../utils/sort-order'
 import { shortcutScope } from '../../../utils/dom-contract'
@@ -144,7 +145,7 @@ export function MarkerConditionToggle({ marker, value, onChange, touch = false, 
 }) {
   return (
     <SegmentedToggle
-      label={MARKER_LABELS[marker]}
+      label={markerName(marker)}
       choices={MARKER_CHOICES}
       value={choiceOf(markerCondition(value, marker))}
       onChange={(choice) => onChange(withMarkerCondition(value, marker, conditionOf(choice)))}
@@ -459,7 +460,7 @@ export function MarkersPanelBody({ value, onChange }: {
 }) {
   const hot = isHotFilter(value)
   return (
-    <div className={markerStyles.panel} role="group" aria-label={MARKERS_LABEL}>
+    <div className={markerStyles.panel} role="group" aria-label={markersName()}>
       <button
         type="button"
         className={`${picker.dropdownItem} ${markerStyles.row} ${hot ? markerStyles.rowOn : ''}`}
@@ -468,21 +469,21 @@ export function MarkersPanelBody({ value, onChange }: {
         onClick={() => onChange(toggleHot(value))}
       >
         <span className={markerStyles.glyph} style={{ color: 'var(--color-danger)' }}><HotIcon /></span>
-        <span className={markerStyles.label}>{HOT_LABEL}</span>
+        <span className={markerStyles.label}>{hotName()}</span>
         {hot && TICK}
       </button>
       <div className={markerStyles.separator} role="separator" />
       {MARKER_KEYS.map((key) => (
         <div key={key} className={`${markerStyles.markerRow} ${hot ? markerStyles.rowDisabled : ''}`}>
           <span className={markerStyles.glyph} style={{ color: MARKER_COLOR[key] }}><MarkerIcon marker={key} /></span>
-          <span className={markerStyles.label} aria-hidden>{MARKER_LABELS[key]}</span>
+          <span className={markerStyles.label} aria-hidden>{markerName(key)}</span>
           <MarkerConditionToggle marker={key} value={value} onChange={onChange} disabled={hot} />
         </div>
       ))}
       <p className={markerStyles.note}>
         {hot
-          ? 'Hot already combines these. Clear Hot to pick them one by one.'
-          : 'Yes: tasks must have it. No: tasks must not. Urgent includes urgent by due date.'}
+          ? tr('ui.markers_note_hot')
+          : tr('ui.markers_note')}
       </p>
     </div>
   )

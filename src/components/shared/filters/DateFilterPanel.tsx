@@ -15,7 +15,7 @@ import { DateAnchorInput } from '../DateAnchorInput'
 import styles from './DateFilterPanel.module.css'
 import sheetStyles from './FilterChipBarMobile.module.css'
 import { shortcutScope } from '../../../utils/dom-contract'
-import { t } from '../../../i18n'
+import { t, translateText } from '../../../i18n'
 
 /** Which tasks a Due / Follow-up clause keeps. */
 type ShowMode = 'range' | 'set' | 'unset'
@@ -80,7 +80,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
   const { start, end, includeNoDate } = dateRangeOf(clause)
   const hasEnd = start !== null || end !== null
   const noDateName = optional ? NO_DATE_NAME[field] : undefined
-  const shortName = DATE_FIELD_LABELS_SHORT[field]
+  const shortName = translateText(DATE_FIELD_LABELS_SHORT[field])
 
   const forgetHidden = (f: DateField) => setHidden((h) => {
     if (!(f in h)) return h
@@ -164,21 +164,21 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
               id={tabId(f)}
               aria-selected={selected}
               aria-controls={panelId}
-              aria-label={lit ? `${DATE_FIELD_LABELS_SHORT[f]}, filtering` : DATE_FIELD_LABELS_SHORT[f]}
+              aria-label={lit ? `${translateText(DATE_FIELD_LABELS_SHORT[f])}, ${t('ui.filtering_word')}` : translateText(DATE_FIELD_LABELS_SHORT[f])}
               tabIndex={selected ? 0 : -1}
               data-filtering={lit ? '' : undefined}
               className={`${styles.segment} ${styles.tab} ${selected ? styles.selected : ''} ${lit ? styles.lit : ''}`}
               onClick={() => selectTab(f, false)}
               onKeyDown={onTabKeyDown}
             >
-              {DATE_FIELD_LABELS_SHORT[f]}
+              {translateText(DATE_FIELD_LABELS_SHORT[f])}
             </button>
           )
         })}
       </div>
       <div className={styles.body} role="tabpanel" id={panelId} aria-labelledby={tabId(field)}>
         <div className={styles.header}>
-          <span className={styles.title}>{DATE_FIELD_LABELS[field]}</span>
+          <span className={styles.title}>{translateText(DATE_FIELD_LABELS[field])}</span>
           {on && clause
             ? <span className={styles.words} title={describeDateMatch(clause)}>{describeDateMatch(clause)}</span>
             : <span className={styles.off}>{t('ui.not_filtering')}</span>}

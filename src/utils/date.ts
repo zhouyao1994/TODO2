@@ -67,6 +67,20 @@ export function formatDateNumeric(date: Date): string {
   return `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`
 }
 
+const ZH_WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'] as const
+
+/** The weekday by name in the UI language: `Tue` / `星期二` (never an English abbreviation in Chinese). */
+export function weekdayName(date: Date): string {
+  const d = new Date(date)
+  return locale() === 'zh-CN' ? ZH_WEEKDAYS[d.getDay()] ?? '' : formatDateWith(d, { weekday: 'short' })
+}
+
+/** The short month by name in the UI language: `Oct` / `10月`. */
+export function monthNameShort(date: Date): string {
+  const d = new Date(date)
+  return locale() === 'zh-CN' ? `${d.getMonth() + 1}月` : formatDateWith(d, { month: 'short' })
+}
+
 /** Format as relative time: "just now", "5m ago", "3h ago", "2d ago", or "in Xd" for future */
 export function formatRelativeTime(date: Date): string {
   const now = new Date()

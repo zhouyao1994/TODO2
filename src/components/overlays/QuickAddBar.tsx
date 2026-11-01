@@ -63,7 +63,7 @@ import { DATE_ARGUMENT_HINT, REPEAT_FREQUENCIES } from '../../services/slash-com
 import { tokenTints, type TintSpan } from '../../services/nlp-token-tints'
 import { formatFollowupDate, formatFollowupDay } from '../../utils/followup'
 import { startOfToday } from '../../utils/date'
-import { MARKER_LABELS } from '../../utils/markers'
+import { markerName } from '../../utils/markers'
 import { CalendarIcon, RepeatGlyph } from '../shared/CommandIcons'
 import { FollowupFlagIcon } from '../shared/FollowupIcons'
 import { MarkerIcon } from '../shared/MarkerIcons'
@@ -255,13 +255,13 @@ function ParsedChips({ draft, preset, defaultFollowup, today, onRemove }: {
   onRemove: (chip: ChipRemoval) => void
 }) {
   // Without a default, a typed follow-up's × just removes it.
-  const followupRemoveLabel = defaultFollowup ? 'Use the default follow-up' : 'Remove follow-up'
+  const followupRemoveLabel = defaultFollowup ? tr('ui.use_default_followup') : tr('ui.remove_followup_chip')
   return (
     <div className={styles.chipsRow} role="group" aria-label={tr('ui.what_the_task_gets')}>
       {MARKER_KEYS.filter((key) => draft[key] || preset?.[key]).map((key) => (
         <span key={`marker-${key}`} className={`${styles.chip} ${styles.markerChip}`} data-tint={MARKER_CHIP_TINT[key]}>
-          <MarkerIcon marker={key} /> {MARKER_LABELS[key]}
-          <ChipRemove label={`Remove ${MARKER_LABELS[key]}`} onRemove={() => onRemove({ kind: 'marker', marker: key })} />
+          <MarkerIcon marker={key} /> {markerName(key)}
+          <ChipRemove label={tr('ui.remove_marker_chip', { name: markerName(key) })} onRemove={() => onRemove({ kind: 'marker', marker: key })} />
         </span>
       ))}
       {draft.tags.map((t) => (
