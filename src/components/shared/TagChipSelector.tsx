@@ -4,6 +4,7 @@ import { ChipSelector } from './ChipSelector'
 import { AnchoredPicker } from './AnchoredPicker'
 import styles from './TagChipSelector.module.css'
 import { byName } from '../../utils/sort-order'
+import { t as tr } from '../../i18n'
 
 export interface TagChipSelectorProps {
   /** Tags currently assigned to this todo. Pre-resolved by the consumer. */
@@ -59,7 +60,7 @@ export function TagChipSelector({
             data-tag-chip=""
             style={tag.color ? { color: tag.color, borderColor: tag.color } : undefined}
             onClick={toggleOpen}
-            title="Edit tags"
+            title={tr('ui.edit_tags')}
           >
             #{tag.name}
           </button>
@@ -82,8 +83,8 @@ export function TagChipSelector({
             type="button"
             className={styles.chipTrigger}
             onClick={toggleOpen}
-            title="Add tag"
-            aria-label="Add tag"
+            title={tr('ui.add_tag_2')}
+            aria-label={tr('ui.add_tag_2')}
           >
             #
           </button>
@@ -123,7 +124,7 @@ export function TagPicker({ anchorRef, anchorIsInside = true, assignedTags, allT
           onToggle={onToggle}
           onCreate={onCreate}
           onClose={onClose}
-          placeholder="Search tags..."
+          placeholder={tr('ui.search_tags')}
           entityMenu="tag"
         />
       </div>

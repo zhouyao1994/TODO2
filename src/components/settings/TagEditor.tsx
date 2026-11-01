@@ -12,6 +12,7 @@ import styles from './EntityEditor.module.css'
 import { EditorModal } from './EditorModal'
 import { TaskCount } from './TaskCount'
 import { byName } from '../../utils/sort-order'
+import { t as tr } from '../../i18n'
 
 interface EditState {
   id: number
@@ -146,12 +147,12 @@ export function TagEditor({ onClose, editTagId, layer }: TagEditorProps) {
               className={styles.editInput}
               value={ed.name}
               onChange={(e) => { setEditing({ ...ed, name: e.target.value }); setNameError('') }}
-              placeholder="Tag name"
+              placeholder={tr('ui.tag_name')}
               autoFocus
             />
             <div className={styles.editActions}>
-              <button className={styles.saveBtn} onClick={saveEdit}>Save</button>
-              <button className={styles.cancelBtn} onClick={() => { setEditing(null); setNameError('') }}>Cancel</button>
+              <button className={styles.saveBtn} onClick={saveEdit}>{tr('ui.save')}</button>
+              <button className={styles.cancelBtn} onClick={() => { setEditing(null); setNameError('') }}>{tr('ui.cancel')}</button>
             </div>
           </div>
           {nameError && <div className={styles.errorHint}>{nameError}</div>}
@@ -166,7 +167,7 @@ export function TagEditor({ onClose, editTagId, layer }: TagEditorProps) {
         <span className={styles.nameEditable} onClick={() => startEdit(tag)}>{tag.name}</span>
         <TaskCount count={count} />
         <div className={styles.actions}>
-          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => startDelete(tag.id!)} title="Delete">&times;</button>
+          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => startDelete(tag.id!)} title={tr('ui.delete')}>{tr('ui.c397')}</button>
         </div>
       </div>
     )
@@ -174,21 +175,21 @@ export function TagEditor({ onClose, editTagId, layer }: TagEditorProps) {
 
   return (
     <>
-      <EditorModal title="Tags" onClose={onClose} layer={layer}>
+      <EditorModal title={tr('ui.tags')} onClose={onClose} layer={layer}>
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Search tags..."
+          placeholder={tr('ui.search_tags')}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
 
         <div className={styles.list}>
           {tags.length === 0 && !adding && (
-            <div className={styles.empty}>No tags yet</div>
+            <div className={styles.empty}>{tr('ui.no_tags_yet')}</div>
           )}
           {tags.length > 0 && visible.length === 0 && (
-            <div className={styles.empty}>No matching tags</div>
+            <div className={styles.empty}>{tr('ui.no_matching_tags')}</div>
           )}
           {visible.map(renderRow)}
         </div>
@@ -201,18 +202,18 @@ export function TagEditor({ onClose, editTagId, layer }: TagEditorProps) {
                 className={styles.editInput}
                 value={newName}
                 onChange={(e) => { setNewName(e.target.value); setNameError('') }}
-                placeholder="Tag name"
+                placeholder={tr('ui.tag_name')}
                 autoFocus
               />
               <div className={styles.editActions}>
-                <button className={styles.saveBtn} onClick={saveAdd}>Add</button>
-                <button className={styles.cancelBtn} onClick={() => { setAdding(false); setNameError('') }}>Cancel</button>
+                <button className={styles.saveBtn} onClick={saveAdd}>{tr('ui.add_2')}</button>
+                <button className={styles.cancelBtn} onClick={() => { setAdding(false); setNameError('') }}>{tr('ui.cancel')}</button>
               </div>
             </div>
             {nameError && <div className={styles.errorHint}>{nameError}</div>}
           </div>
         ) : (
-          <button className={styles.addBtn} onClick={startAdd}>+ Add Tag</button>
+          <button className={styles.addBtn} onClick={startAdd}>{tr('ui.add_tag')}</button>
         )}
       </EditorModal>
       {deleteId != null && <DeleteTagConfirm tagId={deleteId} onDone={() => setDeleteId(null)} />}

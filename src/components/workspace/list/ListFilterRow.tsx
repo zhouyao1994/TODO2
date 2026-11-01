@@ -14,6 +14,7 @@ import { useScreenChips } from './use-screen-chips'
 import { openEditList } from '../widget-hooks'
 import chipStyles from '../../shared/filters/ListFilterChips.module.css'
 import styles from './ListFilterRow.module.css'
+import { t } from '../../../i18n'
 
 /** Value-only text for a screen chip (dates keep their field name). */
 function screenChipText(chip: FilterChip): string {
@@ -84,7 +85,7 @@ function FilterRowBody({ tabId, definition, summary = true, inDialog = false, un
                 </span>
               ))}
               {screenChips.length > 0 && hasListChips && <span className={styles.chipSep} aria-hidden="true" />}
-              {screenChips.length === 0 && !hasListChips && <span className={styles.noFilters}>No filters</span>}
+              {screenChips.length === 0 && !hasListChips && <span className={styles.noFilters}>{t('ui.no_filters')}</span>}
             </>
           )}
         />

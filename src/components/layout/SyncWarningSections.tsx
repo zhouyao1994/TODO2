@@ -4,6 +4,7 @@ import { AlertCircleIcon, LockIcon, PauseIcon, WarningIcon } from '../shared/ico
 import { FileSyncPausedControls } from './FileSyncPausedControls'
 import { syncWarningCopy, warningTone, type SyncWarning } from './sync-status'
 import styles from './SyncWarningSections.module.css'
+import { t } from '../../i18n'
 
 /** A warning's glyph (the pill, its popover, the phone's status button). */
 export function SyncWarningIcon({ kind, size }: { kind: SyncWarning['kind']; size: number }) {
@@ -49,22 +50,20 @@ export function SyncWarningSections({ warnings, variant, titleId, onClose, onOpe
       case 'permission':
         return (
           <button type="button" className={styles.primary} onClick={() => { onClose(); void reconnect() }}>
-            Grant access
-          </button>
+            {t('ui.grant_access')}</button>
         )
       case 'paused':
         return <FileSyncPausedControls buttonClassName={styles.secondary} primaryButtonClassName={styles.warningFill} onDone={onClose} />
       case 'error':
-        return <button type="button" className={styles.secondary} onClick={dismiss(dismissError)}>Dismiss</button>
+        return <button type="button" className={styles.secondary} onClick={dismiss(dismissError)}>{t('ui.dismiss')}</button>
       case 'backup':
         return (
           <>
             {onOpenBackups && (
-              <button type="button" className={styles.secondary} onClick={() => { onClose(); onOpenBackups() }}>Open Backups…</button>
+              <button type="button" className={styles.secondary} onClick={() => { onClose(); onOpenBackups() }}>{t('ui.open_backups')}</button>
             )}
             <button type="button" className={onOpenBackups ? styles.ghost : styles.secondary} onClick={dismiss(dismissSnapshotWarning)}>
-              Dismiss
-            </button>
+              {t('ui.dismiss')}</button>
           </>
         )
     }

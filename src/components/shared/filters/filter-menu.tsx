@@ -4,7 +4,8 @@ import { useStatusStore } from '../../../stores/status-store'
 import { useTagStore } from '../../../stores/tag-store'
 import type { ListFilterField } from '../../../stores/list-widget-store'
 import type { FilterChipNames } from '../../../utils/filter-chips'
-import { MARKERS_LABEL } from '../../../utils/markers'
+import { markersName } from '../../../utils/markers'
+import { t } from '../../../i18n'
 import { ImportantIcon } from '../MarkerIcons'
 import { AtIcon, HashIcon, SearchIcon, StatusRingIcon, WidgetKindIcon } from '../icons'
 
@@ -20,11 +21,12 @@ export function useChipNames(): FilterChipNames {
  * "+ Filter" menu items, in the top bar's filter order: a field, then that
  * field's picker (Dates opens the date panel on the first type that filters, else Due).
  */
+/** The items' labels resolve at import; a language choice reloads the app, so they are current. */
 export const ADD_FILTER_ITEMS: ReadonlyArray<{ label: string; field: ListFilterField; icon: ReactNode; submenu: boolean }> = [
-  { label: MARKERS_LABEL, field: 'markers', icon: <ImportantIcon outline />, submenu: true },
-  { label: 'Tags', field: 'tags', icon: <HashIcon />, submenu: true },
-  { label: 'People', field: 'people', icon: <AtIcon />, submenu: true },
-  { label: 'Dates', field: 'dates', icon: <WidgetKindIcon kind="calendar" />, submenu: true },
-  { label: 'Status', field: 'status', icon: <StatusRingIcon />, submenu: true },
-  { label: 'Text contains…', field: 'text', icon: <SearchIcon />, submenu: false },
+  { label: markersName(), field: 'markers', icon: <ImportantIcon outline />, submenu: true },
+  { label: t('ui.tags'), field: 'tags', icon: <HashIcon />, submenu: true },
+  { label: t('ui.people'), field: 'people', icon: <AtIcon />, submenu: true },
+  { label: t('ui.dates'), field: 'dates', icon: <WidgetKindIcon kind="calendar" />, submenu: true },
+  { label: t('ui.status'), field: 'status', icon: <StatusRingIcon />, submenu: true },
+  { label: t('ui.text_contains_menu'), field: 'text', icon: <SearchIcon />, submenu: false },
 ]

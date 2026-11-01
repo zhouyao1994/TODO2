@@ -26,6 +26,7 @@ import { useSettingsStore } from '../../stores/settings-store'
 import { useUrgentRangeSetting } from './eisenhower/urgent-range-setting'
 import { BandIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon, LayoutIcon, MoreIcon } from '../shared/icons'
 import styles from './MobileWorkspaceView.module.css'
+import { t as tr } from '../../i18n'
 
 /** Gap between columns in the pager (px). */
 const PAGER_GAP_PX = 8
@@ -94,7 +95,7 @@ function LayoutSheet({ onClose }: { onClose: () => void }) {
         initialFocus={layouts.some((l) => l.id === activeLayoutId) ? currentRowRef : firstRowRef}
       >
         <span className={styles.handle} aria-hidden="true" />
-        <h2 id="ws-layout-sheet-title" className={styles.sheetTitle}>Layouts</h2>
+        <h2 id="ws-layout-sheet-title" className={styles.sheetTitle}>{tr('ui.layouts')}</h2>
         <div className={styles.sheetRows}>
           {layouts.map((l) => {
             const current = l.id === activeLayoutId
@@ -109,7 +110,7 @@ function LayoutSheet({ onClose }: { onClose: () => void }) {
               >
                 <span className={styles.sheetGlyph}><LayoutIcon /></span>
                 <span className={styles.sheetName}>{l.name}</span>
-                {current && isDirty && <span className={styles.sheetNote}>Edited</span>}
+                {current && isDirty && <span className={styles.sheetNote}>{tr('ui.edited_2')}</span>}
                 {current && <span className={styles.sheetCheck}><CheckIcon /></span>}
               </button>
             )
@@ -166,7 +167,7 @@ function MobileTopBar({ name, status }: { name: string; status?: ReactNode }) {
         <button
           type="button"
           className={styles.iconButton}
-          aria-label="Search"
+          aria-label={tr('ui.search_3')}
           onClick={() => useUIStore.getState().openFilterSheetSearch()}
         >
           <SearchIcon />
@@ -212,12 +213,12 @@ function EisenhowerSheet({ tab, onClose }: { tab: EisenhowerTab; onClose: () => 
       className={styles.sheet}
       backdropClassName={styles.backdrop}
       style={SHEET_PLACEMENT}
-      aria-label="Eisenhower tab"
+      aria-label={tr('ui.eisenhower_tab')}
       initialFocus={focusRef}
       onKeyDown={moveInMenu}
     >
       <span className={styles.handle} aria-hidden="true" />
-      <div role="menu" aria-label="Eisenhower">
+      <div role="menu" aria-label={tr('ui.eisenhower')}>
         <div className={styles.sheetRows}>
           {editList && (
             <button
@@ -227,11 +228,11 @@ function EisenhowerSheet({ tab, onClose }: { tab: EisenhowerTab; onClose: () => 
               className={styles.sheetRow}
               onClick={() => { onClose(); openEditList(tab.id, listId) }}
             >
-              <span className={styles.sheetName}>Edit list…</span>
+              <span className={styles.sheetName}>{tr('ui.edit_list')}</span>
             </button>
           )}
         </div>
-        <div className={styles.sheetFootnote}>To change the panes, use Settings on a wider screen.</div>
+        <div className={styles.sheetFootnote}>{tr('ui.to_change_the_panes_use_settings')}</div>
         <div className={`${styles.sheetTitle} ${styles.sheetSectionTitle}`}>{setting.heading}</div>
         <div className={styles.sheetRows}>
           {setting.options.map((o) => (
@@ -280,11 +281,11 @@ function ListTabSheet({ tabId, listDefinitionId, result, onClose }: {
       className={styles.sheet}
       backdropClassName={styles.backdrop}
       style={SHEET_PLACEMENT}
-      aria-label="List tab"
+      aria-label={tr('ui.list_tab')}
       onKeyDown={moveInMenu}
     >
       <span className={styles.handle} aria-hidden="true" />
-      <div role="menu" aria-label="List" className={styles.sheetRows}>
+      <div role="menu" aria-label={tr('ui.list')} className={styles.sheetRows}>
         {rows.map((row) => (
           <button
             key={row.label}
@@ -320,8 +321,8 @@ function MobileCell({ cell, fill, band = false }: { cell: LayoutPanel; fill: boo
 
   if (cell.tabs.length === 0) {
     return (
-      <section className={styles.emptyCell} data-ws-cell={cell.id} data-empty="true" aria-label="Empty cell">
-        <span className={styles.emptyTitle}>Empty cell</span>
+      <section className={styles.emptyCell} data-ws-cell={cell.id} data-empty="true" aria-label={tr('ui.empty_cell')}>
+        <span className={styles.emptyTitle}>{tr('ui.empty_cell')}</span>
         <span className={styles.emptyHint}>{WIDER_SCREEN_HINT}</span>
       </section>
     )
@@ -572,7 +573,7 @@ function ColumnPager({ pages }: { pages: readonly PagerPage[] }) {
 
   return (
     <>
-      <div ref={stripRef} className={styles.strip} role="tablist" aria-label="Columns" onKeyDown={onStripKeyDown}>
+      <div ref={stripRef} className={styles.strip} role="tablist" aria-label={tr('ui.columns')} onKeyDown={onStripKeyDown}>
         {pages.map((page, i) => (
           <PageName
             key={page.id}
@@ -614,9 +615,9 @@ export function MobileWorkspaceView({ layout, status }: { layout: WorkspaceLayou
       <MobileTopBar name={layout.name} status={status} />
       {pages.length === 0 ? (
         <div className={styles.emptyLayout} data-ws-area>
-          <p className={styles.emptyLayoutTitle}>This layout is empty</p>
+          <p className={styles.emptyLayoutTitle}>{tr('ui.this_layout_is_empty')}</p>
           <p className={styles.emptyHint}>{WIDER_SCREEN_HINT}</p>
-          <p className={styles.emptyHint}>Or choose a saved layout from the picker above.</p>
+          <p className={styles.emptyHint}>{tr('ui.or_choose_a_saved_layout_from')}</p>
         </div>
       ) : (
         // Remount per layout so a switch starts at the first column.

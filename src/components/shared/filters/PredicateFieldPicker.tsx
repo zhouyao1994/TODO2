@@ -12,11 +12,12 @@ import { entityPickerSelection, isNegated, withIdFilter } from '../../../utils/f
 import { MARKERS_LABEL } from '../../../utils/markers'
 import { EntityDropdownItems, MarkersPanelBody, SelectionPanelBody } from './FilterPanels'
 import { DateFilterPanel } from './DateFilterPanel'
-import { DATE_FILTER_DIALOG_LABEL, DATE_FILTER_POPOVER_CLASS } from './date-filter-popover'
+import { DATE_FILTER_POPOVER_CLASS } from './date-filter-popover'
 import { DEFAULT_PREDICATE, ENTITY_ID_FIELD } from './FilterChipBar.shared'
 import { ClearableField } from '../ClearableField'
 import picker from './FilterPicker.module.css'
 import styles from './ListFilterChips.module.css'
+import { t, translateText } from '../../../i18n'
 
 type EntityField = 'people' | 'tags' | 'status'
 
@@ -69,7 +70,7 @@ export function PredicateFieldPicker({ field, predicate: stored, onChange, at, a
       className={dates ? DATE_FILTER_POPOVER_CLASS : `${picker.dropdownPanel} ${styles.pickerPanel}`}
       style={{ position: style.position, left: style.left, top: style.top, maxHeight: style.maxHeight }}
       role="dialog"
-      aria-label={dates ? DATE_FILTER_DIALOG_LABEL : `${PICKER_TITLE[field]} filter`}
+      aria-label={dates ? t('ui.date_filters') : t('ui.field_filter_aria', { field: translateText(PICKER_TITLE[field]) })}
       data-testid="list-filter-picker"
     >
       {dates ? (
@@ -153,12 +154,12 @@ function EntityPicker({ field, predicate, adding, replace, onClose }: {
       searchInputRef={searchRef}
     >
       {field === 'tags' && entities.length === 0 ? (
-        <div className={picker.dropdownEmpty}>No tags yet</div>
+        <div className={picker.dropdownEmpty}>{t('ui.no_tags_yet')}</div>
       ) : (
         <EntityDropdownItems
           searchText={searchText}
           entities={entities}
-          label={PICKER_TITLE[field]}
+          label={translateText(PICKER_TITLE[field])}
           isChecked={sel.isChecked}
           onToggle={toggle}
           namePrefix={field === 'people' ? '@' : field === 'tags' ? '#' : undefined}
@@ -183,12 +184,12 @@ function TextPicker({ predicate, update, onClose }: {
   useEffect(() => { inputRef.current?.focus() }, [])
   return (
     <div className={styles.textPicker}>
-      <label htmlFor={inputId} className={styles.textPickerLabel}>Text contains</label>
+      <label htmlFor={inputId} className={styles.textPickerLabel}>{t('ui.text_contains')}</label>
       <ClearableField
         value={predicate.searchText}
         onClear={() => update({ searchText: '' })}
         inputRef={inputRef}
-        label="Clear text filter"
+        label={t('ui.clear_text_filter')}
       >
         <input
           ref={inputRef}
@@ -197,7 +198,7 @@ function TextPicker({ predicate, update, onClose }: {
           type="text"
           value={predicate.searchText}
           maxLength={PREDICATE_SEARCH_TEXT_MAX}
-          placeholder="Title, notes, people, tags…"
+          placeholder={t('ui.title_notes_people_tags')}
           onChange={(e) => update({ searchText: e.target.value })}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === 'Escape') {

@@ -4,6 +4,7 @@ import { useSettingsStore } from '../../stores/settings-store'
 import { urgentByDateReason, urgentMark } from '../../utils/urgency'
 import { FocusIcon, ImportantIcon, UrgentClockIcon, UrgentIcon } from './MarkerIcons'
 import { Tooltip } from './Tooltip'
+import { t } from '../../i18n'
 
 type MarkerFields = Pick<TodoItem, 'urgent' | 'important' | 'focus' | 'dueDate' | 'isCompleted'>
 
@@ -51,18 +52,18 @@ export function TaskMarkers({ todo, today, size = 14, className }: {
   const reason = urgent === 'date' ? urgentByDateReason(todo, today, range) : ''
   const glyphs: Record<MarkerKey, ReactNode> = {
     focus: focus && (
-      <Marker label="Focus" color="var(--color-marker-focus)" testId="focus-marker">
+      <Marker label={t('ui.focus')} color="var(--color-marker-focus)" testId="focus-marker">
         <FocusIcon />
       </Marker>
     ),
     urgent: urgent === 'flag' ? (
-      <Marker label="Urgent" color="var(--color-marker-urgent)" testId="urgent-marker">
+      <Marker label={t('ui.urgent')} color="var(--color-marker-urgent)" testId="urgent-marker">
         <UrgentIcon />
       </Marker>
     ) : urgent === 'date' && (
       <Marker
-        label="Urgent: due soon"
-        tooltip={reason ? `Urgent: due soon\n${reason}` : 'Urgent: due soon'}
+        label={t('ui.urgent_due_soon')}
+        tooltip={reason ? `${t('ui.urgent_due_soon')}\n${reason}` : t('ui.urgent_due_soon')}
         color="var(--color-marker-urgent)"
         testId="urgent-clock-marker"
       >
@@ -70,7 +71,7 @@ export function TaskMarkers({ todo, today, size = 14, className }: {
       </Marker>
     ),
     important: important && (
-      <Marker label="Important" color="var(--color-marker-important)" testId="important-marker">
+      <Marker label={t('ui.important')} color="var(--color-marker-important)" testId="important-marker">
         <ImportantIcon />
       </Marker>
     ),

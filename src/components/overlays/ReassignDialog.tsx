@@ -1,5 +1,6 @@
 import { ConfirmDialog } from '../shared/Dialog'
 import styles from './ReassignDialog.module.css'
+import { t } from '../../i18n'
 
 interface ReassignDialogProps {
   taskTitle: string
@@ -24,9 +25,9 @@ export function ReassignDialog({
       title={`Reassign ${noun}`}
       message={
         <>
-          Move <strong>{taskTitle}</strong> from <strong>{fromLabel}</strong> to <strong>{toLabel}</strong>?
+          {t('ui.move')}{' '}<strong>{taskTitle}</strong> {t('ui.from')}{' '}<strong>{fromLabel}</strong> {t('ui.to_2')}{' '}<strong>{toLabel}</strong>?
           <div className={styles.detail}>
-            This will remove the <em>{fromLabel}</em> {noun} and add <em>{toLabel}</em>.
+            {t('ui.this_will_remove_the')}{' '}<em>{fromLabel}</em> {noun} {t('ui.and_add')}{' '}<em>{toLabel}</em>.
           </div>
         </>
       }

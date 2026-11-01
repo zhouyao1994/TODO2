@@ -12,14 +12,15 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import type { SettingsBodyProps } from './settings-sections'
 import styles from './sections.module.css'
+import { t, translateText } from '../../../i18n'
 
 /** How a check-in email is handed to the mail app (also set from the check-in dialog). */
 function CheckinOpenMethodSetting() {
   const method = useSettingsStore((s) => s.checkinOpenMethod)
   const setMethod = useSettingsStore((s) => s.setCheckinOpenMethod)
   return (
-    <SettingRow label="Email check-ins open as" help="How each check-in email reaches your mail app." column>
-      <div className={styles.radioGroup} role="radiogroup" aria-label="Email check-ins open as">
+    <SettingRow label={t('ui.email_check_ins_open_as')} help={t('ui.how_each_check_in_email_reaches')} column>
+      <div className={styles.radioGroup} role="radiogroup" aria-label={t('ui.email_check_ins_open_as')}>
         {CHECKIN_OPEN_METHOD_OPTIONS.map((o) => (
           <label key={o.method} className={styles.radioOption}>
             <input
@@ -30,8 +31,8 @@ function CheckinOpenMethodSetting() {
               onChange={() => void setMethod(o.method)}
             />
             <span className={styles.radioText}>
-              {o.label}
-              <span className={styles.help}>{o.help}</span>
+              {translateText(o.label)}
+              <span className={styles.help}>{translateText(o.help)}</span>
             </span>
           </label>
         ))}
@@ -40,8 +41,8 @@ function CheckinOpenMethodSetting() {
   )
 }
 
-function count(n: number, one: string, many: string): string {
-  return `${n} ${n === 1 ? one : many}`
+function countText(n: number, one: 'ui.people_count_one' | 'ui.status_count_one' | 'ui.tag_count_one', many: 'ui.people_count_many' | 'ui.status_count_many' | 'ui.tag_count_many'): string {
+  return n === 1 ? t(one) : t(many, { n })
 }
 
 /**
@@ -63,20 +64,20 @@ export function EntitiesSection({ mobile }: SettingsBodyProps) {
     <div className={styles.section}>
       {!mobile && (
         <>
-          <SettingRow label="People" help={count(peopleCount, 'person', 'people')}>
-            <button type="button" className={button} onClick={() => setEditor('people')}>Manage people…</button>
+          <SettingRow label={t('ui.people')} help={countText(peopleCount, 'ui.people_count_one', 'ui.people_count_many')}>
+            <button type="button" className={button} onClick={() => setEditor('people')}>{t('ui.manage_people')}</button>
           </SettingRow>
           <CheckinOpenMethodSetting />
-          <SettingRow label="Statuses" help={count(statusCount, 'status', 'statuses')}>
-            <button type="button" className={button} onClick={() => setEditor('statuses')}>Manage statuses…</button>
+          <SettingRow label={t('ui.statuses')} help={countText(statusCount, 'ui.status_count_one', 'ui.status_count_many')}>
+            <button type="button" className={button} onClick={() => setEditor('statuses')}>{t('ui.manage_statuses')}</button>
           </SettingRow>
-          <SettingRow label="Tags" help={count(tagCount, 'tag', 'tags')}>
-            <button type="button" className={button} onClick={() => setEditor('tags')}>Manage tags…</button>
+          <SettingRow label={t('ui.tags')} help={countText(tagCount, 'ui.tag_count_one', 'ui.tag_count_many')}>
+            <button type="button" className={button} onClick={() => setEditor('tags')}>{t('ui.manage_tags')}</button>
           </SettingRow>
         </>
       )}
-      <SettingRow label="Unused people & tags" help="People and tags no task has.">
-        <button type="button" className={button} onClick={() => setEditor('unused')}>Find unused…</button>
+      <SettingRow label={t('ui.unused_people_tags')} help={t('ui.people_and_tags_no_task_has_2')}>
+        <button type="button" className={button} onClick={() => setEditor('unused')}>{t('ui.find_unused')}</button>
       </SettingRow>
 
       {editor === 'people' && <PeopleEditor onClose={close} />}

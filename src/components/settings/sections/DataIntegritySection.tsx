@@ -9,6 +9,7 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import styles from './sections.module.css'
 import { cleanupCurrentAudit } from '../../../services/replace-data'
+import { t } from '../../../i18n'
 
 /** The database audit: orphaned joins, dangling references, unrecognized data. */
 export function DataIntegritySection() {
@@ -36,7 +37,7 @@ export function DataIntegritySection() {
   return (
     <div className={styles.section}>
       {auditReport == null ? (
-        <SettingRow label="Audit" help="Looks for records that point at missing data, and data this version doesn’t recognize.">
+        <SettingRow label={t('ui.audit')} help={t('ui.looks_for_records_that_point_at')}>
           <button
             type="button"
             className={secondary}
@@ -50,12 +51,12 @@ export function DataIntegritySection() {
             }}
             disabled={running}
           >
-            {running ? 'Scanning...' : 'Run Audit'}
+            {running ? t('ui.scanning') : t('ui.run_audit')}
           </button>
         </SettingRow>
       ) : auditReport.totalOrphans === 0 ? (
-        <SettingRow label="Audit" help="No issues found.">
-          <button type="button" className={secondary} onClick={() => setAuditReport(null)}>Dismiss</button>
+        <SettingRow label={t('ui.audit')} help={t('ui.no_issues_found')}>
+          <button type="button" className={secondary} onClick={() => setAuditReport(null)}>{t('ui.dismiss')}</button>
         </SettingRow>
       ) : (
         <>
@@ -76,7 +77,7 @@ export function DataIntegritySection() {
                 >
                   <span className={styles.auditCount}>{issue.count}</span>
                   <span className={styles.auditDesc}>{issue.description}</span>
-                  {hasDetail && <span className={styles.auditViewHint} aria-hidden="true">View →</span>}
+                  {hasDetail && <span className={styles.auditViewHint} aria-hidden="true">{t('ui.view')}</span>}
                 </button>
               )
             })}
@@ -99,9 +100,9 @@ export function DataIntegritySection() {
                 }
               }}
             >
-              Clean Up {auditReport.totalOrphans} Issue{auditReport.totalOrphans !== 1 ? 's' : ''}
+              {t('ui.clean_up')}{' '}{auditReport.totalOrphans} {t('ui.issue')}{auditReport.totalOrphans !== 1 ? 's' : ''}
             </button>
-            <button type="button" className={secondary} onClick={() => setAuditReport(null)}>Dismiss</button>
+            <button type="button" className={secondary} onClick={() => setAuditReport(null)}>{t('ui.dismiss')}</button>
           </div>
         </>
       )}

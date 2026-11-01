@@ -6,11 +6,13 @@ import { ESCAPE_CLEARS_ATTR } from '../../../hooks/use-popover-anchor'
 import { PickerEntityMenu } from '../EntityMenu'
 import picker from './FilterPicker.module.css'
 import { HotIcon, MarkerIcon } from '../MarkerIcons'
-import { HOT_LABEL, MARKER_COLOR, MARKER_LABELS, MARKERS_LABEL, isHotFilter, markerCondition, toggleHot, withMarkerCondition } from '../../../utils/markers'
+import { MARKER_COLOR, hotName, isHotFilter, markerCondition, markerName, markersName, toggleHot, withMarkerCondition } from '../../../utils/markers'
+import { t as tr } from '../../../i18n'
 import markerStyles from './MarkersPanel.module.css'
 import { byName } from '../../../utils/sort-order'
 import { shortcutScope } from '../../../utils/dom-contract'
 import { splitOnTop, usePickerOrder } from '../../../hooks/use-picker-order'
+import { t } from '../../../i18n'
 
 /**
  * Bodies of the filter pickers, shared by the top bar's filter buttons
@@ -143,7 +145,7 @@ export function MarkerConditionToggle({ marker, value, onChange, touch = false, 
 }) {
   return (
     <SegmentedToggle
-      label={MARKER_LABELS[marker]}
+      label={markerName(marker)}
       choices={MARKER_CHOICES}
       value={choiceOf(markerCondition(value, marker))}
       onChange={(choice) => onChange(withMarkerCondition(value, marker, conditionOf(choice)))}
@@ -205,16 +207,14 @@ export function SelectionPanelBody({ mode, allSelected, noneSelected, onSelectAl
           className={`${picker.dropdownAction} ${allSelected ? picker.dropdownActionDisabled : ''}`}
           onClick={allSelected ? undefined : onSelectAll}
         >
-          Select all
-        </button>
+          {t('ui.select_all')}</button>
         <span className={picker.dropdownActionSep}>/</span>
         <button
           type="button"
           className={`${picker.dropdownAction} ${noneSelected ? picker.dropdownActionDisabled : ''}`}
           onClick={noneSelected ? undefined : onDeselectAll}
         >
-          Deselect all
-        </button>
+          {t('ui.deselect_all')}</button>
       </div>
       <div className={picker.dropdownDivider} />
       {search && (
@@ -223,13 +223,13 @@ export function SelectionPanelBody({ mode, allSelected, noneSelected, onSelectAl
             value={search.text}
             onClear={() => search.setText('')}
             inputRef={searchRef}
-            label="Clear search"
+            label={t('ui.clear_search')}
           >
             <input
               ref={searchRef}
               className={picker.dropdownSearchInput}
               type="text"
-              placeholder="Search..."
+              placeholder={t('ui.search_2')}
               value={search.text}
               onChange={(e) => search.setText(e.target.value)}
               {...{ [ESCAPE_CLEARS_ATTR]: '', [PICKER_SEARCH_ATTR]: '' }}
@@ -408,7 +408,7 @@ export function EntityDropdownItems({
       {rowIds.length > 0 && (
         <div ref={listRef} role="listbox" aria-multiselectable="true" aria-label={label} onKeyDown={onListKeyDown} {...shortcutScope('none')}>
           {rowIds.map((id) => {
-            if (id === 0) return row(0, <span className={picker.noneLabel}>None</span>, !!entityMenu)
+            if (id === 0) return row(0, <span className={picker.noneLabel}>{t('ui.none')}</span>, !!entityMenu)
             const entity = byId.get(id)
             return entity && row(id, (
               <>
@@ -427,7 +427,7 @@ export function EntityDropdownItems({
         </div>
       )}
       {q && !showNone && matching.length === 0 && (
-        <div className={picker.dropdownEmpty}>No matches</div>
+        <div className={picker.dropdownEmpty}>{t('ui.no_matches')}</div>
       )}
       {menu && entityMenu && (
         <PickerEntityMenu
@@ -460,7 +460,7 @@ export function MarkersPanelBody({ value, onChange }: {
 }) {
   const hot = isHotFilter(value)
   return (
-    <div className={markerStyles.panel} role="group" aria-label={MARKERS_LABEL}>
+    <div className={markerStyles.panel} role="group" aria-label={markersName()}>
       <button
         type="button"
         className={`${picker.dropdownItem} ${markerStyles.row} ${hot ? markerStyles.rowOn : ''}`}
@@ -469,21 +469,21 @@ export function MarkersPanelBody({ value, onChange }: {
         onClick={() => onChange(toggleHot(value))}
       >
         <span className={markerStyles.glyph} style={{ color: 'var(--color-danger)' }}><HotIcon /></span>
-        <span className={markerStyles.label}>{HOT_LABEL}</span>
+        <span className={markerStyles.label}>{hotName()}</span>
         {hot && TICK}
       </button>
       <div className={markerStyles.separator} role="separator" />
       {MARKER_KEYS.map((key) => (
         <div key={key} className={`${markerStyles.markerRow} ${hot ? markerStyles.rowDisabled : ''}`}>
           <span className={markerStyles.glyph} style={{ color: MARKER_COLOR[key] }}><MarkerIcon marker={key} /></span>
-          <span className={markerStyles.label} aria-hidden>{MARKER_LABELS[key]}</span>
+          <span className={markerStyles.label} aria-hidden>{markerName(key)}</span>
           <MarkerConditionToggle marker={key} value={value} onChange={onChange} disabled={hot} />
         </div>
       ))}
       <p className={markerStyles.note}>
         {hot
-          ? 'Hot already combines these. Clear Hot to pick them one by one.'
-          : 'Yes: tasks must have it. No: tasks must not. Urgent includes urgent by due date.'}
+          ? tr('ui.markers_note_hot')
+          : tr('ui.markers_note')}
       </p>
     </div>
   )

@@ -3,6 +3,7 @@ import { RECOVERED_LISTS_LAYOUT_NAME } from '../../data/layout-repository'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import dialogStyles from '../shared/Dialog.module.css'
 import styles from './AuditIssueDetailDialog.module.css'
+import { t } from '../../i18n'
 
 interface AuditIssueDetailDialogProps {
   issue: AuditIssue | null
@@ -44,8 +45,7 @@ export function AuditIssueDetailDialog({ issue, onClose }: AuditIssueDetailDialo
 
         {samples.length === 0 ? (
           <div className={styles.empty}>
-            No row-level detail was captured for this issue.
-          </div>
+            {t('ui.no_row_level_detail_was_captured')}</div>
         ) : (
           <ul className={styles.sampleList}>
             {samples.map((sample, i) => (
@@ -56,8 +56,7 @@ export function AuditIssueDetailDialog({ issue, onClose }: AuditIssueDetailDialo
       </DialogBody>
       <DialogActions>
         <button type="button" className={dialogStyles.confirmButton} onClick={onClose}>
-          Close
-        </button>
+          {t('ui.close')}</button>
       </DialogActions>
     </Dialog>
   )
@@ -92,7 +91,7 @@ function SampleCard({ sample }: { sample: AuditSample }) {
   return (
     <li className={styles.sampleCard}>
       <div className={styles.sampleHeader}>
-        <span className={styles.sampleId}>id: {idLabel}</span>
+        <span className={styles.sampleId}>{t('ui.id')}{' '}{idLabel}</span>
         {sample.note && <span className={styles.sampleNote}>{sample.note}</span>}
       </div>
       <pre className={styles.json}>

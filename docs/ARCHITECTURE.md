@@ -12,11 +12,12 @@ This file is the always-loaded orientation: what lives where and how data moves.
 
 ## Dependency Graph
 
-Layers, lowest first — a module imports only from its own layer or lower, and `src/test/architecture/folder-cycles.test.ts` fails on any folder cycle: `models` / `utils` → `data` → `stores` → `services` → `hooks` → `components` → `views`. Services orchestrate stores; no store imports a service.
+Layers, lowest first — a module imports only from its own layer or lower, and `src/test/architecture/folder-cycles.test.ts` fails on any folder cycle: `i18n` / `models` / `utils` → `data` → `stores` → `services` → `hooks` → `components` → `views`. Services orchestrate stores; no store imports a service. `i18n` imports only `models`; anything lower than a component may read a message.
 
 ```
 main.tsx                  → mounts App
 ├── App.tsx               → hash data router (`/` workspace, `/settings` the phone Settings page — a deep link to the Settings modal on desktop; old page routes redirect to `/`); the shell: top bar, launch (`services/app-startup`), the Settings modal, the command palette (`AppCommandPalette`), keyboard shortcuts, global dialogs
+├── i18n/                 → the UI language: `t` (catalog lookup, `{name}` parameters), `translateText` (message by its English text, for labels defined as plain data), `locale` (Intl formats), the en / zh-CN catalogs under messages/, and the preference mirrored for the first synchronous read
 ├── styles/tokens.css     → design tokens (dark / light via `[data-theme]` — the only place a rule forks per theme) + global base rules, incl. the one reduced-motion rule
 ├── views/                → WorkspacePage (`/`: opens the workspace store, loads the tasks and entities, owns the workspace DndContext, guards unsaved changes) · SettingsPage (phone)
 ├── components/
@@ -66,6 +67,7 @@ Each is a table of `Abstraction | Location | Purpose` rows.
 
 | File | Covers |
 |------|--------|
+| [architecture/i18n.md](architecture/i18n.md) | The UI language, message catalogs, adding a message, and what is (and is not) translated |
 | [architecture/models-and-data.md](architecture/models-and-data.md) | Models (`src/models/`), repositories, the schema floor and the upgrade registry, validation, restore (`src/data/`) |
 | [architecture/state.md](architecture/state.md) | Zustand stores, filter semantics, store helpers (`src/stores/`) |
 | [architecture/components.md](architecture/components.md) | Views, workspace / task / overlay / shared / layout / settings components, design tokens |

@@ -1,3 +1,4 @@
+import { listSeparator, t } from '../i18n'
 import { emptyPredicate, MARKER_KEYS, type MarkerConditions, type TodoPredicate } from '../models/filter-predicate'
 import type { EisenhowerPaneConfig, EisenhowerPanes } from '../models/eisenhower-settings'
 import { EISENHOWER_QUADRANTS, type EisenhowerQuadrant } from '../models/workspace-layout'
@@ -46,19 +47,23 @@ export const QUADRANT_COLOR: Record<EisenhowerQuadrant, string> = {
 }
 
 /** The plain-words subtitle of a default pane (its {@link QUADRANT_FLAGS} in words). */
-export const QUADRANT_SUBTITLE: Record<EisenhowerQuadrant, string> = {
-  do: 'Urgent and important',
-  schedule: 'Important, not urgent',
-  delegate: 'Urgent, not important',
-  drop: 'Neither',
+export function quadrantSubtitle(q: EisenhowerQuadrant): string {
+  switch (q) {
+    case 'do': return t('ui.quad_subtitle_do')
+    case 'schedule': return t('ui.quad_subtitle_schedule')
+    case 'delegate': return t('ui.quad_subtitle_delegate')
+    case 'drop': return t('ui.quad_subtitle_drop')
+  }
 }
 
 /** A default pane's "+" hint (the Yes flags of its {@link QUADRANT_FLAGS}). */
-export const QUADRANT_ADD_HINT: Record<EisenhowerQuadrant, string> = {
-  do: 'Opens Quick Add marked urgent and important.',
-  schedule: 'Opens Quick Add marked important.',
-  delegate: 'Opens Quick Add marked urgent.',
-  drop: 'Opens Quick Add.',
+export function quadrantAddHint(q: EisenhowerQuadrant): string {
+  switch (q) {
+    case 'do': return t('ui.quad_add_do')
+    case 'schedule': return t('ui.quad_add_schedule')
+    case 'delegate': return t('ui.quad_add_delegate')
+    case 'drop': return t('ui.quad_add_plain')
+  }
 }
 
 /** A position's default filter: its quadrant's Urgent / Important, each Yes or No. */
@@ -148,9 +153,9 @@ export function withPaneConfig(
 /** A filter's clauses as short values: `Urgent`, `not Important`, `not Delegated`, `Due within 7 days`. */
 function chipWords(chip: FilterChip): string[] {
   switch (chip.field) {
-    case 'markers': return chip.value.split(', ')
+    case 'markers': return chip.value.split(listSeparator())
     case 'dates': return [`${chip.label} ${chip.value}`]
-    case 'text': return [`Text ${chip.value}`]
+    case 'text': return [t('ui.text_chip', { value: chip.value })]
     default: return [chip.value]
   }
 }
@@ -161,9 +166,9 @@ function chipWords(chip: FilterChip): string[] {
  * or `Every task` for a pane with no filter.
  */
 export function paneSubtitle(pane: EisenhowerPane, names: FilterChipNames): string {
-  if (!pane.customFilter) return QUADRANT_SUBTITLE[pane.id]
+  if (!pane.customFilter) return quadrantSubtitle(pane.id)
   const words = filterChips(pane.filter, names).flatMap(chipWords)
-  return words.length > 0 ? words.join(' · ') : 'Every task'
+  return words.length > 0 ? words.join(' · ') : t('ui.every_task')
 }
 
 /** The clauses whose one value a drop / "+" writes: a status, a person, a tag. */

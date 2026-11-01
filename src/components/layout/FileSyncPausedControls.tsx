@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useFileStorageStore } from '../../services/file-storage-store'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import dialogStyles from '../overlays/FileSyncDialogs.module.css'
+import { t } from '../../i18n'
 
 interface FileSyncPausedControlsProps {
   buttonClassName?: string
@@ -30,47 +31,35 @@ export function FileSyncPausedControls({ buttonClassName, primaryButtonClassName
   return (
     <>
       <button className={buttonClassName} onClick={() => { void retry(); onDone?.() }} disabled={isLoading}>
-        Retry
-      </button>
+        {t('ui.retry')}</button>
       <button
         className={primaryButtonClassName ?? buttonClassName}
         onClick={() => setConfirming(true)}
         disabled={isLoading}
       >
-        Keep browser data&hellip;
-      </button>
+        {t('ui.keep_browser_data')}</button>
       {confirming && (
         // In place: opened from the storage pill's popover, a dialog portaled out of
         // it would count as an outside click and close the popover.
-        <Dialog open inline onClose={() => setConfirming(false)} size="md" title="Overwrite the sync file?">
+        <Dialog open inline onClose={() => setConfirming(false)} size="md" title={t('ui.overwrite_the_sync_file')}>
           <DialogBody>
-            Replace the contents of <strong>{fileName}</strong> with this browser&rsquo;s
-            data? The file&rsquo;s current contents are saved
-            as a backup first (Settings &rarr; Database &rarr; Backups), then syncing resumes.
-            {paused.reason === 'too-new' && (
+            {t('ui.replace_the_contents_of')}{' '}<strong>{fileName}</strong> {t('ui.with_this_browsers_data_the_files')}{paused.reason === 'too-new' && (
               <div className={dialogStyles.note}>
-                The file was written by a newer version of TODO2. Overwriting it discards whatever
-                that version saved &mdash; updating TODO2 instead keeps it.
-              </div>
+                {t('ui.the_file_was_written_by_a')}</div>
             )}
             {paused.reason === 'too-old' && (
               <div className={dialogStyles.note}>
-                The file was written by an older version of TODO2 that this one can&rsquo;t read.
-                Overwriting it discards what that version saved &mdash; the backup of it can only
-                be restored by an older TODO2 build.
-              </div>
+                {t('ui.the_file_was_written_by_an')}</div>
             )}
           </DialogBody>
           <DialogActions>
             <button className={dialogStyles.cancelButton} onClick={() => setConfirming(false)}>
-              Cancel
-            </button>
+              {t('ui.cancel')}</button>
             <button
               className={dialogStyles.dangerButton}
               onClick={() => { setConfirming(false); void overwrite(); onDone?.() }}
             >
-              Overwrite file
-            </button>
+              {t('ui.overwrite_file')}</button>
           </DialogActions>
         </Dialog>
       )}

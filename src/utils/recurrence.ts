@@ -1,6 +1,7 @@
 import type { RecurrenceRule, RecurrenceType } from '../models/recurrence'
 import type { TodoItem } from '../models/todo-item'
-import { startOfToday } from './date'
+import { startOfToday, weekdayName } from './date'
+import { locale, t } from '../i18n'
 
 /** Build a RecurrenceRule, capturing originalDayOfMonth for monthly/yearly to prevent drift. */
 export function makeRecurrenceRule(type: RecurrenceType, dueDate?: Date | null): RecurrenceRule {
@@ -20,15 +21,15 @@ function ordinal(n: number): string {
 
 /** `Repeats every Monday` etc., from the rule and the task's due date. */
 export function describeRecurrence(rule: RecurrenceRule, anchor: Date | undefined): string {
-  const wd = anchor ? WEEKDAYS[anchor.getDay()] : undefined
+  const wd = anchor ? (locale() === 'zh-CN' ? weekdayName(anchor) : WEEKDAYS[anchor.getDay()]) : undefined
   const dom = rule.originalDayOfMonth ?? anchor?.getDate()
   switch (rule.type) {
-    case 'daily': return 'Repeats every day'
-    case 'weekly': return wd ? `Repeats every ${wd}` : 'Repeats every week'
-    case 'biweekly': return wd ? `Repeats every other ${wd}` : 'Repeats every two weeks'
-    case 'monthly': return dom ? `Repeats monthly on the ${ordinal(dom)}` : 'Repeats every month'
-    case 'quarterly': return 'Repeats every quarter'
-    case 'yearly': return 'Repeats every year'
+    case 'daily': return t('ui.rec_daily')
+    case 'weekly': return wd ? t('ui.rec_weekly_wd', { wd }) : t('ui.rec_weekly')
+    case 'biweekly': return wd ? t('ui.rec_biweekly_wd', { wd }) : t('ui.rec_biweekly')
+    case 'monthly': return dom ? t('ui.rec_monthly_dom', { day: locale() === 'zh-CN' ? String(dom) : ordinal(dom) }) : t('ui.rec_monthly')
+    case 'quarterly': return t('ui.rec_quarterly')
+    case 'yearly': return t('ui.rec_yearly')
   }
 }
 

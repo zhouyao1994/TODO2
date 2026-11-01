@@ -7,6 +7,7 @@ import {
 } from '../../utils/followup'
 import { SettingRow } from './sections/SettingRow'
 import styles from './sections/sections.module.css'
+import { t } from '../../i18n'
 
 /**
  * Settings → Task defaults: "Set a next follow-up automatically" and the
@@ -43,23 +44,21 @@ export function FollowupIntervalSetting() {
   return (
     <>
       <SettingRow
-        label="Set a next follow-up automatically"
-        help="New tasks and Mark followed up set it to today + the interval. Off: new tasks get none, and Mark followed up clears it."
+        label={t('ui.set_a_next_follow_up_automatically')}
+        help={t('ui.new_tasks_and_mark_followed_up')}
       >
         <button
           type="button"
           role="switch"
           aria-checked={autoFollowup}
-          aria-label="Set a next follow-up automatically"
+          aria-label={t('ui.set_a_next_follow_up_automatically')}
           className={`${styles.switch} ${autoFollowup ? styles.switchOn : ''}`}
           onClick={() => void setAutoFollowup(!autoFollowup)}
         />
       </SettingRow>
       <SettingRow
-        label="Follow-up interval"
-        help={autoFollowup
-          ? 'How far ahead new tasks and “Mark followed up” set the next follow-up. Use d, w, m or y — e.g. 10d, 2w, 1m.'
-          : 'Used while Set a next follow-up automatically is on. Use d, w, m or y — e.g. 10d, 2w, 1m.'}
+        label={t('ui.follow_up_interval')}
+        help={autoFollowup ? t('ui.followup_interval_help_on') : t('ui.followup_interval_help_off')}
       >
         <input
           type="text"
@@ -77,9 +76,9 @@ export function FollowupIntervalSetting() {
               setDraft(stored)
             }
           }}
-          aria-label="Follow-up interval"
+          aria-label={t('ui.follow_up_interval')}
           aria-invalid={!parsed}
-          placeholder="1m"
+          placeholder={t('ui.1m')}
           style={{ width: 64, textAlign: 'right' }}
           spellCheck={false}
           autoComplete="off"

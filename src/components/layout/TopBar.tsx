@@ -31,6 +31,7 @@ import { FILTER_ROW_ATTR, SEARCH_INPUT_ATTR } from '../../utils/dom-contract'
 import { FilteredTasksPanel } from '../overlays/FilteredTasksPanel'
 import { tabAcross } from '../../utils/focusables'
 import { trayExpansion, type TrayExpansion } from './tray-expansion'
+import { t as tr } from '../../i18n'
 
 const SEARCH_FIELD_ORDER: TextMatchField[] = ['title', 'notes', 'person', 'status', 'tag']
 const SEARCH_FIELD_LABELS: Record<TextMatchField, string> = {
@@ -70,7 +71,7 @@ function ClearFiltersButton({ active }: { active: boolean }) {
     <button
       type="button"
       className={styles.funnel}
-      aria-label="Clear all filters"
+      aria-label={tr('ui.clear_all_filters')}
       disabled={!active}
       onClick={() => useFilterStore.getState().clearAll()}
       data-clear-filters=""
@@ -256,7 +257,7 @@ const SearchResultsGroups = forwardRef<HTMLDivElement, {
       className={styles.searchMiniList}
       id="search-results"
       role="listbox"
-      aria-label="Search results"
+      aria-label={tr('ui.search_results')}
       tabIndex={-1}
       onBlur={onBlur}
     >
@@ -287,7 +288,7 @@ const SearchResultsGroups = forwardRef<HTMLDivElement, {
                 className={styles.miniListShowAll}
                 onMouseDown={(e) => { e.preventDefault(); setExpansion({ query, fields: new Set(expanded).add(field) }) }}
               >
-                Show all {items.length}
+                {tr('ui.show_all')}{' '}{items.length}
               </button>
             )}
           </div>
@@ -439,7 +440,7 @@ export function TopBar() {
           type="button"
           className={styles.newTask}
           onClick={() => useUIStore.getState().openQuickAdd()}
-          aria-label="New task"
+          aria-label={tr('ui.new_task')}
           title={`New task (${quickAddKeys})`}
         >
           <PlusIcon size={14} strokeWidth={2} />
@@ -460,7 +461,7 @@ export function TopBar() {
           data-fold-part={FOLD_PART.tray}
           data-expanded={expansion ? '' : undefined}
           role="group"
-          aria-label="Screen filters — apply to every widget"
+          aria-label={tr('ui.screen_filters_apply_to_every_widget')}
           {...{ [FILTER_ROW_ATTR]: '' }}
           data-filtered={isActive || undefined}
           onKeyDown={panelOpen ? (e) => tabAcross(e, trayRef.current, panelRef.current) : undefined}
@@ -472,8 +473,8 @@ export function TopBar() {
               ref={searchInputRef}
               className={styles.searchInput}
               type="text"
-              placeholder="Search…"
-              aria-label="Search tasks"
+              placeholder={tr('ui.search')}
+              aria-label={tr('ui.search_tasks')}
               value={localSearch}
               onChange={(e) => handleSearchChange(e.target.value)}
               aria-controls="search-results"
@@ -512,7 +513,7 @@ export function TopBar() {
               <button
                 type="button"
                 className={styles.searchClear}
-                aria-label="Clear search"
+                aria-label={tr('ui.clear_search')}
                 tabIndex={-1}
                 onMouseDown={(e) => { e.preventDefault(); handleSearchChange(''); searchInputRef.current?.focus() }}
               >
@@ -560,7 +561,7 @@ export function TopBar() {
             type="button"
             className={`${styles.gear} ${settingsOpen ? styles.gearOpen : ''}`}
             onClick={() => useUIStore.getState().openSettings()}
-            aria-label="Settings"
+            aria-label={tr('ui.settings')}
             title={`Settings (${settingsKeys})`}
           >
             <GearIcon />

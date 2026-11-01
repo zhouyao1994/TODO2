@@ -3,6 +3,7 @@ import type { DateField } from '../models/app-view'
 import { RELATIVE_TOKEN_LABELS } from './date-anchor'
 import { activeDateFields, hasDateFilters, withDateMatch } from './date-filters'
 import { isNegated, withIdFilter, type IdList } from './filter-negation'
+import { joinListOr, listSeparator, locale, t, translateText } from '../i18n'
 import { DATE_FIELD_LABELS_SHORT } from './filter-labels'
 import { hasMarkers, MARKERS_LABEL, markersTooltip, markersValue } from './markers'
 
@@ -60,10 +61,9 @@ export const TOOLTIP_NAMES_MAX = 10
 /** `a, b or c`; past `TOOLTIP_NAMES_MAX` names, `a, b, … j and 5 more`. */
 function orList(names: readonly string[]): string {
   if (names.length > TOOLTIP_NAMES_MAX) {
-    return `${names.slice(0, TOOLTIP_NAMES_MAX).join(', ')} and ${names.length - TOOLTIP_NAMES_MAX} more`
+    return t('ui.names_and_more', { names: names.slice(0, TOOLTIP_NAMES_MAX).join(listSeparator()), n: names.length - TOOLTIP_NAMES_MAX })
   }
-  if (names.length <= 1) return names.join('')
-  return `${names.slice(0, -1).join(', ')} or ${names.at(-1)}`
+  return joinListOr(names)
 }
 
 /**
@@ -80,9 +80,9 @@ function namesById(rows: readonly { id?: number; name: string }[]): (id: number)
 /** What an "is not" chip hides, spelled out (its tooltip). */
 function negatedTooltip(field: NegatableField, names: readonly string[]): string {
   switch (field) {
-    case 'statusIds': return `Status: not ${orList(names)}\nHides tasks with ${names.length === 1 ? 'that status' : 'any of these statuses'}`
-    case 'personIds': return `People: not ${orList(names)}\nHides tasks assigned to ${names.length === 1 ? 'them' : 'any of them'}`
-    case 'tags': return `Tags: not ${orList(names)}\nHides tasks with ${names.length === 1 ? 'that tag' : 'any of these tags'}; untagged tasks stay`
+    case 'statusIds': return t('ui.status_not_tooltip', { names: orList(names), which: names.length === 1 ? t('ui.that_status') : t('ui.any_statuses') })
+    case 'personIds': return t('ui.person_not_tooltip', { names: orList(names), which: names.length === 1 ? t('ui.them') : t('ui.any_of_them') })
+    case 'tags': return t('ui.tags_not_tooltip', { names: orList(names), which: names.length === 1 ? t('ui.that_tag') : t('ui.any_tags') })
   }
 }
 
@@ -95,25 +95,25 @@ function namesValue(
 ): string {
   const names = [...ids].map((id) => (id === 0 ? zeroName : nameOf(id))).filter((n): n is string => n != null)
   const first = names[0]
-  if (first == null) return 'none'
+  if (first == null) return t('ui.none_value')
   const name = first === zeroName ? first : `${prefix}${first}`
   return names.length > 1 ? `${name} +${names.length - 1}` : name
 }
 
 function dayLabel(n: number): string {
-  return `${n} ${n === 1 ? 'day' : 'days'}`
+  return n === 1 ? t('ui.days_count_one') : t('ui.days_count_many', { n })
 }
 
 /** One endpoint in words: `Oct 15`, `today`, `end of week`, `in 3 days`, `2 days ago`. */
 export function describeAnchor(anchor: DateAnchor): string {
   switch (anchor.kind) {
     case 'fixed':
-      return new Date(anchor.iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      return new Date(anchor.iso).toLocaleDateString(locale(), { month: 'short', day: 'numeric' })
     case 'relative':
       return RELATIVE_TOKEN_LABELS[anchor.token].toLowerCase()
     case 'offset':
-      if (anchor.days === 0) return 'today'
-      return anchor.days > 0 ? `in ${dayLabel(anchor.days)}` : `${dayLabel(-anchor.days)} ago`
+      if (anchor.days === 0) return t('ui.rel_today')
+      return anchor.days > 0 ? t('ui.in_amount', { amount: dayLabel(anchor.days) }) : t('ui.ago_amount', { amount: dayLabel(-anchor.days) })
   }
 }
 
@@ -123,26 +123,26 @@ function isToday(a: DateAnchor | null): boolean {
 
 /** A date range in words: `within 14 days`, `by end of week`, `from today`, `Oct 1 – Oct 15`. */
 export function describeRange(start: DateAnchor | null, end: DateAnchor | null): string {
-  if (isToday(start) && end?.kind === 'offset' && end.days > 0) return `within ${dayLabel(end.days)}`
+  if (isToday(start) && end?.kind === 'offset' && end.days > 0) return end.days === 1 ? t('ui.within_days_one', { n: 1 }) : t('ui.within_days_many', { n: end.days })
   if (start && end) return `${describeAnchor(start)} – ${describeAnchor(end)}`
-  if (end) return `by ${describeAnchor(end)}`
-  if (start) return `from ${describeAnchor(start)}`
+  if (end) return t('ui.by_date', { date: describeAnchor(end) })
+  if (start) return t('ui.from_date', { date: describeAnchor(start) })
   return ''
 }
 
 /** One date clause in words: `within 14 days`, `by Oct 31, or none`, `has a date`, `no date`. */
 export function describeDateMatch(m: DateMatch): string {
-  if (m.match === 'set') return 'has a date'
-  if (m.match === 'unset') return 'no date'
+  if (m.match === 'set') return t('ui.has_date')
+  if (m.match === 'unset') return t('ui.no_date')
   const range = describeRange(m.start, m.end)
-  return m.includeNoDate === true ? `${range}, or none` : range
+  return m.includeNoDate === true ? t('ui.range_or_none', { range }) : range
 }
 
 /** One chip per date type that filters, in tab order: `Due` `within 14 days`, `Created` `from start of month`. */
 function dateChips(dates: DateFilters): FilterChip[] {
   return activeDateFields(dates).flatMap((f) => {
     const m = dates[f]
-    return m ? [{ field: 'dates' as const, dateField: f, label: DATE_FIELD_LABELS_SHORT[f], value: describeDateMatch(m) }] : []
+    return m ? [{ field: 'dates' as const, dateField: f, label: translateText(DATE_FIELD_LABELS_SHORT[f]), value: describeDateMatch(m) }] : []
   })
 }
 
@@ -155,7 +155,7 @@ export function chipKey(chip: FilterChip): string {
 function dateClauses(dates: DateFilters): { field: DateField; text: string; words: string }[] {
   return activeDateFields(dates).flatMap((f) => {
     const m = dates[f]
-    return m ? [{ field: f, text: `${DATE_FIELD_LABELS_SHORT[f]} ${describeDateMatch(m)}`, words: describeDateMatch(m) }] : []
+    return m ? [{ field: f, text: `${translateText(DATE_FIELD_LABELS_SHORT[f])} ${describeDateMatch(m)}`, words: describeDateMatch(m) }] : []
   })
 }
 
@@ -170,7 +170,7 @@ export function datesValue(dates: DateFilters): string | null {
   const [first, second] = clauses
   if (!first) return null
   if (!second) return first.text
-  const name = (f: DateField) => DATE_FIELD_LABELS_SHORT[f]
+  const name = (f: DateField) => translateText(DATE_FIELD_LABELS_SHORT[f])
   if (clauses.length === 2) return `${name(first.field)} + ${name(second.field)}`
   return `${name(first.field)} + ${clauses.length - 1}`
 }
@@ -184,7 +184,7 @@ export function datesTooltip(dates: DateFilters): string | null {
   if (clauses.length < 2) return null
   const both = clauses.length === 2 ? 'both' : 'all'
   return [
-    ...clauses.map((c) => `${DATE_FIELD_LABELS_SHORT[c.field]}: ${c.words}`),
+    ...clauses.map((c) => `${translateText(DATE_FIELD_LABELS_SHORT[c.field])}: ${c.words}`),
     `Tasks must match ${both} · × clears ${both}`,
   ].join('\n')
 }
@@ -206,7 +206,7 @@ export function filterChips(c: FilterClauses, names: FilterChipNames, includeCom
   if (hasMarkers(c.markers)) {
     // A No marker: `Urgent, not Important`, with a tooltip saying what it hides.
     const tooltip = markersTooltip(c.markers)
-    chips.push({ field: 'markers', label: MARKERS_LABEL, value: markersValue(c.markers), ...(tooltip ? { tooltip } : {}) })
+    chips.push({ field: 'markers', label: translateText(MARKERS_LABEL), value: markersValue(c.markers), ...(tooltip ? { tooltip } : {}) })
   }
   // An id chip: `Alice +2`, or — "is not" — `not Alice +2` with a tooltip saying what it hides.
   const idChip = (field: 'tags' | 'people' | 'status', key: NegatableField, label: string, ids: Iterable<number>, nameOf: (id: number) => string | undefined, zeroName: string, prefix = ''): FilterChip => {

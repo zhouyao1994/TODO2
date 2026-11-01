@@ -2,7 +2,8 @@ import { MARKER_KEYS, type MarkerKey } from '../models/filter-predicate'
 import { dropDescription } from './eisenhower'
 import { DEFAULT_HOT_RULE, hasMarker, isHot, type HotRule, type MarkerFields } from './hot'
 import { HOT_COLOR, HOT_LABEL, MARKER_COLOR, MARKER_LABELS } from './markers'
-import { URGENT_BY_DATE_HINT, urgentByDateSentence, type UrgentDueWithinDays } from './urgency'
+import { urgentByDateHint, urgentByDateSentence, type UrgentDueWithinDays } from './urgency'
+import { t, translateText } from '../i18n'
 
 /**
  * A list grouped by Priority: the groups Hot, Focus, Urgent and Important,
@@ -113,12 +114,12 @@ export function resolvePriorityDrop(
   const source = groupOf(sourceKey)
   const target = groupOf(targetKey)
   if (source == null || target == null || source === target) return null
-  const targetName = target === 'none' ? NO_PRIORITY_LABEL : PRIORITY_GROUP_LABEL[target]
-  const title = `Can’t move to ${targetName}`
+  const targetName = target === 'none' ? t('ui.no_priority') : translateText(PRIORITY_GROUP_LABEL[target])
+  const title = t('ui.cant_move_to', { name: targetName })
   if (target === 'hot') {
     return {
       kind: 'refused',
-      lines: [title, 'Hot comes from a task’s markers, by the Hot rule in Settings.', 'Drop it on Focus, Urgent or Important instead.'],
+      lines: [title, t('ui.hot_from_markers'), t('ui.drop_on_marker_instead')],
     }
   }
 
@@ -136,8 +137,8 @@ export function resolvePriorityDrop(
   // With its flags as the drop sets them, only a due date can keep the task
   // urgent (and so in Urgent, or Hot by a rule line of Urgent alone).
   if (staysInSource || missesTarget) {
-    const why = urgentByDateSentence(after, ctx.today, ctx.urgentRange) || `${todo.title} counts as urgent.`
-    return { kind: 'refused', lines: [title, why, URGENT_BY_DATE_HINT] }
+    const why = urgentByDateSentence(after, ctx.today, ctx.urgentRange) || t('ui.counts_urgent', { title: todo.title })
+    return { kind: 'refused', lines: [title, why, urgentByDateHint()] }
   }
 
   // Only the flags that change are written.

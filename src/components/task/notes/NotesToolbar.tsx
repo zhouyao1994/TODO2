@@ -4,6 +4,7 @@ import type { EditorView } from '@codemirror/view'
 import { formatShortcut } from '../../../utils/platform'
 import { useTooltip } from '../../shared/use-tooltip'
 import styles from './NotesToolbar.module.css'
+import { t } from '../../../i18n'
 
 /** The toolbar's Convert button: the bullet lines in scope and what to do with them. */
 export interface NotesConvertControl {
@@ -79,7 +80,7 @@ function ConvertButton({ convert }: { convert: NotesConvertControl }) {
       onBlur={() => { triggerProps.onBlur?.(); onShowScope(false) }}
     >
       <ConvertGlyph />
-      <span className={styles.convertLabel}>Convert</span>
+      <span className={styles.convertLabel}>{t('ui.convert')}</span>
       {!disabled && <span className={styles.convertBadge}>{count}</span>}
       {tooltip}
     </button>
@@ -147,51 +148,49 @@ export function NotesToolbar({ viewRef, onCopy, copying = false, convert }: Note
   }, [viewRef])
 
   return (
-    <div className={styles.toolbar} role="toolbar" aria-label="Notes formatting">
+    <div className={styles.toolbar} role="toolbar" aria-label={t('ui.notes_formatting')}>
       <button
         type="button"
         className={styles.btn}
         onClick={() => wrapSelection('**')}
         title={`Bold (${formatShortcut('Mod-b')})`}
-        aria-label="Bold"
+        aria-label={t('ui.bold')}
       >
-        <span className={styles.btnBold}>B</span>
+        <span className={styles.btnBold}>{t('ui.b')}</span>
       </button>
       <button
         type="button"
         className={styles.btn}
         onClick={() => wrapSelection('*')}
         title={`Italic (${formatShortcut('Mod-i')})`}
-        aria-label="Italic"
+        aria-label={t('ui.italic')}
       >
-        <span className={styles.btnItalic}>I</span>
+        <span className={styles.btnItalic}>{t('ui.i')}</span>
       </button>
       <span className={styles.sep} aria-hidden="true" />
       <button
         type="button"
         className={styles.btn}
         onClick={() => prefixLines('# ', { replaceHeading: true })}
-        title="Heading 1"
-        aria-label="Heading 1"
+        title={t('ui.heading_1')}
+        aria-label={t('ui.heading_1')}
       >
-        H1
-      </button>
+        {t('ui.h1')}</button>
       <button
         type="button"
         className={styles.btn}
         onClick={() => prefixLines('## ', { replaceHeading: true })}
-        title="Heading 2"
-        aria-label="Heading 2"
+        title={t('ui.heading_2')}
+        aria-label={t('ui.heading_2')}
       >
-        H2
-      </button>
+        {t('ui.h2')}</button>
       <span className={styles.sep} aria-hidden="true" />
       <button
         type="button"
         className={styles.btn}
         onClick={() => prefixLines('- ')}
-        title="Bullet list"
-        aria-label="Bullet list"
+        title={t('ui.bullet_list')}
+        aria-label={t('ui.bullet_list')}
       >
         •
       </button>
@@ -199,8 +198,8 @@ export function NotesToolbar({ viewRef, onCopy, copying = false, convert }: Note
         type="button"
         className={styles.btn}
         onClick={() => prefixLines('- [ ] ')}
-        title="Checkbox"
-        aria-label="Checkbox"
+        title={t('ui.checkbox')}
+        aria-label={t('ui.checkbox')}
       >
         ☐
       </button>
@@ -211,8 +210,8 @@ export function NotesToolbar({ viewRef, onCopy, copying = false, convert }: Note
         className={styles.copyBtn}
         onClick={onCopy}
         disabled={copying}
-        title="Copy as rich text for OneNote / Word"
-        aria-label="Copy as rich text"
+        title={t('ui.copy_as_rich_text_for_onenote')}
+        aria-label={t('ui.copy_as_rich_text')}
       >
         ⧉
       </button>

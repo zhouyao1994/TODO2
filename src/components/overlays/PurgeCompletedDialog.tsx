@@ -8,6 +8,7 @@ import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import buttons from './FileSyncDialogs.module.css'
 import styles from './TaskArchiveDialogs.module.css'
 import { formatDateWith } from '../../utils/date'
+import { t as tr } from '../../i18n'
 
 interface PurgeCompletedDialogProps {
   /** The expired completed tasks, as currently in the store. */
@@ -94,8 +95,7 @@ export function PurgeCompletedDialog({ tasks, retentionDays, onDone, onDismiss }
       title={`Delete ${plural(tasks.length, 'old completed task')}?`}
     >
       <DialogBody>
-        These tasks were completed more than {plural(retentionDays, 'day')} ago (Settings → Tasks → Completed tasks).
-        <ul className={styles.list} data-testid="purge-task-list">
+        {tr('ui.these_tasks_were_completed_more_than')}{' '}{plural(retentionDays, 'day')} {tr('ui.ago_settings_tasks_completed_tasks')}<ul className={styles.list} data-testid="purge-task-list">
           {tasks.map((t) => (
             <li key={t.id} className={styles.row}>
               <div className={styles.rowMain}>
@@ -106,21 +106,16 @@ export function PurgeCompletedDialog({ tasks, retentionDays, onDone, onDismiss }
           ))}
         </ul>
         <div className={styles.note}>
-          <strong>Export &amp; delete</strong> saves them to a file first — add them back any time with
-          Settings → Database → Import / Export → Import tasks (append)…. A backup snapshot is taken before deleting either way.
-        </div>
+          <strong>{tr('ui.export_delete')}</strong> {tr('ui.saves_them_to_a_file_first')}</div>
         {error && <div className={styles.error} role="alert">{error}</div>}
       </DialogBody>
       <DialogActions>
         <button className={buttons.cancelButton} onClick={onDismiss} disabled={busy}>
-          Not now
-        </button>
+          {tr('ui.not_now')}</button>
         <button className={buttons.dangerButton} onClick={handleDelete} disabled={busy}>
-          Delete
-        </button>
+          {tr('ui.delete')}</button>
         <button className={buttons.primaryButton} onClick={handleExportAndDelete} disabled={busy}>
-          Export &amp; delete
-        </button>
+          {tr('ui.export_delete')}</button>
       </DialogActions>
     </Dialog>
   )

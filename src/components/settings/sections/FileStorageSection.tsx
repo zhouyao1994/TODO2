@@ -4,6 +4,7 @@ import { useIsMobile } from '../../../hooks/use-is-mobile'
 import { FileSyncPausedControls } from '../../layout/FileSyncPausedControls'
 import { SettingRow } from './SettingRow'
 import styles from './sections.module.css'
+import { t } from '../../../i18n'
 
 /**
  * The sync file: attach / create one, or — once attached — its state
@@ -32,7 +33,7 @@ export function FileStorageSection() {
   let body
   if (!fileStorage.isSupported) {
     body = (
-      <SettingRow label="Sync file">
+      <SettingRow label={t('ui.sync_file')}>
         <span className={styles.muted}>
           {isMobile
             ? 'File sync is not supported on this browser. Use Import / Export instead.'
@@ -43,64 +44,56 @@ export function FileStorageSection() {
   } else if (fileStorage.needsPermission) {
     body = (
       <SettingRow
-        label="Sync file"
-        help="Permission needed to sync to this file. TODO2 asks for it at every start until you grant it or disconnect the file."
+        label={t('ui.sync_file')}
+        help={t('ui.permission_needed_to_sync_to_this')}
         column
       >
         <span className={styles.fileName}>{fileStorage.fileName}</span>
         <div className={styles.buttonRow}>
           <button type="button" className={primary} onClick={fileStorage.reconnect} disabled={fileStorage.isLoading}>
-            Grant Access
-          </button>
+            {t('ui.grant_access_2')}</button>
           <button type="button" className={secondary} onClick={fileStorage.disconnect} disabled={fileStorage.isLoading}>
-            Disconnect
-          </button>
+            {t('ui.disconnect')}</button>
         </div>
       </SettingRow>
     )
   } else if (fileStorage.paused) {
     body = (
-      <SettingRow label="Sync file" help={fileStorage.paused.message} column>
+      <SettingRow label={t('ui.sync_file')} help={fileStorage.paused.message} column>
         <span className={styles.fileName}>{fileStorage.fileName}</span>
         <div className={styles.buttonRow}>
           <FileSyncPausedControls buttonClassName={secondary} primaryButtonClassName={primary} />
           <button type="button" className={secondary} onClick={fileStorage.disconnect} disabled={fileStorage.isLoading}>
-            Disconnect
-          </button>
+            {t('ui.disconnect')}</button>
         </div>
       </SettingRow>
     )
   } else if (fileStorage.isConnected) {
     body = (
       <SettingRow
-        label="Sync file"
+        label={t('ui.sync_file')}
         help={fileStorage.lastSavedAt ? `Last saved ${fileStorage.lastSavedAt.toLocaleTimeString()}` : 'Every change is written to the file a moment after you make it.'}
         column
       >
         <span className={styles.fileName}>{fileStorage.fileName}</span>
         <button type="button" className={secondary} onClick={fileStorage.openFile} disabled={fileStorage.isLoading}>
-          Attach to Different File
-        </button>
+          {t('ui.attach_to_different_file')}</button>
       </SettingRow>
     )
   } else {
     body = (
       <SettingRow
-        label="Sync file"
+        label={t('ui.sync_file')}
         help={(
           <>
-            Your tasks live in this browser’s storage. Attach a file to keep a copy you can back up or move to another machine.
-            <br />
-            An existing file you replace is emptied by the browser before TODO2 can back it up.
-          </>
+            {t('ui.your_tasks_live_in_this_browsers_2')}<br />
+            {t('ui.an_existing_file_you_replace_is')}</>
         )}
       >
         <button type="button" className={primary} onClick={fileStorage.openFile} disabled={fileStorage.isLoading}>
-          Attach to File
-        </button>
+          {t('ui.attach_to_file')}</button>
         <button type="button" className={secondary} onClick={fileStorage.createFile} disabled={fileStorage.isLoading}>
-          Create New File
-        </button>
+          {t('ui.create_new_file')}</button>
       </SettingRow>
     )
   }

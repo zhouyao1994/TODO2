@@ -7,6 +7,7 @@ import { storagePillLabel, useStorageStatus, warningTone } from './sync-status'
 import { SyncWarningIcon, SyncWarningSections } from './SyncWarningSections'
 import { SyncWarningAnnouncer } from './SyncWarningAnnouncer'
 import styles from './SyncStatusButton.module.css'
+import { t } from '../../i18n'
 
 /** The frame centres its panel; a bottom sheet sits on the bottom edge, full width. */
 const SHEET_PLACEMENT: CSSProperties = { margin: 'auto 0 0', width: '100%' }
@@ -71,7 +72,7 @@ export function SyncStatusButton() {
             }}
           >
             <GearIcon size={16} />
-            <span className={styles.settingsLabel}>File storage settings</span>
+            <span className={styles.settingsLabel}>{t('ui.file_storage_settings_2')}</span>
             <ChevronRightIcon size={14} />
           </button>
         </DialogFrame>

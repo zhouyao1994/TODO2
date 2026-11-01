@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import styles from './ErrorBoundary.module.css'
+import { t } from '../../i18n'
 
 interface Props {
   children: ReactNode
@@ -45,12 +46,11 @@ export class ErrorBoundary extends Component<Props, State> {
             {this.props.scope ? `${this.props.scope} failed to render` : 'Something went wrong'}
           </h2>
           <p className={styles.message}>
-            An unexpected error occurred. Your data is safe on disk — try reloading.
-          </p>
+            {t('ui.an_unexpected_error_occurred_your_data')}</p>
           <code className={styles.error}>{this.state.error.message}</code>
           <div className={styles.actions}>
-            <button className={styles.button} onClick={this.reset}>Try again</button>
-            <button className={styles.button} onClick={() => window.location.reload()}>Reload</button>
+            <button className={styles.button} onClick={this.reset}>{t('ui.try_again')}</button>
+            <button className={styles.button} onClick={() => window.location.reload()}>{t('ui.reload')}</button>
           </div>
         </div>
       )

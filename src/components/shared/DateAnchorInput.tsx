@@ -3,6 +3,7 @@ import type { DateAnchor, RelativeDateToken } from '../../models'
 import { RELATIVE_DATE_TOKENS } from '../../models'
 import { RELATIVE_TOKEN_LABELS } from '../../utils/date-anchor'
 import styles from './DateAnchorInput.module.css'
+import { t as tr } from '../../i18n'
 
 const NONE_SENTINEL = '__none__'
 const OFFSET_SENTINEL = '__offset__'
@@ -101,7 +102,7 @@ export function DateAnchorInput({ value, onChange, className, ...aria }: DateAnc
             onBlur={handleOffsetBlur}
             aria-label={aria['aria-label'] ? `${aria['aria-label']} (days offset)` : 'Days from today'}
           />
-          <span className={styles.offsetSuffix}>days</span>
+          <span className={styles.offsetSuffix}>{tr('ui.days')}</span>
         </span>
       ) : (
         <input
@@ -117,14 +118,14 @@ export function DateAnchorInput({ value, onChange, className, ...aria }: DateAnc
         value={tokenStr}
         onChange={handleTokenChange}
         aria-label={aria['aria-label'] ? `${aria['aria-label']} (relative)` : 'Relative date'}
-        title="Relative date"
+        title={tr('ui.relative_date')}
       >
-        {value && value.kind === 'fixed' && <option value="">Custom…</option>}
-        <option value={NONE_SENTINEL}>None</option>
+        {value && value.kind === 'fixed' && <option value="">{tr('ui.custom')}</option>}
+        <option value={NONE_SENTINEL}>{tr('ui.none')}</option>
         {RELATIVE_DATE_TOKENS.map(t => (
           <option key={t} value={t}>{RELATIVE_TOKEN_LABELS[t]}</option>
         ))}
-        <option value={OFFSET_SENTINEL}>Custom offset…</option>
+        <option value={OFFSET_SENTINEL}>{tr('ui.custom_offset')}</option>
       </select>
     </div>
   )

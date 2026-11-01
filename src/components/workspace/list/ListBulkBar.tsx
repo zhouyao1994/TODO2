@@ -18,6 +18,7 @@ import { MenuPopover } from '../../shared/MenuPopover'
 import { AtIcon, CheckIcon, CloseIcon, HashIcon, MoreIcon, TrashIcon } from '../../shared/icons'
 import styles from './ListWidget.module.css'
 import { KEEPS_SELECTION_ATTR } from '../../../utils/dom-contract'
+import { t as tr } from '../../../i18n'
 
 type OpenPicker = 'people' | 'tags' | 'followup' | 'more' | null
 
@@ -84,19 +85,19 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
       className={styles.bulkBar}
       style={{ bottom }}
       role="toolbar"
-      aria-label="Selected tasks"
+      aria-label={tr('ui.selected_tasks')}
       data-testid="list-bulk-bar"
       {...{ [KEEPS_SELECTION_ATTR]: '' }}
       onClick={(e) => e.stopPropagation()}
       onPointerDown={(e) => e.stopPropagation()}
     >
-      <span className={styles.bulkCount}>{ids.length} selected</span>
+      <span className={styles.bulkCount}>{ids.length} {tr('ui.selected')}</span>
       <span className={styles.bulkDate}>
         <button
           type="button"
           className={styles.bulkButton}
-          title="Set due date"
-          aria-label="Set due date"
+          title={tr('ui.set_due_date')}
+          aria-label={tr('ui.set_due_date')}
           onClick={() => {
             try { dateRef.current?.showPicker?.() } catch { dateRef.current?.focus() }
           }}
@@ -120,8 +121,8 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
         ref={followupRef}
         type="button"
         className={`${styles.bulkButton} ${open === 'followup' ? styles.bulkButtonOpen : ''}`}
-        title="Set follow-up"
-        aria-label="Set follow-up"
+        title={tr('ui.set_follow_up')}
+        aria-label={tr('ui.set_follow_up')}
         onClick={() => toggle('followup')}
       >
         <FollowupFlagIcon />
@@ -130,8 +131,8 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
         ref={peopleRef}
         type="button"
         className={`${styles.bulkButton} ${open === 'people' ? styles.bulkButtonOpen : ''}`}
-        title="Assign people"
-        aria-label="Assign people"
+        title={tr('ui.assign_people')}
+        aria-label={tr('ui.assign_people')}
         onClick={() => toggle('people')}
       >
         <AtIcon />
@@ -140,8 +141,8 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
         ref={tagsRef}
         type="button"
         className={`${styles.bulkButton} ${open === 'tags' ? styles.bulkButtonOpen : ''}`}
-        title="Add tag"
-        aria-label="Add tag"
+        title={tr('ui.add_tag_2')}
+        aria-label={tr('ui.add_tag_2')}
         onClick={() => toggle('tags')}
       >
         <HashIcon />
@@ -159,8 +160,8 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
         ref={moreRef}
         type="button"
         className={`${styles.bulkButton} ${open === 'more' ? styles.bulkButtonOpen : ''}`}
-        title="More"
-        aria-label="More"
+        title={tr('ui.more_2')}
+        aria-label={tr('ui.more_2')}
         aria-haspopup="menu"
         aria-expanded={open === 'more'}
         onClick={() => toggle('more')}
@@ -170,8 +171,8 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
       <button
         type="button"
         className={`${styles.bulkButton} ${styles.bulkDanger}`}
-        title="Delete (Del)"
-        aria-label="Delete"
+        title={tr('ui.delete_del')}
+        aria-label={tr('ui.delete')}
         onClick={() => useUIStore.getState().showBulkConfirmation('delete', list)}
       >
         <TrashIcon />
@@ -180,8 +181,8 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
       <button
         type="button"
         className={styles.bulkButton}
-        title="Clear selection (Esc)"
-        aria-label="Clear selection"
+        title={tr('ui.clear_selection_esc')}
+        aria-label={tr('ui.clear_selection')}
         onClick={() => useUIStore.getState().clearSelection()}
       >
         <CloseIcon size={12} />
@@ -202,7 +203,7 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
         <MenuPopover
           anchorRef={moreRef}
           placement="top-start"
-          label="More actions"
+          label={tr('ui.more_actions')}
           width={220}
           entries={[
             followedUpMenuEntry(selectedTodos, today, () => { void useTodoStore.getState().markFollowedUp(list) }),
@@ -254,7 +255,7 @@ export function ListBulkBar({ ids, bottom }: { ids: readonly number[]; bottom: n
                 await useTagStore.getState().bulkAssignTag(list, tagId)
               }}
               onClose={close}
-              placeholder="Search tags..."
+              placeholder={tr('ui.search_tags')}
               entityMenu="tag"
             />
           </div>

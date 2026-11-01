@@ -26,6 +26,7 @@ import { DialogFrame } from '../shared/Dialog'
 import styles from './CheckinImportDialog.module.css'
 import { collapseWhitespace } from '../../utils/text'
 import { byName } from '../../utils/sort-order'
+import { t as tr } from '../../i18n'
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 const sameName = (a: string, b: string) => collapseWhitespace(a).toLocaleLowerCase() === collapseWhitespace(b).toLocaleLowerCase()
@@ -213,8 +214,8 @@ function CheckinImportPanel() {
       panelRef={panelRef}
     >
       <div className={styles.header}>
-        <h2 id={titleId} className={styles.title}>Import task update</h2>
-        <button type="button" className={styles.closeBtn} aria-label="Close" onClick={close}>×</button>
+        <h2 id={titleId} className={styles.title}>{tr('ui.import_task_update')}</h2>
+        <button type="button" className={styles.closeBtn} aria-label={tr('ui.close')} onClick={close}>{tr('ui.c397')}</button>
       </div>
 
       {reply && (
@@ -240,9 +241,9 @@ function CheckinImportPanel() {
             <textarea
               ref={pasteRef}
               className={styles.pasteTarget}
-              aria-label="Paste the reply here"
+              aria-label={tr('ui.paste_the_reply_here')}
               aria-describedby={`${titleId}-help`}
-              placeholder="Paste the reply here (Ctrl+V)"
+              placeholder={tr('ui.paste_the_reply_here_ctrl_v')}
               value=""
               onChange={() => {}}
               onPaste={onPaste}
@@ -250,9 +251,7 @@ function CheckinImportPanel() {
               data-checkin-paste=""
             />
             <p id={`${titleId}-help`} className={styles.help}>
-              Open the person’s reply to a check-in email, select all of it (Ctrl+A), copy it (Ctrl+C) and paste it here.
-              Nothing changes until you review the changes and apply them.
-            </p>
+              {tr('ui.open_the_persons_reply_to_a')}</p>
             {error && <div className={styles.error} role="alert">{error}</div>}
           </>
         )}
@@ -272,8 +271,8 @@ function CheckinImportPanel() {
       </div>
 
       <div className={styles.footer}>
-        <span className={styles.hint}>You can undo this after applying.</span>
-        <button type="button" className={styles.footerBtn} onClick={close}>Cancel</button>
+        <span className={styles.hint}>{tr('ui.you_can_undo_this_after_applying')}</span>
+        <button type="button" className={styles.footerBtn} onClick={close}>{tr('ui.cancel')}</button>
         <button
           type="button"
           className={styles.applyBtn}
@@ -319,35 +318,33 @@ function ReplySummary({ reply, person, footerPerson, people, pickedPersonId, onP
           : <span className={`${styles.avatar} ${styles.avatarEmpty}`} aria-hidden="true">?</span>}
         <div className={styles.summaryText}>
           {footerPerson
-            ? <div className={styles.replyFrom}>Reply from {footerPerson.name}</div>
+            ? <div className={styles.replyFrom}>{tr('ui.reply_from')}{' '}{footerPerson.name}</div>
             : (
               <label className={styles.replyFrom} htmlFor={pickId}>
-                Reply from
-                <select
+                {tr('ui.reply_from')}<select
                   id={pickId}
                   className={`${styles.personPick} ${pickedPersonId == null ? styles.personPickMissing : ''}`}
                   value={pickedPersonId ?? ''}
                   required
                   onChange={(e) => onPick(e.target.value === '' ? null : Number(e.target.value))}
                 >
-                  <option value="">Choose a person…</option>
+                  <option value="">{tr('ui.choose_a_person')}</option>
                   {sortedPeople.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
               </label>
             )}
           <div className={styles.counts}>{counts}</div>
         </div>
-        <button type="button" className={styles.againBtn} onClick={onPasteAgain}>Paste again</button>
+        <button type="button" className={styles.againBtn} onClick={onPasteAgain}>{tr('ui.paste_again')}</button>
       </div>
       {footerPerson
-        ? <div className={styles.note}>The person and send date come from the email’s “Check-in for …” footer.</div>
+        ? <div className={styles.note}>{tr('ui.the_person_and_send_date_come')}</div>
         : diff.personName
-          ? <div className={styles.warn}>The footer names “{diff.personName}”, who isn’t one of your people. Choose who replied.</div>
-          : <div className={styles.warn}>No “Check-in for …” footer was found. Choose who replied.</div>}
+          ? <div className={styles.warn}>{tr('ui.the_footer_names')}{diff.personName}{tr('ui.who_isnt_one_of_your_people')}</div>
+          : <div className={styles.warn}>{tr('ui.no_check_in_for_footer_was')}</div>}
       {!diff.sentDate && (
         <div className={styles.warn}>
-          Without the footer’s send date, tasks changed in the app since the email can’t be flagged. Check each change before applying.
-        </div>
+          {tr('ui.without_the_footers_send_date_tasks')}</div>
       )}
     </div>
   )
@@ -383,10 +380,10 @@ function ReplyChanges({ reply, notAssigned, selected, onToggle, recordFollowup, 
           onToggle={onToggle}
         />
       ))}
-      {shown.length === 0 && <div className={styles.note}>No changes to apply: the reply matches the tasks as they are now.</div>}
+      {shown.length === 0 && <div className={styles.note}>{tr('ui.no_changes_to_apply_the_reply')}</div>}
       {unchanged.length > 0 && shown.length > 0 && (
         <div className={styles.note} data-checkin-unchanged="">
-          No changes in {plural(unchanged.length, 'other task')}: {unchanged.map((t) => t.todo.title).join(' · ')}
+          {tr('ui.no_changes_in')}{' '}{plural(unchanged.length, 'other task')}: {unchanged.map((t) => t.todo.title).join(' · ')}
         </div>
       )}
       {(diff.unmatched.length > 0 || orphanUpdates > 0) && (
@@ -413,10 +410,9 @@ function ReplyChanges({ reply, notAssigned, selected, onToggle, recordFollowup, 
             onChange={(e) => onRecordFollowup(e.target.checked)}
           />
           <span>
-            Record a follow-up on these tasks{' '}
+            {tr('ui.record_a_follow_up_on_these')}{' '}
             <span className={styles.followupHint}>
-              ({followupHint}, the same as “Mark followed up”)
-            </span>
+              ({followupHint}{tr('ui.the_same_as_mark_followed_up')}</span>
           </span>
         </label>
       )}
@@ -439,10 +435,10 @@ function TaskCard({ task, notAssignedTo, selected, onToggle }: {
         <span className={styles.ref}>{task.ref}</span>
       </div>
       {task.completedSinceSent
-        ? <div className={styles.note}>Completed in the app since this email was sent. Nothing to apply.</div>
-        : task.stale && <div className={styles.warn}>Changed in the app since this email was sent. Check before applying.</div>}
+        ? <div className={styles.note}>{tr('ui.completed_in_the_app_since_this')}</div>
+        : task.stale && <div className={styles.warn}>{tr('ui.changed_in_the_app_since_this')}</div>}
       {!task.completedSinceSent && notAssignedTo != null && (
-        <div className={styles.warn}>Not assigned to {notAssignedTo}. Check before applying.</div>
+        <div className={styles.warn}>{tr('ui.not_assigned_to')}{' '}{notAssignedTo}{tr('ui.check_before_applying')}</div>
       )}
       {task.changes.map((change) => {
         const key = checkinChangeKey(todo.id, change.field)
@@ -474,10 +470,10 @@ function ChangeRow({ change, repeats, checked, onToggle }: {
       <div className={`${styles.changeBody} ${checked ? '' : styles.changeOff}`}>
         {change.field === 'completed' && (
           <div className={styles.fromTo}>
-            <span className={styles.from}><span className={`${styles.dot} ${styles.dotOpen}`} />Open</span>
+            <span className={styles.from}><span className={`${styles.dot} ${styles.dotOpen}`} />{tr('ui.open')}</span>
             <span className={styles.arrow} aria-hidden="true">→</span>
-            <span className={styles.to}><span className={`${styles.dot} ${styles.dotDone}`} />Completed</span>
-            {repeats && <span className={styles.note}>Repeats, so it moves to its next due date.</span>}
+            <span className={styles.to}><span className={`${styles.dot} ${styles.dotDone}`} />{tr('ui.completed')}</span>
+            {repeats && <span className={styles.note}>{tr('ui.repeats_so_it_moves_to_its')}</span>}
           </div>
         )}
         {change.field === 'progress' && (
@@ -489,7 +485,7 @@ function ChangeRow({ change, repeats, checked, onToggle }: {
         )}
         {change.field === 'notes' && (
           <>
-            {change.emptied && <div className={styles.warn}>The reply’s Notes are empty: applying removes the task’s notes.</div>}
+            {change.emptied && <div className={styles.warn}>{tr('ui.the_replys_notes_are_empty_applying')}</div>}
             <NotesDiff lines={change.lines} />
           </>
         )}

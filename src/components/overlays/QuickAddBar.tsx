@@ -63,7 +63,7 @@ import { DATE_ARGUMENT_HINT, REPEAT_FREQUENCIES } from '../../services/slash-com
 import { tokenTints, type TintSpan } from '../../services/nlp-token-tints'
 import { formatFollowupDate, formatFollowupDay } from '../../utils/followup'
 import { startOfToday } from '../../utils/date'
-import { MARKER_LABELS } from '../../utils/markers'
+import { markerName } from '../../utils/markers'
 import { CalendarIcon, RepeatGlyph } from '../shared/CommandIcons'
 import { FollowupFlagIcon } from '../shared/FollowupIcons'
 import { MarkerIcon } from '../shared/MarkerIcons'
@@ -74,6 +74,7 @@ import { isInLayerAbove } from '../../utils/dom-layers'
 import { StatusIcon } from '../shared/StatusIcon'
 import styles from './QuickAddBar.module.css'
 import { shortcutScope } from '../../utils/dom-contract'
+import { locale, t as tr } from '../../i18n'
 
 const POPUP_GAP_PX = 4
 const POPUP_WIDTH_PX = 280
@@ -181,7 +182,7 @@ const RECURRENCE_LABEL: Record<RecurrenceType, string> = {
 
 /** `Every Mon` for weekly from a Monday due date; the frequency otherwise. */
 function repeatLabel(recurrence: RecurrenceType, due: Date): string {
-  if (recurrence === 'weekly') return `Every ${due.toLocaleDateString('en-US', { weekday: 'short' })}`
+  if (recurrence === 'weekly') return `Every ${due.toLocaleDateString(locale(), { weekday: 'short' })}`
   return RECURRENCE_LABEL[recurrence]
 }
 
@@ -206,8 +207,7 @@ function ChipRemove({ label, onRemove }: { label: string; onRemove: () => void }
         onRemove()
       }}
     >
-      &times;
-    </button>
+      {tr('ui.c397')}</button>
   )
 }
 
@@ -255,13 +255,13 @@ function ParsedChips({ draft, preset, defaultFollowup, today, onRemove }: {
   onRemove: (chip: ChipRemoval) => void
 }) {
   // Without a default, a typed follow-up's × just removes it.
-  const followupRemoveLabel = defaultFollowup ? 'Use the default follow-up' : 'Remove follow-up'
+  const followupRemoveLabel = defaultFollowup ? tr('ui.use_default_followup') : tr('ui.remove_followup_chip')
   return (
-    <div className={styles.chipsRow} role="group" aria-label="What the task gets">
+    <div className={styles.chipsRow} role="group" aria-label={tr('ui.what_the_task_gets')}>
       {MARKER_KEYS.filter((key) => draft[key] || preset?.[key]).map((key) => (
         <span key={`marker-${key}`} className={`${styles.chip} ${styles.markerChip}`} data-tint={MARKER_CHIP_TINT[key]}>
-          <MarkerIcon marker={key} /> {MARKER_LABELS[key]}
-          <ChipRemove label={`Remove ${MARKER_LABELS[key]}`} onRemove={() => onRemove({ kind: 'marker', marker: key })} />
+          <MarkerIcon marker={key} /> {markerName(key)}
+          <ChipRemove label={tr('ui.remove_marker_chip', { name: markerName(key) })} onRemove={() => onRemove({ kind: 'marker', marker: key })} />
         </span>
       ))}
       {draft.tags.map((t) => (
@@ -279,13 +279,12 @@ function ParsedChips({ draft, preset, defaultFollowup, today, onRemove }: {
       {draft.deadlineAt && (
         <span className={styles.chip} data-tint="due">
           <CalendarIcon /> {formatFollowupDay(draft.deadlineAt, today)}
-          <ChipRemove label="Remove due date" onRemove={() => onRemove({ kind: 'command', command: 'due' })} />
+          <ChipRemove label={tr('ui.remove_due_date')} onRemove={() => onRemove({ kind: 'command', command: 'due' })} />
         </span>
       )}
       {draft.followupNone ? (
         <span className={`${styles.chip} ${styles.chipRing}`}>
-          <FollowupFlagIcon /> No follow-up
-          <ChipRemove label={followupRemoveLabel} onRemove={() => onRemove({ kind: 'command', command: 'followup' })} />
+          <FollowupFlagIcon /> {tr('ui.no_follow_up')}<ChipRemove label={followupRemoveLabel} onRemove={() => onRemove({ kind: 'command', command: 'followup' })} />
         </span>
       ) : draft.nextFollowupAt ? (
         <span className={styles.chip} data-tint="followup">
@@ -295,24 +294,24 @@ function ParsedChips({ draft, preset, defaultFollowup, today, onRemove }: {
       ) : defaultFollowup && (
         <span className={`${styles.chip} ${styles.chipDefault}`}>
           <FollowupFlagIcon /> {formatFollowupDate(defaultFollowup, today)}
-          <span className={styles.chipDefaultNote}> · default</span>
-          <ChipRemove label="No follow-up" onRemove={() => onRemove({ kind: 'defaultFollowup' })} />
+          <span className={styles.chipDefaultNote}> {tr('ui.default')}</span>
+          <ChipRemove label={tr('ui.no_follow_up')} onRemove={() => onRemove({ kind: 'defaultFollowup' })} />
         </span>
       )}
       {draft.recurrence && draft.deadlineAt && (
         <span className={styles.chip} data-tint="accent">
           <RepeatGlyph /> {repeatLabel(draft.recurrence, draft.deadlineAt)}
-          <ChipRemove label="Remove repeat" onRemove={() => onRemove({ kind: 'command', command: 'repeat' })} />
+          <ChipRemove label={tr('ui.remove_repeat')} onRemove={() => onRemove({ kind: 'command', command: 'repeat' })} />
         </span>
       )}
       {draft.status && (
         <span className={`${styles.chip} ${styles.statusChip}`}>
           <span style={{ color: draft.status.color }}><StatusIcon icon={draft.status.icon || DEFAULT_STATUS_ICON} filled /></span>
           {draft.status.name}
-          <ChipRemove label="Remove status" onRemove={() => onRemove({ kind: 'command', command: 'status' })} />
+          <ChipRemove label={tr('ui.remove_status')} onRemove={() => onRemove({ kind: 'command', command: 'status' })} />
         </span>
       )}
-      {preset?.source && <span className={styles.chipsSource}>Adding to {preset.source}</span>}
+      {preset?.source && <span className={styles.chipsSource}>{tr('ui.adding_to')}{' '}{preset.source}</span>}
     </div>
   )
 }
@@ -757,7 +756,7 @@ export function QuickAddBar({
         onClick={(e) => e.stopPropagation()}
         onKeyDown={onKey}
         role="dialog"
-        aria-label="Quick add task"
+        aria-label={tr('ui.quick_add_task')}
       >
         {/* Title row — the input over its tint mirror */}
         <div className={styles.titleRow}>
@@ -768,7 +767,7 @@ export function QuickAddBar({
             <input
               ref={inputRef}
               className={styles.titleInput}
-              placeholder="New task…"
+              placeholder={tr('ui.new_task_2')}
               value={raw}
               onChange={(e) => {
                 setRaw(e.target.value)
@@ -811,15 +810,15 @@ export function QuickAddBar({
             <span className={styles.newPersonNames}>
               {parsed.unmatchedPersons.map((n) => `@${n}`).join(' ')}
             </span>
-            <span>— created when you add the task</span>
+            <span>{tr('ui.created_when_you_add_the_task')}</span>
           </div>
         )}
 
         {/* ⏎ on text that is only tokens */}
         {titleMissing && (
           <div className={styles.problemLine} role="alert">
-            <span className={styles.problemLabel}>No title:</span>
-            <span>— type what the task is; @ # / only add details</span>
+            <span className={styles.problemLabel}>{tr('ui.no_title')}</span>
+            <span>{tr('ui.type_what_the_task_is_only')}</span>
           </div>
         )}
 
@@ -838,11 +837,11 @@ export function QuickAddBar({
         {/* Footer row — syntax hints + Details + keyboard hints */}
         <div className={styles.footerRow}>
           <div className={styles.nlpHints}>
-            <span><Kbd>@</Kbd> person</span>
+            <span><Kbd>@</Kbd> {tr('ui.person')}</span>
             <span aria-hidden="true">·</span>
-            <span><Kbd>#</Kbd> tag</span>
+            <span><Kbd>#</Kbd> {tr('ui.tag')}</span>
             <span aria-hidden="true">·</span>
-            <span><Kbd>/</Kbd> command</span>
+            <span><Kbd>/</Kbd> {tr('ui.command')}</span>
           </div>
           <div className={styles.actionCluster}>
             <button
@@ -850,12 +849,12 @@ export function QuickAddBar({
               onClick={() => onOpenFullEditor?.(draft)}
               disabled={!onOpenFullEditor}
             >
-              Details <span className={styles.kbd}>Tab</span>
+              {tr('ui.details')}{' '}<span className={styles.kbd}>{tr('ui.tab')}</span>
             </button>
             <span className={styles.hintCluster}>
-              <span><Kbd>⏎</Kbd> add</span>
+              <span><Kbd>⏎</Kbd> {tr('ui.add')}</span>
               <span aria-hidden="true">·</span>
-              <span><Kbd>Esc</Kbd> close</span>
+              <span><Kbd>{tr('ui.esc')}</Kbd> {tr('ui.close_2')}</span>
             </span>
           </div>
         </div>

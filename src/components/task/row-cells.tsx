@@ -17,6 +17,7 @@ import { useTooltip } from '../shared/use-tooltip'
 import { tagTextWidth } from './text-width'
 import { useTaskRowColumn } from './task-row-grid-context'
 import styles from './TaskRow.module.css'
+import { t as tr } from '../../i18n'
 
 /*
  * The desktop task row's cells: one per column, each a button that opens its
@@ -316,8 +317,7 @@ function DateClear({ label, cell, onClear }: { label: string; cell: string; onCl
       data-row-cell={cell}
       onClick={cellClick(onClear)}
     >
-      &times;
-    </button>
+      {tr('ui.c397')}</button>
   )
 }
 
@@ -360,7 +360,7 @@ function DuePart({ todo, today, width, showDate, inputRef, onOpen, onClear, onIn
         )}
         {tooltip}
       </button>
-      {due && showDate && <DateClear label="Clear due date" cell="due-clear" onClear={onClear} />}
+      {due && showDate && <DateClear label={tr('ui.clear_due_date')} cell="due-clear" onClear={onClear} />}
       <input
         ref={inputRef}
         type="date"
@@ -413,7 +413,7 @@ function FollowupPart({ todo, today, width, showDate, anchorRef, open, onToggle,
         )}
         {tooltip}
       </button>
-      {next && showDate && <DateClear label="Clear follow-up" cell="followup-clear" onClear={onClear} />}
+      {next && showDate && <DateClear label={tr('ui.clear_follow_up')} cell="followup-clear" onClear={onClear} />}
     </span>
   )
 }

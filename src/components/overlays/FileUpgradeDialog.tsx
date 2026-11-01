@@ -1,6 +1,7 @@
 import type { FileUpgradeInfo } from '../../services/file-storage'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import styles from './FileSyncDialogs.module.css'
+import { t } from '../../i18n'
 
 interface FileUpgradeDialogProps {
   info: FileUpgradeInfo
@@ -11,23 +12,16 @@ interface FileUpgradeDialogProps {
 /** One-time consent before an older sync file is loaded and rewritten. */
 export function FileUpgradeDialog({ info, onConfirm, onCancel }: FileUpgradeDialogProps) {
   return (
-    <Dialog open onClose={onCancel} blockBackdropClose size="md" title="Upgrade sync file?">
+    <Dialog open onClose={onCancel} blockBackdropClose size="md" title={t('ui.upgrade_sync_file')}>
       <DialogBody>
-        {info.fileName} was saved by an older version of TODO2 (schema v{info.fromVersion}).
-        To keep syncing, this version will load it and save it back in the v{info.toVersion} format.
-        Older TODO2 builds won&rsquo;t be able to open the file afterwards.
-        <div className={styles.note}>
-          A copy of the file as it is now is saved first (Settings &rarr; Database &rarr; Backups).
-          Cancel leaves the file and this browser&rsquo;s data untouched and pauses sync.
-        </div>
+        {info.fileName} {t('ui.was_saved_by_an_older_version')}{info.fromVersion}{t('ui.to_keep_syncing_this_version_will')}{info.toVersion} {t('ui.format_older_todo2_builds_wont_be')}<div className={styles.note}>
+          {t('ui.a_copy_of_the_file_as')}</div>
       </DialogBody>
       <DialogActions>
         <button className={styles.cancelButton} onClick={onCancel}>
-          Cancel (pause sync)
-        </button>
+          {t('ui.cancel_pause_sync')}</button>
         <button className={styles.primaryButton} onClick={onConfirm}>
-          Upgrade file
-        </button>
+          {t('ui.upgrade_file')}</button>
       </DialogActions>
     </Dialog>
   )

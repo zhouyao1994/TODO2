@@ -15,6 +15,7 @@ import { DateAnchorInput } from '../DateAnchorInput'
 import styles from './DateFilterPanel.module.css'
 import sheetStyles from './FilterChipBarMobile.module.css'
 import { shortcutScope } from '../../../utils/dom-contract'
+import { t, translateText } from '../../../i18n'
 
 /** Which tasks a Due / Follow-up clause keeps. */
 type ShowMode = 'range' | 'set' | 'unset'
@@ -79,7 +80,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
   const { start, end, includeNoDate } = dateRangeOf(clause)
   const hasEnd = start !== null || end !== null
   const noDateName = optional ? NO_DATE_NAME[field] : undefined
-  const shortName = DATE_FIELD_LABELS_SHORT[field]
+  const shortName = translateText(DATE_FIELD_LABELS_SHORT[field])
 
   const forgetHidden = (f: DateField) => setHidden((h) => {
     if (!(f in h)) return h
@@ -150,7 +151,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
 
   return (
     <div ref={rootRef} className={`${styles.panel} ${sheet ? styles.sheet : ''}`} {...shortcutScope('none')}>
-      <div className={styles.tabs} role="tablist" aria-label="Date type">
+      <div className={styles.tabs} role="tablist" aria-label={t('ui.date_type')}>
         {DATE_FIELD_VALUES.map((f) => {
           const lit = isDateMatchOn(dates[f])
           const selected = f === field
@@ -163,29 +164,29 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
               id={tabId(f)}
               aria-selected={selected}
               aria-controls={panelId}
-              aria-label={lit ? `${DATE_FIELD_LABELS_SHORT[f]}, filtering` : DATE_FIELD_LABELS_SHORT[f]}
+              aria-label={lit ? `${translateText(DATE_FIELD_LABELS_SHORT[f])}, ${t('ui.filtering_word')}` : translateText(DATE_FIELD_LABELS_SHORT[f])}
               tabIndex={selected ? 0 : -1}
               data-filtering={lit ? '' : undefined}
               className={`${styles.segment} ${styles.tab} ${selected ? styles.selected : ''} ${lit ? styles.lit : ''}`}
               onClick={() => selectTab(f, false)}
               onKeyDown={onTabKeyDown}
             >
-              {DATE_FIELD_LABELS_SHORT[f]}
+              {translateText(DATE_FIELD_LABELS_SHORT[f])}
             </button>
           )
         })}
       </div>
       <div className={styles.body} role="tabpanel" id={panelId} aria-labelledby={tabId(field)}>
         <div className={styles.header}>
-          <span className={styles.title}>{DATE_FIELD_LABELS[field]}</span>
+          <span className={styles.title}>{translateText(DATE_FIELD_LABELS[field])}</span>
           {on && clause
             ? <span className={styles.words} title={describeDateMatch(clause)}>{describeDateMatch(clause)}</span>
-            : <span className={styles.off}>Not filtering</span>}
+            : <span className={styles.off}>{t('ui.not_filtering')}</span>}
         </div>
         {optional && (
           <div className={styles.showRow}>
-            <span className={styles.label}>Show</span>
-            <div className={`${styles.track} ${styles.showTrack}`} role="radiogroup" aria-label="Which tasks">
+            <span className={styles.label}>{t('ui.show')}</span>
+            <div className={`${styles.track} ${styles.showTrack}`} role="radiogroup" aria-label={t('ui.which_tasks')}>
               {SHOW_CHOICES.map((c) => {
                 const checked = c.mode === show
                 return (
@@ -210,12 +211,12 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
         {show === 'range' ? (
           <>
             <div className={styles.rangeRow}>
-              <span className={styles.label}>From</span>
-              <DateAnchorInput className={styles.anchor} value={start} onChange={(v) => setRange(v, end)} aria-label="From" />
+              <span className={styles.label}>{t('ui.from_2')}</span>
+              <DateAnchorInput className={styles.anchor} value={start} onChange={(v) => setRange(v, end)} aria-label={t('ui.from_2')} />
             </div>
             <div className={styles.rangeRow}>
-              <span className={styles.label}>To</span>
-              <DateAnchorInput className={styles.anchor} value={end} onChange={(v) => setRange(start, v)} aria-label="To" />
+              <span className={styles.label}>{t('ui.to')}</span>
+              <DateAnchorInput className={styles.anchor} value={end} onChange={(v) => setRange(start, v)} aria-label={t('ui.to')} />
             </div>
             {noDateLabel && (sheet ? (
               <div className={`${styles.noDate} ${hasEnd ? '' : styles.disabled}`}>
@@ -251,7 +252,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
       </div>
       <div className={styles.footer}>
         <button type="button" className={styles.ghost} disabled={!on} onClick={clearType}>
-          Clear {shortName}
+          {t('ui.clear')}{' '}{shortName}
         </button>
         <button type="button" className={styles.ghost} disabled={!hasDateFilters(dates)} onClick={clearAll}>
           {sheet ? 'Clear all dates' : 'Clear all'}

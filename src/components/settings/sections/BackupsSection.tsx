@@ -6,6 +6,7 @@ import type { BackupTrigger } from '../../../models'
 import { NO_BACKUP_NOTE } from '../../../stores/safety-snapshot'
 import styles from './sections.module.css'
 import { restoreBackup } from '../../../services/replace-data'
+import { t } from '../../../i18n'
 
 const TRIGGER_LABEL: Record<BackupTrigger, string> = {
   auto: 'auto',
@@ -44,7 +45,7 @@ export function BackupsSection() {
   return (
     <div className={styles.section}>
       {backups.length === 0 ? (
-        <div className={styles.muted}>No backups yet. Backups are created automatically every 24 hours, before destructive operations, and before the sync file is rewritten.</div>
+        <div className={styles.muted}>{t('ui.no_backups_yet_backups_are_created')}</div>
       ) : (
         <div className={styles.backupList}>
           {backups.map((b) => (
@@ -59,19 +60,18 @@ export function BackupsSection() {
               <div className={styles.backupActions}>
                 {confirmRestoreId === b.id ? (
                   <>
-                    <button type="button" className={styles.backupBtn} onClick={() => { void restore(b.id) }}>Confirm</button>
-                    <button type="button" className={styles.backupBtn} onClick={() => setConfirmRestoreId(null)}>Cancel</button>
+                    <button type="button" className={styles.backupBtn} onClick={() => { void restore(b.id) }}>{t('ui.confirm')}</button>
+                    <button type="button" className={styles.backupBtn} onClick={() => setConfirmRestoreId(null)}>{t('ui.cancel')}</button>
                   </>
                 ) : (
                   <>
-                    <button type="button" className={styles.backupBtn} onClick={() => setConfirmRestoreId(b.id)}>Restore</button>
+                    <button type="button" className={styles.backupBtn} onClick={() => setConfirmRestoreId(b.id)}>{t('ui.restore')}</button>
                     <button
                       type="button"
                       className={`${styles.backupBtn} ${styles.backupBtnDanger}`}
                       onClick={() => { void deleteBackup(b.id) }}
                     >
-                      Delete
-                    </button>
+                      {t('ui.delete')}</button>
                   </>
                 )}
               </div>
@@ -93,8 +93,7 @@ export function BackupsSection() {
             }
           }}
         >
-          Create Backup Now
-        </button>
+          {t('ui.create_backup_now')}</button>
       </div>
       {message && <div className={message.error ? styles.errorMsg : styles.successMsg} role={message.error ? 'alert' : undefined}>{message.text}</div>}
     </div>

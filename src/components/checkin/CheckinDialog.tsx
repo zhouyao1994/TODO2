@@ -28,6 +28,7 @@ import { PeopleEditor } from '../settings/PeopleEditor'
 import { Dialog, DialogFrame } from '../shared/Dialog'
 import { PredicateChips } from '../shared/filters/PredicateChips'
 import styles from './CheckinDialog.module.css'
+import { t, translateText } from '../../i18n'
 
 type SentAs = 'opened' | 'downloaded'
 
@@ -210,8 +211,8 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
         panelRef={panelRef}
       >
         <div className={styles.header}>
-        <h2 id={titleId} className={styles.title}>Email task check-ins</h2>
-        <button type="button" className={styles.closeBtn} aria-label="Close" onClick={close}>×</button>
+        <h2 id={titleId} className={styles.title}>{t('ui.email_task_check_ins')}</h2>
+        <button type="button" className={styles.closeBtn} aria-label={t('ui.close')} onClick={close}>{t('ui.c397')}</button>
         </div>
 
         <div className={styles.body}>
@@ -219,7 +220,7 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
           <div id={`${titleId}-recipients`} className={styles.groupLabel}>
             {filtered ? 'Recipients · their open tasks that match Which tasks' : 'Recipients · open tasks assigned to each'}
           </div>
-          {recipients.length === 0 && <div className={styles.empty}>Nobody has open tasks assigned.</div>}
+          {recipients.length === 0 && <div className={styles.empty}>{t('ui.nobody_has_open_tasks_assigned')}</div>}
           {recipients.map((p) => {
             const email = hasEmail(p)
             const checked = isChecked(p)
@@ -269,7 +270,7 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
         </section>
 
         <section className={styles.group} aria-labelledby={`${titleId}-filter`}>
-          <div id={`${titleId}-filter`} className={styles.groupLabel}>Which tasks · remembered for every check-in</div>
+          <div id={`${titleId}-filter`} className={styles.groupLabel}>{t('ui.which_tasks_remembered_for_every_check')}</div>
           <div className={styles.filterLine} data-testid="checkin-filter">
             <PredicateChips
               predicate={filter}
@@ -277,25 +278,23 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
               addLabel="Add a filter to the check-in"
               omitFields={CHECKIN_OMIT_FIELDS}
               inDialog
-              before={filtered ? undefined : <span className={styles.noFilter}>All open tasks</span>}
+              before={filtered ? undefined : <span className={styles.noFilter}>{t('ui.all_open_tasks')}</span>}
             />
           </div>
         </section>
 
         <div className={styles.options}>
           <div className={styles.group}>
-            <div className={styles.groupLabel}>Include</div>
+            <div className={styles.groupLabel}>{t('ui.include')}</div>
             <label className={styles.check}>
               <input type="checkbox" checked={includeNotes} onChange={(e) => setIncludeNotes(e.target.checked)} />
-              Task notes
-            </label>
+              {t('ui.task_notes')}</label>
             <label className={styles.check}>
               <input type="checkbox" checked={includeOthers} onChange={(e) => setIncludeOthers(e.target.checked)} />
-              Other people on the task
-            </label>
+              {t('ui.other_people_on_the_task')}</label>
           </div>
-          <div className={styles.group} role="radiogroup" aria-label="How to open it">
-            <div className={styles.groupLabel}>How to open it · saved in Settings</div>
+          <div className={styles.group} role="radiogroup" aria-label={t('ui.how_to_open_it')}>
+            <div className={styles.groupLabel}>{t('ui.how_to_open_it_saved_in')}</div>
             {CHECKIN_OPEN_METHOD_OPTIONS.map((o) => (
               <label key={o.method} className={styles.radio}>
                 <input
@@ -306,8 +305,8 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
                   onChange={() => { void useSettingsStore.getState().setCheckinOpenMethod(o.method) }}
                 />
                 <span className={styles.radioText}>
-                  {o.label}
-                  <span className={styles.help}>{o.help}</span>
+                  {translateText(o.label)}
+                  <span className={styles.help}>{translateText(o.help)}</span>
                 </span>
               </label>
             ))}
@@ -325,12 +324,11 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
         </div>
 
         <div className={styles.footer}>
-        <span className={styles.hint}>One message per person, opened one at a time.</span>
-        <button type="button" className={styles.linkBtn} onClick={openImport}>Paste a reply…</button>
+        <span className={styles.hint}>{t('ui.one_message_per_person_opened_one')}</span>
+        <button type="button" className={styles.linkBtn} onClick={openImport}>{t('ui.paste_a_reply')}</button>
         <button type="button" className={styles.footerBtn} disabled={checkedPeople.length === 0} onClick={() => setPreviewOpen(true)}>
-          Preview email
-        </button>
-        <button type="button" className={styles.footerBtn} data-checkin-done="" onClick={close}>Done</button>
+          {t('ui.preview_email')}</button>
+        <button type="button" className={styles.footerBtn} data-checkin-done="" onClick={close}>{t('ui.done')}</button>
         </div>
       </DialogFrame>
 
@@ -373,20 +371,19 @@ function CheckinPreview({ people, build, onClose }: {
   const selectId = useId()
   if (!person || !email) return null
   return (
-    <Dialog open onClose={onClose} title="Preview email" size="lg" className={styles.preview} style={PREVIEW_SIZE}>
+    <Dialog open onClose={onClose} title={t('ui.preview_email')} size="lg" className={styles.preview} style={PREVIEW_SIZE}>
       <div className={styles.previewMeta}>
         {people.length > 1 && (
           <label className={styles.previewPick} htmlFor={selectId}>
-            For
-            <select id={selectId} value={person.id} onChange={(e) => setPersonId(Number(e.target.value))}>
+            {t('ui.for')}<select id={selectId} value={person.id} onChange={(e) => setPersonId(Number(e.target.value))}>
               {people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </label>
         )}
         <div>
-          <span className={styles.previewKey}>To</span> {email.to === '' ? `${person.name} (no address)` : <>{person.name} &lt;{email.to}&gt;</>}
+          <span className={styles.previewKey}>{t('ui.to')}</span> {email.to === '' ? `${person.name} (no address)` : <>{person.name} &lt;{email.to}&gt;</>}
         </div>
-        <div><span className={styles.previewKey}>Subject</span> {email.subject}</div>
+        <div><span className={styles.previewKey}>{t('ui.subject')}</span> {email.subject}</div>
       </div>
       <iframe
         className={styles.previewFrame}
@@ -395,7 +392,7 @@ function CheckinPreview({ people, build, onClose }: {
         srcDoc={previewDocument(email.html)}
       />
       <div className={styles.previewActions}>
-        <button type="button" className={styles.footerBtn} onClick={onClose}>Close</button>
+        <button type="button" className={styles.footerBtn} onClick={onClose}>{t('ui.close')}</button>
       </div>
     </Dialog>
   )

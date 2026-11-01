@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { visibleParts, type SettingsPartDef, type SettingsSectionDef } from './settings-sections'
 import styles from './sections.module.css'
+import { translateText } from '../../../i18n'
 
 /**
  * A Settings section's body: a one-part section's body as it is; a merged
@@ -22,7 +23,7 @@ function SettingsPart({ part, mobile }: { part: SettingsPartDef; mobile: boolean
   const Body = part.Body
   return (
     <section className={styles.part} aria-labelledby={headingId} data-settings-part={part.id}>
-      <h3 id={headingId} className={styles.partTitle}>{part.label}</h3>
+      <h3 id={headingId} className={styles.partTitle}>{translateText(part.label)}</h3>
       <Body mobile={mobile} />
     </section>
   )

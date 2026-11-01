@@ -65,6 +65,7 @@ import { CheckinImportDialog } from '../components/checkin/CheckinImportDialog'
 import { TaskDialog } from '../components/overlays/TaskDialog'
 import overlayStyles from '../components/workspace/DragOverlayTask.module.css'
 import styles from './WorkspacePage.module.css'
+import { t as tr } from '../i18n'
 
 /**
  * A sensor that never starts a drag (it has no activators): phones use it
@@ -427,7 +428,7 @@ export function WorkspacePage() {
           <div className={styles.page} data-dragging-tab={drag ? 'true' : undefined}>
             {working
               ? (isMobile ? <MobileWorkspaceView layout={working} status={<SyncStatusButton />} /> : <WorkspaceView layout={working} />)
-              : hydrated ? null : <div className={styles.loading}>Loading…</div>}
+              : hydrated ? null : <div className={styles.loading}>{tr('ui.loading')}</div>}
           </div>
         </PendingCalendarDropContext.Provider>
       </WorkspaceDragContext.Provider>

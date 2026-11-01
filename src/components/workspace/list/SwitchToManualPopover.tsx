@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom'
 import { useEffect, useRef } from 'react'
 import { usePopoverAnchor } from '../../../hooks/use-popover-anchor'
 import styles from './ListWidget.module.css'
+import { t } from '../../../i18n'
 
 interface SwitchToManualPopoverProps {
   listName: string
@@ -37,21 +38,19 @@ export function SwitchToManualPopover({ listName, sortLabel, at, onConfirm, onCa
       className={styles.switchPopover}
       style={{ position: style.position, left: style.left, top: style.top }}
       role="dialog"
-      aria-label="Switch to manual order?"
+      aria-label={t('ui.switch_to_manual_order')}
       data-testid="switch-to-manual"
       onKeyDown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); onCancel() } }}
     >
-      <div className={styles.switchTitle}>Switch to manual order?</div>
+      <div className={styles.switchTitle}>{t('ui.switch_to_manual_order')}</div>
       <p className={styles.switchBody}>
-        “{listName}” is sorted by {sortLabel.toLowerCase()}. Manual order starts from what you see now, within each group. New tasks go to the bottom.
-      </p>
+        “{listName}{t('ui.is_sorted_by')}{' '}{sortLabel.toLowerCase()}{t('ui.manual_order_starts_from_what_you')}</p>
       <div className={styles.switchFooter}>
         <button type="button" className={styles.switchCancel} onClick={onCancel}>
-          Cancel <kbd className={styles.kbd}>Esc</kbd>
+          {t('ui.cancel')}{' '}<kbd className={styles.kbd}>Esc</kbd>
         </button>
         <button ref={confirmRef} type="button" className={styles.switchConfirm} onClick={onConfirm}>
-          Switch to manual
-        </button>
+          {t('ui.switch_to_manual')}</button>
       </div>
     </div>,
     document.body,

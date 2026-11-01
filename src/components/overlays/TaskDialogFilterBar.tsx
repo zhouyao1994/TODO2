@@ -6,6 +6,7 @@ import { countActiveFilters, criteriaToPredicate, predicateToCriteria } from '..
 import { FilterChipBar } from '../shared/filters/FilterChipBar'
 import { CloseIcon, FunnelIcon, SearchIcon } from '../shared/icons'
 import styles from './TaskDialogFilterBar.module.css'
+import { t } from '../../i18n'
 
 /**
  * The screen filter's task dialog's filter bar (a phone: desktop edits the
@@ -35,8 +36,7 @@ export function TaskDialogFilterBar() {
         onClick={() => setOpen((o) => !o)}
       >
         <FunnelIcon size={14} />
-        Filters
-        {count > 0 && <span className={styles.count}>{count}</span>}
+        {t('ui.filters')}{count > 0 && <span className={styles.count}>{count}</span>}
         <span className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`} aria-hidden="true">▸</span>
       </button>
       {open && (
@@ -59,8 +59,8 @@ function SearchField() {
         ref={inputRef}
         className={styles.searchInput}
         type="text"
-        placeholder="Search…"
-        aria-label="Search tasks"
+        placeholder={t('ui.search')}
+        aria-label={t('ui.search_tasks')}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
@@ -75,7 +75,7 @@ function SearchField() {
         <button
           type="button"
           className={styles.searchClear}
-          aria-label="Clear search"
+          aria-label={t('ui.clear_search')}
           tabIndex={-1}
           onMouseDown={(e) => { e.preventDefault(); setText(''); inputRef.current?.focus() }}
         >

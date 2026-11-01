@@ -5,6 +5,7 @@ import { dayLabel, shortDayLabel } from '../../../utils/calendar-grid'
 import { MenuPopover, type MenuEntry } from '../../shared/MenuPopover'
 import { FlagIcon, WidgetKindIcon } from '../../shared/icons'
 import styles from './CalendarWidget.module.css'
+import { t } from '../../../i18n'
 
 interface CalendarDropChooserProps {
   todo: PersistedTodoItem
@@ -54,7 +55,7 @@ export function CalendarDropChooser({ todo, date, at, onDone }: CalendarDropChoo
     <MenuPopover
       point={{ x: at.x + 2, y: at.y + 10 }}
       entries={entries}
-      label="Set which date"
+      label={t('ui.set_which_date')}
       width={252}
       onClose={() => onDone(null)}
     />

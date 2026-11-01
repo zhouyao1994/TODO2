@@ -1,6 +1,7 @@
 import { useUndoStore } from '../../stores/undo-store'
 import styles from './UndoSnackbar.module.css'
 import { KEEPS_SELECTION_ATTR } from '../../utils/dom-contract'
+import { t } from '../../i18n'
 
 export function UndoSnackbar() {
   const snackbar = useUndoStore((s) => s.snackbar)
@@ -27,12 +28,10 @@ export function UndoSnackbar() {
             dismissSnackbar()
           }}
         >
-          Undo
-        </button>
+          {t('ui.undo')}</button>
       )}
-      <button className={styles.dismissButton} onClick={dismissSnackbar} aria-label="Dismiss">
-        &times;
-      </button>
+      <button className={styles.dismissButton} onClick={dismissSnackbar} aria-label={t('ui.dismiss')}>
+        {t('ui.c397')}</button>
     </div>
   )
 }

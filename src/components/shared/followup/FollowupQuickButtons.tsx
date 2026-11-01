@@ -1,5 +1,6 @@
-import { describeFollowupInterval, formatFollowupInterval, type FollowupInterval } from '../../../utils/followup'
+import { describeFollowupInterval, formatFollowupIntervalDisplay, type FollowupInterval } from '../../../utils/followup'
 import styles from './Followup.module.css'
+import { t } from '../../../i18n'
 
 interface FollowupQuickButtonsProps {
   intervals: readonly FollowupInterval[]
@@ -11,19 +12,19 @@ interface FollowupQuickButtonsProps {
 /** Row of interval chips ("1 week" … "3 months"), each counted from today. */
 export function FollowupQuickButtons({ intervals, labelStyle, onPick }: FollowupQuickButtonsProps) {
   return (
-    <div className={styles.quickRow} role="group" aria-label="Quick follow-up intervals">
+    <div className={styles.quickRow} role="group" aria-label={t('ui.quick_follow_up_intervals')}>
       {intervals.map((i) => {
         const long = describeFollowupInterval(i)
         return (
           <button
-            key={formatFollowupInterval(i)}
+            key={formatFollowupIntervalDisplay(i)}
             type="button"
             className={styles.quickButton}
             onClick={() => onPick(i)}
-            title={`Follow up in ${long}`}
-            aria-label={`Follow up in ${long}`}
+            title={t('ui.followup_in', { interval: long })}
+            aria-label={t('ui.followup_in', { interval: long })}
           >
-            {labelStyle === 'long' ? long : formatFollowupInterval(i)}
+            {labelStyle === 'long' ? long : formatFollowupIntervalDisplay(i)}
           </button>
         )
       })}

@@ -10,6 +10,7 @@ import { useTooltip } from './use-tooltip'
 import { StatusIcon } from './StatusIcon'
 import { AvatarStack } from './AvatarStack'
 import styles from './TaskPillBar.module.css'
+import { t } from '../../i18n'
 
 /**
  * Shared task-pill bar — the one due-date / people / status chip
@@ -121,14 +122,14 @@ export const TaskPillDates = memo(function TaskPillDates({
   if (compact) {
     return (
       <>
-        <span className={styles.markerDeadline} aria-label="Due">
+        <span className={styles.markerDeadline} aria-label={t('ui.due')}>
           <StatusIcon icon="clock" />
         </span>
         {todo.recurrenceRule && (
           <span
             className={styles.markerRecurrence}
             title={`Repeats ${todo.recurrenceRule.type}`}
-            aria-label="Recurring"
+            aria-label={t('ui.recurring')}
           >
             &#x21bb;
           </span>
@@ -152,7 +153,7 @@ export const TaskPillDates = memo(function TaskPillDates({
         onClick={onDeadlineClick}
         data-pill="due"
         title={deadlinePast ? 'Due date passed — click to change' : 'Due — click to change'}
-        aria-label="Edit due date"
+        aria-label={t('ui.edit_due_date')}
       >
         <StatusIcon icon="clock" />
         {dateFormat === 'numeric' ? formatDateNumeric(todo.dueDate!) : formatDateShort(todo.dueDate!)}
@@ -166,13 +167,12 @@ export const TaskPillDates = memo(function TaskPillDates({
             className={styles.chipClear}
             role="button"
             tabIndex={-1}
-            aria-label="Clear due date"
-            title="Clear due date"
+            aria-label={t('ui.clear_due_date')}
+            title={t('ui.clear_due_date')}
             onClick={(e) => { e.stopPropagation(); onDeadlineClear(e) }}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            &times;
-          </span>
+            {t('ui.c397')}</span>
         )}
       </button>
     ) : (
@@ -251,13 +251,12 @@ export const TaskPillFollowup = memo(function TaskPillFollowup({
           className={styles.followupClear}
           role="button"
           tabIndex={-1}
-          aria-label="Clear follow-up"
+          aria-label={t('ui.clear_follow_up')}
           onClick={(e) => { e.stopPropagation(); onFollowupClear(e) }}
           onMouseDown={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
-          &times;
-        </span>
+          {t('ui.c397')}</span>
       )}
       {tooltip}
     </button>

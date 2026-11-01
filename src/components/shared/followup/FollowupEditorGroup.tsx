@@ -8,6 +8,7 @@ import { FollowedUpIcon, FollowupFlagIcon } from '../FollowupIcons'
 import { FollowupDateButton } from './FollowupDateButton'
 import { FollowupQuickButtons } from './FollowupQuickButtons'
 import styles from './Followup.module.css'
+import { t } from '../../../i18n'
 
 interface FollowupEditorGroupProps {
   next: Date | undefined
@@ -95,11 +96,10 @@ export function FollowupEditorGroup({
     <div className={styles.editorGroup}>
       <div className={styles.editorHeading}>
         <FollowupFlagIcon />
-        Follow-up
-      </div>
+        {t('ui.follow_up')}</div>
 
       <div className={rowClassName}>
-        <span className={labelClassName}>Next</span>
+        <span className={labelClassName}>{t('ui.next')}</span>
         <div className={`${styles.editorInputWrap} ${nextInput.state.kind === 'invalid' ? styles.inputWrapError : ''}`}>
           <input
             className={styles.input}
@@ -111,7 +111,7 @@ export function FollowupEditorGroup({
             onFocus={(e) => { skipCommitRef.current = false; selectNext.onFocus(e) }}
             onBlur={() => commit(nextInput, onNextChange)}
             onKeyDown={keyHandler(nextInput)}
-            aria-label="Next follow-up"
+            aria-label={t('ui.next_follow_up')}
             aria-invalid={nextInput.state.kind === 'invalid'}
             autoComplete="off"
             spellCheck={false}
@@ -120,17 +120,16 @@ export function FollowupEditorGroup({
             <button
               type="button"
               className={styles.inputClear}
-              aria-label="Clear next follow-up"
-              title="Clear next follow-up"
+              aria-label={t('ui.clear_next_follow_up')}
+              title={t('ui.clear_next_follow_up')}
               // Keep the input's blur from committing the text we're about to clear.
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => { onNextChange(null); nextInput.settle(null) }}
             >
-              &times;
-            </button>
+              {t('ui.c397')}</button>
           )}
           <FollowupDateButton
-            label="Pick next follow-up date"
+            label={t('ui.pick_next_follow_up_date')}
             value={next}
             onPick={(d) => { onNextChange(d); nextInput.settle(d) }}
           />
@@ -152,23 +151,23 @@ export function FollowupEditorGroup({
       </div>
 
       {!hideLast && <div className={rowClassName}>
-        <span className={labelClassName}>Last</span>
+        <span className={labelClassName}>{t('ui.last')}</span>
         <div className={`${styles.editorInputWrap} ${lastInput.state.kind === 'invalid' ? styles.inputWrapError : ''}`}>
           <input
             className={styles.input}
             value={lastInput.text}
-            placeholder="Never"
+            placeholder={t('ui.never')}
             onChange={(e) => { skipCommitRef.current = false; lastInput.change(e.target.value) }}
             onFocus={() => { skipCommitRef.current = false }}
             onBlur={() => commit(lastInput, onLastChange)}
             onKeyDown={keyHandler(lastInput)}
-            aria-label="Last follow-up"
+            aria-label={t('ui.last_follow_up')}
             aria-invalid={lastInput.state.kind === 'invalid'}
             autoComplete="off"
             spellCheck={false}
           />
           <FollowupDateButton
-            label="Pick last follow-up date"
+            label={t('ui.pick_last_follow_up_date')}
             value={last}
             max={today}
             onPick={(d) => { onLastChange(d); lastInput.settle(d) }}
@@ -187,8 +186,7 @@ export function FollowupEditorGroup({
           data-done-today={lastIsToday ? 'true' : undefined}
         >
           <FollowedUpIcon />
-          Mark followed up
-        </button>
+          {t('ui.mark_followed_up')}</button>
       </div>}
     </div>
   )

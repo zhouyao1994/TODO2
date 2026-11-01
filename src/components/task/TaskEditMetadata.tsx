@@ -6,6 +6,7 @@ import { DeadlinePicker } from '../shared/DeadlinePicker'
 import { FollowupEditorGroup } from '../shared/followup/FollowupEditorGroup'
 import styles from './TaskEditPopup.module.css'
 import { byName } from '../../utils/sort-order'
+import { t as tr } from '../../i18n'
 
 interface TaskEditMetadataProps {
   // Due date + repeat
@@ -61,7 +62,7 @@ export function TaskEditMetadata({
     <div className={styles.metaSection}>
       {/* Due date */}
       <div className={styles.metaRow}>
-        <span className={styles.metaLabel}>Due</span>
+        <span className={styles.metaLabel}>{tr('ui.due')}</span>
         <DeadlinePicker value={deadline} onChange={onDeadlineChange} />
         {deadline && (
           <select
@@ -69,20 +70,20 @@ export function TaskEditMetadata({
             value={recurrenceType}
             onChange={onRecurrenceChange}
           >
-            <option value="">No repeat</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="biweekly">Biweekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="quarterly">Quarterly</option>
-            <option value="yearly">Yearly</option>
+            <option value="">{tr('ui.no_repeat')}</option>
+            <option value="daily">{tr('ui.daily')}</option>
+            <option value="weekly">{tr('ui.weekly')}</option>
+            <option value="biweekly">{tr('ui.biweekly')}</option>
+            <option value="monthly">{tr('ui.monthly')}</option>
+            <option value="quarterly">{tr('ui.quarterly')}</option>
+            <option value="yearly">{tr('ui.yearly')}</option>
           </select>
         )}
       </div>
 
       {/* People */}
       <div className={styles.metaRow}>
-        <span className={styles.metaLabel}>People</span>
+        <span className={styles.metaLabel}>{tr('ui.people')}</span>
         <div className={styles.chipArea} ref={peopleRef}>
           {/* A chip: its name opens the picker, its × (a button of its own, beside it) unassigns. */}
           {assignedPeople.map((person) => (
@@ -95,13 +96,12 @@ export function TaskEditMetadata({
                 <span className={styles.personName}>{person.name}</span>
               </button>
               <button type="button" className={styles.chipRemove} aria-label={`Remove ${person.name}`}
-                onClick={() => onTogglePerson(person.id!)}>&times;</button>
+                onClick={() => onTogglePerson(person.id!)}>{tr('ui.c397')}</button>
             </span>
           ))}
           <button className={styles.chipAddBtn}
             onClick={() => setOpenDropdown(openDropdown === 'people' ? null : 'people')}>
-            + Add
-          </button>
+            {tr('ui.add_3')}</button>
           {openDropdown === 'people' && (
             <div className={styles.chipDropdown}>
               <ChipSelector
@@ -121,7 +121,7 @@ export function TaskEditMetadata({
 
       {/* Tags */}
       <div className={styles.metaRow}>
-        <span className={styles.metaLabel}>Tags</span>
+        <span className={styles.metaLabel}>{tr('ui.tags')}</span>
         <div className={styles.chipArea} ref={tagsRef}>
           {assignedTags.map((tag) => (
             <span key={`t-${tag.id}`} className={styles.tagChip} style={{ color: tag.color, borderColor: tag.color }}>
@@ -130,13 +130,12 @@ export function TaskEditMetadata({
                 #{tag.name}
               </button>
               <button type="button" className={styles.chipRemove} aria-label={`Remove #${tag.name}`}
-                onClick={() => onToggleTag(tag.id!)}>&times;</button>
+                onClick={() => onToggleTag(tag.id!)}>{tr('ui.c397')}</button>
             </span>
           ))}
           <button className={styles.chipAddBtn}
             onClick={() => setOpenDropdown(openDropdown === 'tags' ? null : 'tags')}>
-            + Add
-          </button>
+            {tr('ui.add_3')}</button>
           {openDropdown === 'tags' && (
             <div className={styles.chipDropdown}>
               <ChipSelector
@@ -144,7 +143,7 @@ export function TaskEditMetadata({
                 selectedIds={assignedTagIds}
                 onToggle={onToggleTag}
                 onCreate={onCreateTag}
-                placeholder="Search tags..."
+                placeholder={tr('ui.search_tags')}
                 entityMenu="tag"
               />
             </div>

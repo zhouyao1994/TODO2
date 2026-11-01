@@ -6,6 +6,7 @@ import { useSettingsStore } from '../../stores/settings-store'
 import { shortcutListSections, type ShortcutListRow } from '../../utils/shortcut-bindings'
 import { chordLabel, comboFromEvent, comboLabel, isModifierOnly, isSequenceKey } from '../../utils/shortcut-chord'
 import styles from './ShortcutEditor.module.css'
+import { t, translateText } from '../../i18n'
 
 interface Recording {
   id: ShortcutId
@@ -32,7 +33,7 @@ export function ShortcutEditor() {
     <div className={styles.editor}>
       {sections.map((section) => (
         <div key={section.category} className={styles.category}>
-          <div className={styles.categoryLabel}>{section.label}</div>
+          <div className={styles.categoryLabel}>{translateText(section.label)}</div>
           <div className={styles.rows}>
             {section.rows.map((row, idx) => (
               <ShortcutRow
@@ -81,7 +82,7 @@ function ShortcutRow({ row, recording, onRecord }: ShortcutRowProps) {
   if (id === null || !row.editable) {
     return (
       <div className={styles.row}>
-        <span className={styles.description}>{row.description}</span>
+        <span className={styles.description}>{translateText(row.description)}</span>
         <span className={styles.keys}><kbd className={styles.kbd}>{row.label}</kbd></span>
         <span className={styles.actions} />
       </div>
@@ -136,12 +137,12 @@ function ShortcutRow({ row, recording, onRecord }: ShortcutRowProps) {
   }
 
   const prompt = recording?.pending
-    ? `${comboLabel(recording.pending)} … then a second key, or Enter for ${comboLabel(recording.pending)} alone`
-    : 'Press the new keys'
+    ? t('ui.press_second_key', { key: comboLabel(recording.pending) })
+    : t('ui.press_new_keys')
 
   return (
     <div className={`${styles.row} ${isRecording ? styles.rowRecording : ''}`} data-shortcut-id={id}>
-      <span className={styles.description}>{row.description}</span>
+      <span className={styles.description}>{translateText(row.description)}</span>
       <span className={styles.keys}>
         {isRecording ? (
           <div
@@ -149,7 +150,7 @@ function ShortcutRow({ row, recording, onRecord }: ShortcutRowProps) {
             className={styles.capture}
             tabIndex={0}
             role="textbox"
-            aria-label={`New keys for ${row.description}`}
+            aria-label={t('ui.new_keys_for', { name: translateText(row.description) })}
             aria-describedby={recording.error ? `shortcut-error-${id}` : undefined}
             onKeyDown={onKeyDown}
             onBlur={() => onRecord(null)}
@@ -162,29 +163,27 @@ function ShortcutRow({ row, recording, onRecord }: ShortcutRowProps) {
       </span>
       <span className={styles.actions}>
         {isRecording ? (
-          <span className={styles.hint}>Esc cancels</span>
+          <span className={styles.hint}>{t('ui.esc_cancels')}</span>
         ) : (
           <>
             {row.changed && (
               <button
                 type="button"
                 className={styles.action}
-                aria-label={`Reset ${row.description} to ${chordLabel(shortcutSpec(id).chord)}`}
+                aria-label={t('ui.reset_shortcut_aria', { name: translateText(row.description), keys: chordLabel(shortcutSpec(id).chord) })}
                 title={`Back to ${chordLabel(shortcutSpec(id).chord)}`}
                 onClick={() => void resetShortcut(id)}
               >
-                Reset
-              </button>
+                {t('ui.reset')}</button>
             )}
             <button
               ref={changeRef}
               type="button"
               className={styles.action}
-              aria-label={`Change keys for ${row.description}`}
+              aria-label={t('ui.change_keys_for', { name: translateText(row.description) })}
               onClick={() => onRecord({ id, pending: null, error: null })}
             >
-              Change
-            </button>
+              {t('ui.change')}</button>
           </>
         )}
       </span>

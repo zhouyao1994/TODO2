@@ -20,6 +20,7 @@ import { useTooltip } from '../use-tooltip'
 import { FollowupDateButton } from './FollowupDateButton'
 import { FollowupQuickButtons } from './FollowupQuickButtons'
 import styles from './Followup.module.css'
+import { t } from '../../../i18n'
 
 interface FollowupPopoverProps {
   todo: PersistedTodoItem
@@ -151,7 +152,7 @@ export function FollowupPopover({
       className={styles.popover}
       style={{ position: style.position, left: style.left, top: style.top }}
       role="dialog"
-      aria-label="Follow-up"
+      aria-label={t('ui.follow_up')}
       // The popover is portaled but React events still bubble to the row
       // (select / drag / open-detail handlers) — keep them inside.
       onClick={(e) => e.stopPropagation()}
@@ -162,8 +163,8 @@ export function FollowupPopover({
       onContextMenu={(e) => e.stopPropagation()}
     >
       <div className={styles.fieldLabelRow}>
-        <label className={styles.fieldLabel} htmlFor={`followup-next-${todo.id}`}>Next follow-up</label>
-        <span className={styles.fieldNow} id={`followup-now-${todo.id}`} data-followup-now="">Now: {nowText}</span>
+        <label className={styles.fieldLabel} htmlFor={`followup-next-${todo.id}`}>{t('ui.next_follow_up')}</label>
+        <span className={styles.fieldNow} id={`followup-now-${todo.id}`} data-followup-now="">{t('ui.now_2')}{' '}{nowText}</span>
       </div>
       <div className={`${styles.inputWrap} ${s.kind === 'invalid' ? styles.inputWrapError : ''}`}>
         <input
@@ -187,18 +188,17 @@ export function FollowupPopover({
           <button
             type="button"
             className={styles.inputClear}
-            aria-label="Clear next follow-up"
-            title="Clear the date"
+            aria-label={t('ui.clear_next_follow_up')}
+            title={t('ui.clear_the_date')}
             onClick={() => {
               input.change('')
               inputRef.current?.focus()
             }}
           >
-            &times;
-          </button>
+            {t('ui.c397')}</button>
         )}
         <FollowupDateButton
-          label="Pick next follow-up date"
+          label={t('ui.pick_next_follow_up_date')}
           value={fieldDate instanceof Date ? fieldDate : undefined}
           onPick={apply}
         />
@@ -207,8 +207,7 @@ export function FollowupPopover({
         {s.kind === 'valid' && (
           <>
             → <strong className={styles.helpDate}>{formatFollowupDate(s.date, today)}</strong>
-            {' · '}{relativeDayPhrase(s.date, today)} · ⏎ to set
-          </>
+            {' · '}{relativeDayPhrase(s.date, today)} {t('ui.to_set')}</>
         )}
         {s.kind === 'invalid' && <span className={styles.helpError}>{s.message}</span>}
       </div>
@@ -221,7 +220,7 @@ export function FollowupPopover({
       <div className={styles.lastLine}>
         {todo.lastFollowupAt ? (
           <>
-            Last followed up <strong>{formatFollowupDate(todo.lastFollowupAt, today)}</strong>
+            {t('ui.last_followed_up')}{' '}<strong>{formatFollowupDate(todo.lastFollowupAt, today)}</strong>
             {' · '}{relativeDayPhrase(todo.lastFollowupAt, today)}
           </>
         ) : 'Never followed up'}
@@ -240,8 +239,7 @@ export function FollowupPopover({
         data-done-today={doneToday ? 'true' : undefined}
       >
         <FollowedUpIcon />
-        Mark followed up
-      </button>
+        {t('ui.mark_followed_up')}</button>
       {followedUpTip}
     </div>,
     document.body,

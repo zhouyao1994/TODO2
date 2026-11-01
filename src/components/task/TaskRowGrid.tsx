@@ -4,6 +4,7 @@ import { createValueStore, type ValueStore } from '../../utils/value-store'
 import { TaskRowColumnsContext, UNMEASURED_LIST_WIDTH } from './task-row-grid-context'
 import styles from './TaskRow.module.css'
 import { KEEPS_SELECTION_ATTR, shortcutScope } from '../../utils/dom-contract'
+import { t } from '../../i18n'
 
 /** One arrow-key step of the divider, px. */
 const KEY_STEP = 8
@@ -98,7 +99,7 @@ export function TaskRowGrid({
       style={{ right: box.padRight + TASK_ROW.padRight + cols.laidOut + TASK_ROW.gap / 2 - HIT / 2 }}
       role="separator"
       aria-orientation="vertical"
-      aria-label="Resize task names and details"
+      aria-label={t('ui.resize_task_names_and_details')}
       aria-valuenow={cols.details}
       aria-valuemin={cols.minDetails}
       aria-valuemax={cols.maxDetails}

@@ -8,6 +8,7 @@ import { usePopoverAnchor } from '../../../hooks/use-popover-anchor'
 import { NEUTRAL_PERSON_COLOR } from '../../../constants'
 import styles from './RuntimeFilterPicker.module.css'
 import { byName } from '../../../utils/sort-order'
+import { t as tr } from '../../../i18n'
 
 // All option lookups for this picker go through cached Zustand stores
 // (`usePersonStore`, `useStatusStore`, `useTagStore`) — there are no Dexie reads on render or keystroke. Keep it
@@ -182,8 +183,7 @@ export function RuntimeFilterPicker({ spec, value, onChange }: RuntimeFilterPick
               aria-label={`Remove ${opt.name}`}
               title={`Remove ${opt.name}`}
             >
-              ×
-            </button>
+              {tr('ui.c397')}</button>
           </span>
         ))}
         <input
@@ -212,8 +212,7 @@ export function RuntimeFilterPicker({ spec, value, onChange }: RuntimeFilterPick
               inputRef.current?.focus()
             }}
           >
-            &times;
-          </button>
+            {tr('ui.c397')}</button>
         )}
       </div>
       {open && createPortal(

@@ -8,6 +8,7 @@ import { FilterChipBar } from '../shared/filters/FilterChipBar'
 import { useScreenTaskCount } from '../../hooks/use-screen-task-count'
 import { screenTaskDialog, showTasksLabel } from '../../services/task-dialog'
 import styles from './FilterSheet.module.css'
+import { t } from '../../i18n'
 
 export function FilterSheet() {
   const isOpen = useUIStore((s) => s.isFilterSheetOpen)
@@ -60,16 +61,15 @@ export function FilterSheet() {
             <input
               className={styles.searchInput}
               type="text"
-              placeholder="Search tasks..."
-              aria-label="Search tasks"
+              placeholder={t('ui.search_tasks_2')}
+              aria-label={t('ui.search_tasks')}
               autoFocus={focusSearch}
               value={filters.searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
             {filters.searchText && (
               <button className={styles.searchClear} onClick={() => setSearchText('')}>
-                ×
-              </button>
+                {t('ui.c397')}</button>
             )}
           </div>
 

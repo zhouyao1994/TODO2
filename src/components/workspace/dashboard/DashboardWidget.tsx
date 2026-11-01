@@ -28,6 +28,7 @@ import { useDashboardData, type DashboardData } from '../../../hooks/use-dashboa
 import styles from './DashboardWidget.module.css'
 import { useWidgetSelection } from '../../../hooks/use-widget-selection'
 import { SELECTION_SCOPE_ATTR } from '../../../utils/dom-contract'
+import { t as tr } from '../../../i18n'
 
 /** What the widget reports to its cell: the tab count and the counts for "Copy summary". */
 export interface DashboardResult {
@@ -66,7 +67,7 @@ function Tile({ id, data, onDrill }: { id: DashboardTileId; data: DashboardData;
       <span className={styles.tileLabel}><DashGlyph name={def.glyph} size={12} color={def.color} />{def.label}</span>
       <span className={styles.tileCount} style={{ color: numberColor }} data-testid="dash-tile-count">
         {shown}
-        {shown !== total && <span className={styles.of}>of {total}</span>}
+        {shown !== total && <span className={styles.of}>{tr('ui.of')}{' '}{total}</span>}
       </span>
       <span className={styles.tileSub}>{sub}</span>
       {id === 'open' && data.trend && <Sparkline series={data.trend.openSeries} />}
@@ -95,8 +96,8 @@ function ListTiles({ data, onDrill, style }: {
 }) {
   const hints = useListTileHints()
   return (
-    <div className={styles.lists} aria-label="List tiles" role="group" style={style}>
-      <span className={styles.listsCaption}>Lists</span>
+    <div className={styles.lists} aria-label={tr('ui.list_tiles')} role="group" style={style}>
+      <span className={styles.listsCaption}>{tr('ui.lists')}</span>
       {data.listTiles.map((t) => {
         const content = (
           <>
@@ -107,7 +108,7 @@ function ListTiles({ data, onDrill, style }: {
             </span>
             <span className={styles.listCount} style={{ color: t.shown === 0 ? 'var(--color-text-muted)' : undefined }} data-testid="dash-list-count">
               {t.shown}
-              {t.shown !== t.total && <span className={styles.of}>of {t.total}</span>}
+              {t.shown !== t.total && <span className={styles.of}>{tr('ui.of')}{' '}{t.total}</span>}
             </span>
           </>
         )
@@ -150,7 +151,7 @@ function CustomizeGear({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       className={styles.customizeGear}
-      aria-label="Customize dashboard"
+      aria-label={tr('ui.customize_dashboard')}
       data-dashboard-customize=""
       onClick={onClick}
       {...triggerProps}
@@ -267,7 +268,7 @@ export function DashboardWidget({ tab, onResult, onDrill: onDrillProp, onCustomi
     >
       {showGear && onCustomize && <CustomizeGear onClick={onCustomize} />}
       {config.tiles.length > 0 && (
-        <div className={styles.tiles} aria-label="Tiles" role="group" data-tile-rows={tileRows} style={slot('tiles')}>
+        <div className={styles.tiles} aria-label={tr('ui.tiles')} role="group" data-tile-rows={tileRows} style={slot('tiles')}>
           {config.tiles.map((id) => <Tile key={id} id={id} data={data} onDrill={onDrill} />)}
         </div>
       )}

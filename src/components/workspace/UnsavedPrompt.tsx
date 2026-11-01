@@ -8,6 +8,7 @@ import { countListWidgets } from '../../hooks/use-list-widget-count'
 import { ownerLayoutId } from '../../models/list-definition'
 import { layoutListRefs } from '../../utils/workspace-layout-ops'
 import styles from './LayoutDialogs.module.css'
+import { t } from '../../i18n'
 
 interface UnsavedPromptProps {
   /**
@@ -88,11 +89,10 @@ function UnsavedListDialog({ listId, onDone, onCancel }: {
             onDone()
           }}
         >
-          Discard
-        </button>
+          {t('ui.discard')}</button>
         <span className={styles.spacer} />
         <button type="button" className={styles.ghost} onClick={onCancel}>
-          Cancel <kbd className={styles.kbd}>Esc</kbd>
+          {t('ui.cancel')}{' '}<kbd className={styles.kbd}>Esc</kbd>
         </button>
         <button
           ref={saveRef}
@@ -100,8 +100,7 @@ function UnsavedListDialog({ listId, onDone, onCancel }: {
           className={styles.primary}
           onClick={() => { void useListDraftStore.getState().save(listId).then(onDone) }}
         >
-          Save list
-        </button>
+          {t('ui.save_list')}</button>
       </DialogActions>
     </Dialog>
   )
@@ -170,10 +169,9 @@ function CombinedDialog({ lead, layout, listIds, onDone, onCancel }: Omit<Unsave
   }
 
   return (
-    <Dialog open onClose={onCancel} title="Save your changes?" initialFocusRef={saveRef} nested>
+    <Dialog open onClose={onCancel} title={t('ui.save_your_changes')} initialFocusRef={saveRef} nested>
       <DialogBody>
-        {lead} These have unsaved changes:
-        <div className={styles.unsavedItems}>
+        {lead} {t('ui.these_have_unsaved_changes')}<div className={styles.unsavedItems}>
           {items.map((item) => (
             <label key={item.key} className={styles.unsavedItem}>
               <input type="checkbox" checked={checked.has(item.key)} disabled={item.follows} onChange={() => toggle(item.key)} />
@@ -184,14 +182,13 @@ function CombinedDialog({ lead, layout, listIds, onDone, onCancel }: Omit<Unsave
         </div>
       </DialogBody>
       <DialogActions className={styles.actions}>
-        <button type="button" className={styles.dangerGhost} onClick={() => { void finish(new Set()) }}>Discard all</button>
+        <button type="button" className={styles.dangerGhost} onClick={() => { void finish(new Set()) }}>{t('ui.discard_all')}</button>
         <span className={styles.spacer} />
         <button type="button" className={styles.ghost} onClick={onCancel}>
-          Cancel <kbd className={styles.kbd}>Esc</kbd>
+          {t('ui.cancel')}{' '}<kbd className={styles.kbd}>Esc</kbd>
         </button>
         <button ref={saveRef} type="button" className={styles.primary} disabled={checked.size === 0} onClick={() => { void finish(checked) }}>
-          Save {checked.size} checked
-        </button>
+          {t('ui.save')}{' '}{checked.size} {t('ui.checked')}</button>
       </DialogActions>
     </Dialog>
   )

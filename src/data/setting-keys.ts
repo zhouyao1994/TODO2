@@ -12,6 +12,8 @@
  */
 export const SETTING_KEYS = {
   themeMode: 'themeMode',
+  /** UI language: `en`, `zh-CN`, or `system` (follow the browser); absent = `system`. */
+  language: 'language',
   defaultStatusId: 'defaultStatusId',
   quickStatusId: 'quickStatusId',
   seededAssignedStatusId: 'seededAssignedStatusId',

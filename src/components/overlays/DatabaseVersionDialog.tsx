@@ -2,6 +2,7 @@ import type { TooNewDBInfo } from '../../services/migration-check'
 import { tooNewDatabaseMessage, tooOldDatabaseMessage } from '../../data/database'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import styles from './DatabaseVersionDialog.module.css'
+import { t } from '../../i18n'
 
 /**
  * The browser's database was saved by a newer version of TODO2: this one
@@ -10,14 +11,12 @@ import styles from './DatabaseVersionDialog.module.css'
  */
 export function DatabaseTooNewDialog({ info }: { info: TooNewDBInfo }) {
   return (
-    <Dialog open onClose={() => {}} blockBackdropClose size="md" title="Data from a newer version of TODO2">
+    <Dialog open onClose={() => {}} blockBackdropClose size="md" title={t('ui.data_from_a_newer_version_of')}>
       <DialogBody>
-        {tooNewDatabaseMessage(info.storedVersion, info.buildVersion)} If the newer version is open in another tab, use that one.
-      </DialogBody>
+        {tooNewDatabaseMessage(info.storedVersion, info.buildVersion)} {t('ui.if_the_newer_version_is_open')}</DialogBody>
       <DialogActions>
         <button className={styles.primaryButton} onClick={() => window.location.reload()}>
-          Reload
-        </button>
+          {t('ui.reload')}</button>
       </DialogActions>
     </Dialog>
   )
@@ -31,12 +30,11 @@ export function DatabaseTooNewDialog({ info }: { info: TooNewDBInfo }) {
  */
 export function DatabaseTooOldDialog({ info }: { info: { storedVersion: number | null; floorVersion?: number } }) {
   return (
-    <Dialog open onClose={() => {}} blockBackdropClose size="md" title="Data from an older version of TODO2">
+    <Dialog open onClose={() => {}} blockBackdropClose size="md" title={t('ui.data_from_an_older_version_of')}>
       <DialogBody>{tooOldDatabaseMessage(info.storedVersion, info.floorVersion)}</DialogBody>
       <DialogActions>
         <button className={styles.primaryButton} onClick={() => window.location.reload()}>
-          Reload
-        </button>
+          {t('ui.reload')}</button>
       </DialogActions>
     </Dialog>
   )

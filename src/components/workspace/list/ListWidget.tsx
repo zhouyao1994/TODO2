@@ -56,6 +56,7 @@ import { useDropRefusedCursor } from '../../../hooks/use-drop-refused-cursor'
 import styles from './ListWidget.module.css'
 import { useWidgetSelection } from '../../../hooks/use-widget-selection'
 import { LIST_SECTION_ATTR, SELECTION_SCOPE_ATTR } from '../../../utils/dom-contract'
+import { t as tr } from '../../../i18n'
 
 /** What a list widget reports to its cell (tab count, Copy tasks). */
 export interface ListWidgetResult {
@@ -269,8 +270,7 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
         out.push(
           <div key="drop-line" className={`${styles.dropLine} ${styles.dropLineSorted}`} data-drop-line="">
             <span className={styles.dropHint} data-testid="sorted-drop-hint">
-              <SortIcon size={12} /> Sorted by {sortSummary(definition.sort, definition.sortDirection).toLowerCase()} · drop to switch to manual
-            </span>
+              <SortIcon size={12} /> {tr('ui.sorted_by')}{' '}{sortSummary(definition.sort, definition.sortDirection).toLowerCase()} {tr('ui.drop_to_switch_to_manual')}</span>
           </div>,
         )
       }
@@ -326,7 +326,7 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
     if (baseCount > 0) {
       body = (
         <EmptyState
-          title="No tasks match"
+          title={tr('ui.no_tasks_match')}
           hint={`All ${baseCount} ${baseCount === 1 ? 'task' : 'tasks'} in this list ${baseCount === 1 ? 'is' : 'are'} hidden by the screen filter.`}
           action={{ label: screenChips.length === 1 ? 'Clear screen filter' : 'Clear screen filters', onClick: () => useFilterStore.getState().clearAll() }}
         />
@@ -334,7 +334,7 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
     } else if (hasNarrowingFilters(predicate)) {
       body = (
         <EmptyState
-          title="No tasks match"
+          title={tr('ui.no_tasks_match')}
           hint={describeFilters(listChips)}
           action={{
             label: 'Edit filters',
@@ -343,7 +343,7 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
         />
       )
     } else {
-      body = <EmptyState title="No tasks in this list" />
+      body = <EmptyState title={tr('ui.no_tasks_in_this_list')} />
     }
   } else {
     const sourceLabel = drag ? sections.find((s) => s.key === drag.source.sectionKey)?.label : undefined
@@ -432,15 +432,14 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
         <button
           type="button"
           className={styles.addTask}
-          title="Add a task to this list"
+          title={tr('ui.add_a_task_to_this_list')}
           onClick={() => {
             if (!mergedPredicate) return
             useUIStore.getState().openQuickAdd({ defaults: predicateToFilterDefaults(mergedPredicate) })
           }}
         >
           <span className={styles.addTaskIcon} aria-hidden="true"><PlusIcon size={12} strokeWidth={2} /></span>
-          Add task
-        </button>
+          {tr('ui.add_task')}</button>
       )}
       {showBulkBar && <ListBulkBar ids={[...selectedIds]} bottom={footerHeight + 12} />}
       {refusal && drag?.pointer && (

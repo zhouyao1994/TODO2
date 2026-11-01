@@ -1,6 +1,7 @@
 import type { TodoItem } from '../models/todo-item'
 import { daysUntil } from './effective-date'
 import { formatFollowupDay } from './followup'
+import { t } from '../i18n'
 
 /**
  * App-wide Urgent. A task is urgent when it is flagged urgent, or when its
@@ -42,13 +43,13 @@ export function formatUrgentDueWithinDays(range: UrgentDueWithinDays): string {
 
 /** `Off`, `Today`, `1 day`, `3 days`, `1 week`, `2 weeks`. */
 export function urgentRangeLabel(range: UrgentDueWithinDays): string {
-  if (range == null) return 'Off'
-  if (range === 0) return 'Today'
+  if (range == null) return t('ui.off')
+  if (range === 0) return t('ui.today')
   if (range % 7 === 0) {
     const weeks = range / 7
-    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'}`
+    return weeks === 1 ? t('ui.weeks_count_one') : t('ui.weeks_count_many', { n: weeks })
   }
-  return `${range} ${range === 1 ? 'day' : 'days'}`
+  return range === 1 ? t('ui.days_count_one') : t('ui.days_count_many', { n: range })
 }
 
 type UrgencyFields = Pick<TodoItem, 'urgent' | 'dueDate' | 'isCompleted'>
@@ -79,8 +80,8 @@ export function urgentMark(todo: UrgencyFields, today: Date, range: UrgentDueWit
 
 /** `within 3 days` / `today` — the range in a sentence. */
 function withinPhrase(range: number): string {
-  if (range === 0) return 'today'
-  return `within ${range} ${range === 1 ? 'day' : 'days'}`
+  if (range === 0) return t('ui.rel_today')
+  return range === 1 ? t('ui.within_days_one', { n: range }) : t('ui.within_days_many', { n: range })
 }
 
 /**
@@ -92,9 +93,9 @@ export function urgentByDateReason(todo: UrgencyFields, today: Date, range: Urge
   if (!isUrgentByDate(todo, today, range) || !todo.dueDate || range == null) return ''
   const days = daysUntil(todo.dueDate, today) ?? 0
   const day = formatFollowupDay(todo.dueDate, today)
-  if (days < 0) return `Overdue (${day}), so it counts as urgent.`
-  if (days === 0) return 'Due today.'
-  return `Due ${day}, ${withinPhrase(range)}.`
+  if (days < 0) return t('ui.urgent_overdue_reason', { day })
+  if (days === 0) return t('ui.urgent_due_today_reason')
+  return t('ui.urgent_due_within_reason', { day, within: withinPhrase(range) })
 }
 
 /**
@@ -111,20 +112,22 @@ export function urgentByDateSentence(
   if (!isUrgentByDate(todo, today, range) || !todo.dueDate || range == null) return ''
   const days = daysUntil(todo.dueDate, today) ?? 0
   const day = formatFollowupDay(todo.dueDate, today)
-  if (days < 0) return `${todo.title} is overdue (${day}), so it counts as urgent.`
-  if (days === 0) return `${todo.title} is due today, so it counts as urgent.`
-  return `${todo.title} is due ${day}, ${withinPhrase(range)}, so it counts as urgent.`
+  if (days < 0) return t('ui.urgent_overdue_sentence', { title: todo.title, day })
+  if (days === 0) return t('ui.urgent_due_today_sentence', { title: todo.title })
+  return t('ui.urgent_due_within_sentence', { title: todo.title, day, within: withinPhrase(range) })
 }
 
 /** What a refused drop suggests for a task kept urgent by its due date. */
-export const URGENT_BY_DATE_HINT = 'Change its due date or the due-soon range first.'
+export function urgentByDateHint(many = false): string {
+  return many ? t('ui.urgent_date_hint_many') : t('ui.urgent_date_hint')
+}
 
 /** `today` / `Tue 13` / `overdue (Thu 8)` — the due date in a sentence. */
 export function dueDatePhrase(dueDate: Date, today: Date): string {
   const days = daysUntil(dueDate, today) ?? 0
   const day = formatFollowupDay(dueDate, today)
-  if (days < 0) return `overdue (${day})`
-  if (days === 0) return 'today'
+  if (days < 0) return t('ui.due_overdue_phrase', { day })
+  if (days === 0) return t('ui.rel_today')
   return day
 }
 
@@ -142,14 +145,15 @@ export function urgentToggleHint(targets: readonly UrgencyFields[], today: Date,
   const only = targets.length === 1 ? byDate[0] : undefined
   if (only?.dueDate) {
     const days = daysUntil(only.dueDate, today) ?? 0
-    const phrase = days < 0 ? dueDatePhrase(only.dueDate, today) : `due ${dueDatePhrase(only.dueDate, today)}`
+    const dated = dueDatePhrase(only.dueDate, today)
+    const phrase = days < 0 ? dated : t('ui.due_phrase', { day: dated })
     return only.urgent === true
-      ? `Its due date keeps it urgent even unflagged — ${phrase}.`
-      : `Urgent by due date — ${phrase}. Click to flag it urgent too.`
+      ? t('ui.urgent_hint_flagged', { phrase })
+      : t('ui.urgent_hint_unflagged', { phrase })
   }
   const k = byDate.length
   if (k === 0 || targets.length < 2) return ''
   return k === 1
-    ? `1 of ${targets.length} tasks is urgent by its due date, flagged or not.`
-    : `${k} of ${targets.length} tasks are urgent by their due dates, flagged or not.`
+    ? t('ui.urgent_hint_multi_one', { total: targets.length })
+    : t('ui.urgent_hint_multi_many', { k, total: targets.length })
 }

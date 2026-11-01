@@ -11,6 +11,7 @@ import { priorityRank } from '../utils/markers'
 import type { UrgentDueWithinDays } from '../utils/urgency'
 import type { HotRule } from '../utils/hot'
 import { NO_PRIORITY_KEY, NO_PRIORITY_LABEL } from '../utils/priority-groups'
+import { t as ti18n } from '../i18n'
 
 /**
  * One rendered group of a list. Every list widget builds its sections with
@@ -247,7 +248,18 @@ export function buildListSections(
   })
 
   if (ungrouped.length > 0 && restrict.keepUngrouped) {
-    sections.push({ ...UNGROUPED_SECTION[groupBy], accentColor: UNGROUPED_ACCENT, todos: ungrouped })
+    const ungroupedLabel = groupBy === 'priority'
+      ? ti18n('ui.no_priority')
+      : groupBy === 'deadline'
+        ? ti18n('ui.no_due_date')
+        : groupBy === 'followup'
+          ? ti18n('ui.no_followup')
+          : groupBy === 'people'
+            ? ti18n('ui.unassigned')
+            : groupBy === 'tag'
+              ? ti18n('ui.no_tag_bucket')
+              : ti18n('ui.no_status')
+    sections.push({ ...UNGROUPED_SECTION[groupBy], label: ungroupedLabel, accentColor: UNGROUPED_ACCENT, todos: ungrouped })
   }
   return sections
 }

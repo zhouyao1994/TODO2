@@ -64,6 +64,12 @@ import { readFresh, reportLoadFailure, trackWrite } from './store-helpers'
 import { useUndoStore, type UndoEntry } from './undo-store'
 import { undoable } from './undoable'
 import { registerModuleReset } from '../utils/module-reset'
+import {
+  DEFAULT_LANGUAGE_PREFERENCE,
+  isLanguagePreference,
+  type LanguagePreference,
+} from '../models/language'
+import { setLanguagePreference as applyLanguagePreference } from '../i18n'
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -73,6 +79,8 @@ export { DEFAULT_THEMED_COLORS } from '../models/theme-colors'
 interface SettingsState {
   colors: ThemedColors
   themeMode: ThemeMode
+  /** UI language; `system` follows the browser. Changing it reloads the app. */
+  language: LanguagePreference
   defaultStatusId: number | null
   quickStatusId: number | null
   seededAssignedStatusId: number | null
@@ -131,6 +139,8 @@ interface SettingsState {
   /** When `theme` is omitted, both bags reset; otherwise only the specified bag. */
   resetColors: (theme?: ThemeName) => Promise<void>
   setThemeMode: (mode: ThemeMode) => Promise<void>
+  /** Saves the choice and applies it; the caller reloads so every render picks it up. */
+  setLanguage: (preference: LanguagePreference) => Promise<void>
   setDefaultStatusId: (id: number | null) => Promise<void>
   setCompletedRetentionDays: (days: number | null) => Promise<void>
   setWeekStartsOn: (day: WeekStart) => Promise<void>
@@ -308,6 +318,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     light: { ...DEFAULT_THEMED_COLORS.light },
   },
   themeMode: 'dark' as ThemeMode,
+  language: DEFAULT_LANGUAGE_PREFERENCE,
   defaultStatusId: null,
   quickStatusId: null,
   seededAssignedStatusId: null,
@@ -341,6 +352,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       let seededAssignedStatusId: number | null = null
       let completedRetentionDays: number | null = null
       let themeMode: ThemeMode = 'dark'
+      let language: LanguagePreference = DEFAULT_LANGUAGE_PREFERENCE
       let weekStartsOn: WeekStart = 1
       let followupDefaultInterval: FollowupInterval = DEFAULT_FOLLOWUP_INTERVAL
       let autoFollowup = true
@@ -374,6 +386,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
           completedRetentionDays = parsed != null && isValidRetentionDays(parsed) ? parsed : null
         } else if (row.key === SETTING_KEYS.themeMode) {
           if (isValidThemeMode(row.value)) themeMode = row.value
+        } else if (row.key === SETTING_KEYS.language) {
+          if (isLanguagePreference(row.value)) language = row.value
         } else if (row.key === SETTING_KEYS.weekStartsOn) {
           const parsed = Number(row.value)
           if (isValidWeekStart(parsed)) weekStartsOn = parsed
@@ -413,11 +427,14 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       // A direction only for a sort that has one.
       if (!sortHasDirection(newListSort)) newListSortDirection = 'asc'
       set({
-        colors, defaultStatusId, quickStatusId, seededAssignedStatusId, completedRetentionDays, themeMode, weekStartsOn,
+        colors, defaultStatusId, quickStatusId, seededAssignedStatusId, completedRetentionDays, themeMode, language, weekStartsOn,
         followupDefaultInterval, autoFollowup, urgentDueWithinDays, hotRule, checkinOpenMethod, checkinTaskFilter,
         newListSort, newListSortDirection, newListGroup, purgePromptIntervalDays, purgePromptLastAt,
         shortcutOverrides, eisenhowerPanes, eisenhowerListId,
       })
+      // The language is applied before the shell renders (startup loads
+      // settings first), so every message already reads the saved choice.
+      applyLanguagePreference(language)
       applyThemeMode(themeMode)
       setupMediaQueryListener(themeMode)
       applyThemeOverrides(customizedColorKeys, colors, resolveTheme(themeMode))
@@ -471,6 +488,17 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       // Switching mode flips which `colors[theme]` bag drives the inline
       // overrides — re-apply against the newly-resolved theme.
       applyThemeOverrides(customizedColorKeys, get().colors, resolveTheme(mode))
+    })
+  },
+
+  setLanguage(preference: LanguagePreference) {
+    return trackWrite(async () => {
+      if (!isLanguagePreference(preference)) return
+      // `system` is the default: store only a pinned language.
+      if (preference === DEFAULT_LANGUAGE_PREFERENCE) await settingsRepository.delete(SETTING_KEYS.language)
+      else await settingsRepository.put(SETTING_KEYS.language, preference)
+      set({ language: preference })
+      applyLanguagePreference(preference)
     })
   },
 
