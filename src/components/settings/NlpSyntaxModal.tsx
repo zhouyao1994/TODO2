@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import styles from './EntityEditor.module.css'
 import { EditorModal } from './EditorModal'
 import settingsStyles from './modal-chrome.module.css'
-import { t } from '../../i18n'
+import { t, translateText } from '../../i18n'
 
 interface NlpSyntaxRow {
   syntax: string
@@ -66,12 +66,12 @@ export function NlpSyntaxModal({ onClose }: NlpSyntaxModalProps) {
       <div className={styles.list}>
         {SECTIONS.map((section) => (
           <div key={section.label}>
-            <div className={settingsStyles.shortcutCategory}>{section.label}</div>
+            <div className={settingsStyles.shortcutCategory}>{translateText(section.label)}</div>
             <div className={settingsStyles.shortcutGrid}>
               {section.rows.map((row, idx) => (
                 <Fragment key={`${section.label}-${idx}`}>
                   <span className={settingsStyles.syntaxKey}>{row.syntax}</span>
-                  <span className={settingsStyles.syntaxDesc}>{row.description}</span>
+                  <span className={settingsStyles.syntaxDesc}>{translateText(row.description)}</span>
                 </Fragment>
               ))}
             </div>

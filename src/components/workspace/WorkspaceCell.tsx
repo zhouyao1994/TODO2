@@ -1,5 +1,5 @@
 import { t } from '../../i18n'
-import { useCallback, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
+import { useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import {
   getActiveTab,
@@ -223,7 +223,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
   }
   const closeTabGuarded = (tabId: string) => guarded([tabId], 'You’re closing the last widget that shows it.', () => closeTab(tabId))
   const closeCellGuarded = () => guarded(cell.tabs.map((t) => t.id), 'You’re closing the last widget that shows them.', () => closeCell(cell.id))
-  const closeCustomize = useCallback(() => setCustomize(null), [])
+  const closeCustomize = () => setCustomize(null)
 
   const hit = drag?.hit
   const bodyHit = !band && hit?.kind === 'cell-body' && hit.cellId === cell.id ? hit : null
