@@ -17,6 +17,7 @@ import { DEFAULT_PREDICATE, ENTITY_ID_FIELD } from './FilterChipBar.shared'
 import { ClearableField } from '../ClearableField'
 import picker from './FilterPicker.module.css'
 import styles from './ListFilterChips.module.css'
+import { t } from '../../../i18n'
 
 type EntityField = 'people' | 'tags' | 'status'
 
@@ -153,7 +154,7 @@ function EntityPicker({ field, predicate, adding, replace, onClose }: {
       searchInputRef={searchRef}
     >
       {field === 'tags' && entities.length === 0 ? (
-        <div className={picker.dropdownEmpty}>No tags yet</div>
+        <div className={picker.dropdownEmpty}>{t('ui.no_tags_yet')}</div>
       ) : (
         <EntityDropdownItems
           searchText={searchText}
@@ -183,12 +184,12 @@ function TextPicker({ predicate, update, onClose }: {
   useEffect(() => { inputRef.current?.focus() }, [])
   return (
     <div className={styles.textPicker}>
-      <label htmlFor={inputId} className={styles.textPickerLabel}>Text contains</label>
+      <label htmlFor={inputId} className={styles.textPickerLabel}>{t('ui.text_contains')}</label>
       <ClearableField
         value={predicate.searchText}
         onClear={() => update({ searchText: '' })}
         inputRef={inputRef}
-        label="Clear text filter"
+        label={t('ui.clear_text_filter')}
       >
         <input
           ref={inputRef}
@@ -197,7 +198,7 @@ function TextPicker({ predicate, update, onClose }: {
           type="text"
           value={predicate.searchText}
           maxLength={PREDICATE_SEARCH_TEXT_MAX}
-          placeholder="Title, notes, people, tags…"
+          placeholder={t('ui.title_notes_people_tags')}
           onChange={(e) => update({ searchText: e.target.value })}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === 'Escape') {

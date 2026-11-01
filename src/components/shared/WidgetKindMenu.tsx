@@ -1,5 +1,6 @@
 import { useMemo, type ReactNode } from 'react'
 import { WIDGET_KINDS, widgetKindLabel, type WidgetKind } from '../../models/workspace-layout'
+import { translateText } from '../../i18n'
 import { useListDefinitionStore } from '../../stores/list-definition-store'
 import { listChoiceEntries } from './list-choice-entries'
 import { WidgetKindIcon } from './icons'
@@ -139,7 +140,7 @@ export function WidgetKindMenu({
     : { kind: 'item', label: a.label, icon: listFirst ? undefined : a.icon, onSelect: a.onSelect }))
   const kinds: MenuItemEntry[] = WIDGET_KINDS.map((k) => ({
     kind: 'item',
-    label: widgetKindLabel(k),
+    label: translateText(widgetKindLabel(k)),
     icon: <WidgetKindIcon kind={k} />,
     // Changing a widget: one of them is the current kind. Adding: plain actions.
     radio: currentKind != null,

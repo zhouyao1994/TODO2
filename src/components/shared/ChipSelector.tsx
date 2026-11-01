@@ -6,6 +6,7 @@ import { useUndoStore } from '../../stores/undo-store'
 import { PickerEntityMenu } from './EntityMenu'
 import { ClearableField } from './ClearableField'
 import { splitOnTop, usePickerOrder } from '../../hooks/use-picker-order'
+import { t } from '../../i18n'
 
 export interface ChipItem {
   id: number
@@ -230,7 +231,7 @@ export function ChipSelector({
         value={query}
         onClear={() => { setQuery(''); setActiveChoice(null) }}
         inputRef={inputRef}
-        label="Clear search"
+        label={t('ui.clear_search')}
       >
         <input
           ref={inputRef}
@@ -288,7 +289,7 @@ export function ChipSelector({
                     {avatarLetter({ name: row.name })}
                   </span>
                 )}
-                <span className={styles.name}>Create &quot;{row.name}&quot;</span>
+                <span className={styles.name}>{t('ui.create')}{row.name}&quot;</span>
                 {isActive && <span className={styles.enterHint} aria-hidden="true">⏎</span>}
               </div>
             )
@@ -323,7 +324,7 @@ export function ChipSelector({
           )
         })}
         {rows.length === 0 && (
-          <div className={styles.empty}>No matches</div>
+          <div className={styles.empty}>{t('ui.no_matches')}</div>
         )}
       </div>
       {menu && entityMenu && (

@@ -56,6 +56,7 @@ import { DashGlyph } from '../../shared/DashGlyph'
 import { SECTION_META } from './section-meta'
 import { useListTileHints } from './use-list-tile-hints'
 import styles from './CustomizeDashboardDialog.module.css'
+import { t } from '../../../i18n'
 
 export const PROMPTED_LIST_TILE_NOTE = 'Lists that ask for a value can’t be tiles'
 
@@ -166,18 +167,17 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
       data={{ 'customize-dashboard': tab.id }}
     >
       <div className={styles.header}>
-        <h2 id={titleId} className={styles.title}>Customize dashboard</h2>
-        <button type="button" className={styles.closeBtn} aria-label="Close" onClick={onClose}><CloseIcon size={12} /></button>
+        <h2 id={titleId} className={styles.title}>{t('ui.customize_dashboard')}</h2>
+        <button type="button" className={styles.closeBtn} aria-label={t('ui.close')} onClick={onClose}><CloseIcon size={12} /></button>
       </div>
       <p className={styles.sub}>
-        Changes show behind this dialog as you make them. They are saved with the layout, so the layout’s save icon lights up.
-      </p>
+        {t('ui.changes_show_behind_this_dialog_as')}</p>
       <div className={styles.columns}>
         <div className={styles.column}>
-          <GroupHead label="Tiles" hint="Drag to reorder · 6 fit in a row" />
+          <GroupHead label={t('ui.tiles')} hint="Drag to reorder · 6 fit in a row" />
           <SortableGroup
             group="tile"
-            label="Tiles"
+            label={t('ui.tiles')}
             items={state.tileOrder}
             nameOf={(id) => TILES[id].label}
             onDraggingChange={setDragging}
@@ -201,11 +201,11 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
             )}
           />
 
-          <GroupHead label="List tiles" hint="List count · its filters + screen filter" />
-          {listTiles.length === 0 && <p className={styles.empty}>No list tiles yet.</p>}
+          <GroupHead label={t('ui.list_tiles')} hint="List count · its filters + screen filter" />
+          {listTiles.length === 0 && <p className={styles.empty}>{t('ui.no_list_tiles_yet')}</p>}
           <SortableGroup
             group="list"
-            label="List tiles"
+            label={t('ui.list_tiles')}
             items={listTiles}
             nameOf={(id) => defById.get(id)?.name ?? 'List'}
             onDraggingChange={setDragging}
@@ -226,7 +226,7 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
                     type="button"
                     className={styles.remove}
                     aria-label={`Remove ${def?.name ?? 'list'}`}
-                    title="Remove list tile"
+                    title={t('ui.remove_list_tile')}
                     onClick={() => patch({ listTiles: listTiles.filter((x) => x !== id) })}
                   >
                     <CloseIcon size={10} />
@@ -244,15 +244,14 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
             onClick={() => setAddListOpen((o) => !o)}
           >
             <DashGlyph name="plus" size={12} strokeWidth={2} />
-            Add a list
-            <DashGlyph name="chevron" size={12} />
+            {t('ui.add_a_list')}<DashGlyph name="chevron" size={12} />
           </button>
           {addListOpen && (
             <MenuPopover
               anchorRef={addListRef}
               placement="right-start"
               width={260}
-              label="Lists"
+              label={t('ui.lists')}
               entries={addListEntries}
               onClose={() => setAddListOpen(false)}
             />
@@ -260,10 +259,10 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
         </div>
 
         <div className={styles.column}>
-          <GroupHead label="Sections" hint="Drag to reorder" />
+          <GroupHead label={t('ui.sections')} hint="Drag to reorder" />
           <SortableGroup
             group="section"
-            label="Sections"
+            label={t('ui.sections')}
             items={state.sectionOrder}
             nameOf={(id) => SECTION_META[id].title}
             onDraggingChange={setDragging}
@@ -288,42 +287,42 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
                   </label>
                   {meta.options.includes('lookAhead') && (
                     <OptionSelect
-                      label="Look ahead"
+                      label={t('ui.look_ahead')}
                       disabled={!shown}
                       choices={DASHBOARD_LOOK_AHEAD_CHOICES.map((n) => ({ key: String(n), label: `${n} days`, checked: values.lookAhead === n, onSelect: () => setOption(id, 'lookAhead', n) }))}
                     />
                   )}
                   {meta.options.includes('range') && (
                     <OptionSelect
-                      label="Range"
+                      label={t('ui.range')}
                       disabled={!shown}
                       choices={DASHBOARD_TREND_RANGES.map((r) => ({ key: r, label: trendRangeLabel(r).replace(/^Last /, ''), checked: values.range === r, onSelect: () => setOption(id, 'range', r) }))}
                     />
                   )}
                   {meta.options.includes('showUnassigned') && (
                     <OptionSelect
-                      label="Unassigned"
+                      label={t('ui.unassigned')}
                       disabled={!shown}
                       choices={[true, false].map((v) => ({ key: String(v), label: v ? 'Shown' : 'Hidden', checked: values.showUnassigned === v, onSelect: () => setOption(id, 'showUnassigned', v) }))}
                     />
                   )}
                   {meta.options.includes('showUntagged') && (
                     <OptionSelect
-                      label="No tag"
+                      label={t('ui.no_tag')}
                       disabled={!shown}
                       choices={[true, false].map((v) => ({ key: String(v), label: v ? 'Shown' : 'Hidden', checked: values.showUntagged === v, onSelect: () => setOption(id, 'showUntagged', v) }))}
                     />
                   )}
                   {meta.options.includes('staleDays') && (
                     <OptionSelect
-                      label="Older than"
+                      label={t('ui.older_than')}
                       disabled={!shown}
                       choices={DASHBOARD_STALE_DAYS_CHOICES.map((n) => ({ key: String(n), label: `${n} days`, checked: values.staleDays === n, onSelect: () => setOption(id, 'staleDays', n) }))}
                     />
                   )}
                   {meta.options.includes('recentDays') && (
                     <OptionSelect
-                      label="Last"
+                      label={t('ui.last')}
                       disabled={!shown}
                       choices={DASHBOARD_RECENT_DAYS_CHOICES.map((n) => ({ key: String(n), label: `${n} days`, checked: values.recentDays === n, onSelect: () => setOption(id, 'recentDays', n) }))}
                     />
@@ -333,14 +332,13 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
             }}
           />
           <p className={styles.note}>
-            Sections fill the cell in this order, three to a row on a wide cell. A narrow cell shows them in one column.
-          </p>
+            {t('ui.sections_fill_the_cell_in_this')}</p>
         </div>
       </div>
       <div className={styles.footer}>
-        <button type="button" className={styles.ghostBtn} onClick={reset}>Reset to default</button>
+        <button type="button" className={styles.ghostBtn} onClick={reset}>{t('ui.reset_to_default')}</button>
         <span className={styles.spacer} />
-        <button type="button" className={styles.primaryBtn} onClick={onClose}>Done</button>
+        <button type="button" className={styles.primaryBtn} onClick={onClose}>{t('ui.done')}</button>
       </div>
     </DialogFrame>
   )

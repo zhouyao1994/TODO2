@@ -3,6 +3,7 @@ import type { DateField } from '../models/app-view'
 import { RELATIVE_TOKEN_LABELS } from './date-anchor'
 import { activeDateFields, hasDateFilters, withDateMatch } from './date-filters'
 import { isNegated, withIdFilter, type IdList } from './filter-negation'
+import { locale } from '../i18n'
 import { DATE_FIELD_LABELS_SHORT } from './filter-labels'
 import { hasMarkers, MARKERS_LABEL, markersTooltip, markersValue } from './markers'
 
@@ -108,7 +109,7 @@ function dayLabel(n: number): string {
 export function describeAnchor(anchor: DateAnchor): string {
   switch (anchor.kind) {
     case 'fixed':
-      return new Date(anchor.iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      return new Date(anchor.iso).toLocaleDateString(locale(), { month: 'short', day: 'numeric' })
     case 'relative':
       return RELATIVE_TOKEN_LABELS[anchor.token].toLowerCase()
     case 'offset':

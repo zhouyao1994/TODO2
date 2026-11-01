@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import styles from './EntityEditor.module.css'
 import { EditorModal } from './EditorModal'
 import settingsStyles from './modal-chrome.module.css'
+import { t } from '../../i18n'
 
 interface NlpSyntaxRow {
   syntax: string
@@ -61,7 +62,7 @@ interface NlpSyntaxModalProps {
 
 export function NlpSyntaxModal({ onClose }: NlpSyntaxModalProps) {
   return (
-    <EditorModal title="Quick-Add Syntax" onClose={onClose}>
+    <EditorModal title={t('ui.quick_add_syntax')} onClose={onClose}>
       <div className={styles.list}>
         {SECTIONS.map((section) => (
           <div key={section.label}>

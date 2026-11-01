@@ -21,6 +21,7 @@ import {
 } from './row-cells'
 import styles from './TaskRow.module.css'
 import { TODO_ID_ATTR } from '../../utils/dom-contract'
+import { t as tr } from '../../i18n'
 
 interface TaskRowProps {
   todo: PersistedTodoItem
@@ -223,7 +224,7 @@ export const TaskRow = memo(function TaskRow({
       {ghost ? (
         // The drag overlay's copy: the title and a notes mark only.
         progressNotesPreview(todo.progress, todo.notes)
-          ? <span className={`${styles.cell} ${styles.cellCenter}`} title="Has progress or notes"><NotesGlyph /></span>
+          ? <span className={`${styles.cell} ${styles.cellCenter}`} title={tr('ui.has_progress_or_notes')}><NotesGlyph /></span>
           : null
       ) : (
         <>
@@ -288,8 +289,7 @@ export const TaskRow = memo(function TaskRow({
               onClick={(e) => { e.stopPropagation(); bulk.setStatus(todo.id, undefined); setShowStatusMenu(false) }}
             >
               <span className={styles.statusOptionDot} style={{ background: 'var(--color-text-muted)' }} />
-              No Status
-            </button>
+              {tr('ui.no_status')}</button>
             {statuses.map(s => (
               <button
                 key={s.id}

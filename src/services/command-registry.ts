@@ -7,6 +7,7 @@ import { shortcutLabel } from '../utils/shortcut-bindings'
 import type { ShortcutId, ShortcutOverrides } from '../models/keyboard-shortcut'
 import { runShortcutCommand, type ShortcutCallbacks } from './keyboard-shortcuts'
 import { copySelectedTasks } from './task-copy'
+import { t } from '../i18n'
 
 /** `task` = task actions (New Task, Undo …); `search-results` = tasks found by the palette's search. */
 export type CommandCategory = 'navigation' | 'task' | 'bulk' | 'filter' | 'email' | 'search-results'
@@ -67,8 +68,8 @@ export interface CommandContext {
   getCheckinTaskCounts?: () => ReadonlyMap<number, number> | null
 }
 
-const openTasksLabel = (n: number) => `${n} open ${n === 1 ? 'task' : 'tasks'}`
-const tasksLabel = (n: number) => `${n} ${n === 1 ? 'task' : 'tasks'}`
+const openTasksLabel = (n: number) => (n === 1 ? t('ui.open_task_count_one') : t('ui.open_task_count_many', { n }))
+const tasksLabel = (n: number) => (n === 1 ? t('ui.task_count_hint_one') : t('ui.task_count_hint_many', { n }))
 
 /**
  * `Email check-in: <person>` for each person with at least one open task, by
@@ -90,8 +91,10 @@ function personCheckinCommands(ctx: CommandContext, send: (personId: number) => 
     .sort(byName)
     .map(({ id, name, n }): Command => ({
       id: `email-checkin-${id}`,
-      name: `Email check-in: ${name}`,
-      hint: matching ? `${matching.get(id) ?? 0} of ${openTasksLabel(n)}` : openTasksLabel(n),
+      name: t('ui.command_email_checkin_person', { name }),
+      hint: matching
+        ? t(n === 1 ? 'ui.open_tasks_of_one' : 'ui.open_tasks_of', { matching: matching.get(id) ?? 0, open: n })
+        : openTasksLabel(n),
       category: 'email',
       action: () => send(id),
     }))
@@ -110,21 +113,21 @@ export function createCommands(
   })
   const commands: Command[] = [
     // Navigation
-    bound('open-settings', 'Open Settings', 'open-settings', 'navigation'),
-    bound('focus-filter', 'Focus Filters', 'focus-filters', 'navigation'),
-    bound('focus-search', 'Focus Search', 'focus-search', 'navigation'),
-    ...(ctx.shortcuts.openShortcutsModal ? [bound('keyboard-shortcuts', 'Keyboard Shortcuts', 'show-shortcuts', 'navigation')] : []),
+    bound('open-settings', t('ui.command_open_settings'), 'open-settings', 'navigation'),
+    bound('focus-filter', t('ui.command_focus_filters'), 'focus-filters', 'navigation'),
+    bound('focus-search', t('ui.command_focus_search'), 'focus-search', 'navigation'),
+    ...(ctx.shortcuts.openShortcutsModal ? [bound('keyboard-shortcuts', t('ui.keyboard_shortcuts'), 'show-shortcuts', 'navigation')] : []),
 
     // Task actions
-    bound('new-task', 'New Task', 'quick-add', 'task'),
-    bound('undo', 'Undo', 'undo', 'task'),
-    bound('redo', 'Redo', 'redo', 'task'),
-    bound('select-all', 'Select All Tasks', 'select-all', 'task'),
+    bound('new-task', t('ui.command_new_task'), 'quick-add', 'task'),
+    bound('undo', t('ui.undo'), 'undo', 'task'),
+    bound('redo', t('ui.command_redo'), 'redo', 'task'),
+    bound('select-all', t('ui.command_select_all_tasks'), 'select-all', 'task'),
 
     // Filter presets
-    { id: 'filter-show-completed', name: 'Toggle Show Completed', category: 'filter', action: () => ctx.setShowCompleted(!ctx.getShowCompleted()) },
-    { id: 'filter-clear', name: 'Clear All Filters', category: 'filter', action: ctx.clearAllFilters },
-    { id: 'filter-overdue', name: 'Show Overdue Tasks', category: 'filter', action: () => {
+    { id: 'filter-show-completed', name: t('ui.command_toggle_show_completed'), category: 'filter', action: () => ctx.setShowCompleted(!ctx.getShowCompleted()) },
+    { id: 'filter-clear', name: t('ui.command_clear_all_filters'), category: 'filter', action: ctx.clearAllFilters },
+    { id: 'filter-overdue', name: t('ui.command_show_overdue_tasks'), category: 'filter', action: () => {
       ctx.clearAllFilters()
       const yesterday = new Date(startOfToday().getTime() - 1)
       ctx.setDateRange(null, yesterday)
@@ -136,7 +139,7 @@ export function createCommands(
     const n = ctx.getScreenTaskCount?.()
     commands.push({
       id: 'filter-show-tasks',
-      name: 'Show Tasks Matching the Filter',
+      name: t('ui.command_show_matching'),
       ...(n != null ? { hint: tasksLabel(n) } : {}),
       category: 'filter',
       action: showScreenTasks,
@@ -146,17 +149,17 @@ export function createCommands(
   // Email
   const openCheckinDialog = ctx.openCheckinDialog
   if (openCheckinDialog) {
-    commands.push({ id: 'email-checkins', name: 'Email task check-ins…', hint: 'choose people', category: 'email', action: () => openCheckinDialog() })
+    commands.push({ id: 'email-checkins', name: t('ui.command_email_checkins'), hint: t('ui.command_choose_people'), category: 'email', action: () => openCheckinDialog() })
   }
   if (ctx.openCheckinImport) {
-    commands.push({ id: 'email-import-reply', name: 'Import check-in reply…', category: 'email', action: ctx.openCheckinImport })
+    commands.push({ id: 'email-import-reply', name: t('ui.command_import_reply'), category: 'email', action: ctx.openCheckinImport })
   }
   if (ctx.sendPersonCheckin) commands.push(...personCheckinCommands(ctx, ctx.sendPersonCheckin))
 
   // Bulk actions — only when tasks are selected
   if (ctx.selectionCount === 1) {
     commands.push({
-      id: 'task-duplicate', name: 'Duplicate Task', category: 'task',
+      id: 'task-duplicate', name: t('ui.command_duplicate_task'), category: 'task',
       action: async () => {
         const ids = ctx.getSelectedIds()
         const onlyId = ids[0]
@@ -167,17 +170,17 @@ export function createCommands(
     })
   }
   if (ctx.selectionCount > 0) {
-    const label = ctx.selectionCount === 1 ? '1 Task' : `${ctx.selectionCount} Tasks`
+    const label = ctx.selectionCount === 1 ? t('ui.task_count_one') : t('ui.task_count_many', { n: ctx.selectionCount })
     commands.push(
-      { id: 'bulk-complete', name: `Complete ${label}`, category: 'bulk', action: () => ctx.bulkSetCompleted(ctx.getSelectedIds(), true) },
-      { id: 'bulk-uncomplete', name: `Uncomplete ${label}`, category: 'bulk', action: () => ctx.bulkSetCompleted(ctx.getSelectedIds(), false) },
+      { id: 'bulk-complete', name: t('ui.command_complete_tasks', { label }), category: 'bulk', action: () => ctx.bulkSetCompleted(ctx.getSelectedIds(), true) },
+      { id: 'bulk-uncomplete', name: t('ui.command_uncomplete_tasks', { label }), category: 'bulk', action: () => ctx.bulkSetCompleted(ctx.getSelectedIds(), false) },
     )
     // Bulk status commands
     const statuses = ctx.getStatuses?.() ?? []
     for (const status of statuses) {
       commands.push({
         id: `bulk-status-${status.id}`,
-        name: `Set ${label} Status: ${status.name}`,
+        name: t('ui.command_set_status', { label, status: status.name }),
         category: 'bulk',
         action: () => ctx.bulkSetStatus(ctx.getSelectedIds(), status.id!),
       })
@@ -185,15 +188,15 @@ export function createCommands(
     if (statuses.length > 0) {
       commands.push({
         id: 'bulk-status-clear',
-        name: `Clear Status from ${label}`,
+        name: t('ui.command_clear_status', { label }),
         category: 'bulk',
         action: () => ctx.bulkSetStatus(ctx.getSelectedIds(), undefined),
       })
     }
     commands.push(
       // The selection, as the copy shortcut copies it (no text-selection check: the palette is the ask).
-      { id: 'bulk-copy', name: `Copy ${label}`, shortcut: keys('copy-selected'), category: 'bulk', action: () => { void copySelectedTasks() } },
-      { id: 'bulk-delete', name: `Delete ${label}`, category: 'bulk', action: () => ctx.bulkRemove(ctx.getSelectedIds()) },
+      { id: 'bulk-copy', name: t('ui.command_copy_tasks', { label }), shortcut: keys('copy-selected'), category: 'bulk', action: () => { void copySelectedTasks() } },
+      { id: 'bulk-delete', name: t('ui.command_delete_tasks', { label }), category: 'bulk', action: () => ctx.bulkRemove(ctx.getSelectedIds()) },
     )
   }
 

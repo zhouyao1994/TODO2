@@ -11,6 +11,7 @@ import { MenuPopover } from '../shared/MenuPopover'
 import { WORKSPACE_TAB_DRAG, workspaceTabDragId, type DraggedTab, type WorkspaceTabDragData } from './workspace-drag'
 import { fitTabs, shownTabs, type TabFit, type TabSize } from '../../utils/tab-strip-fit'
 import styles from './CellTabStrip.module.css'
+import { t as tr } from '../../i18n'
 
 /** A tab's widest (the `.tab` rule's `max-width`). */
 const TAB_MAX_PX = 160
@@ -145,14 +146,14 @@ function Tab({ tab, active, collapsed, count, touch, onActivate, onClose, onOpen
     >
       <span className={styles.kindIcon}><WidgetKindIcon kind={tab.kind} size={12} /></span>
       <span className={styles.title} data-tab-title="">{title}</span>
-      {listUnsaved && <span className={styles.unsavedDot} role="img" aria-label="unsaved list changes" />}
+      {listUnsaved && <span className={styles.unsavedDot} role="img" aria-label={tr('ui.unsaved_list_changes')} />}
       {count != null && <span className={styles.count}>{count}</span>}
       {closable && (
         <button
           type="button"
           className={styles.close}
           aria-label={`Close ${title}`}
-          title="Close tab"
+          title={tr('ui.close_tab')}
           tabIndex={-1}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => { e.stopPropagation(); onClose?.() }}
@@ -285,7 +286,7 @@ export function CellTabStrip({
 
   return (
     <div ref={stripRef} className={styles.strip}>
-      <div ref={containerRef} className={styles.tabs} role="tablist" aria-label="Widgets">
+      <div ref={containerRef} className={styles.tabs} role="tablist" aria-label={tr('ui.widgets')}>
         {order.map((tab, i) => (
           <Tab
             key={tab.id}
@@ -327,8 +328,8 @@ export function CellTabStrip({
           ref={addRef}
           type="button"
           className={styles.add}
-          aria-label="Add widget as tab"
-          title="Add widget as tab"
+          aria-label={tr('ui.add_widget_as_tab')}
+          title={tr('ui.add_widget_as_tab')}
           aria-haspopup="menu"
           onClick={() => onAddTab(addRef)}
         >
@@ -379,5 +380,5 @@ function OverflowMenu({ anchorRef, tabs, onPick, onClose }: {
     icon: <WidgetKindIcon kind={tab.kind} />,
     onSelect: () => onPick(tab.id),
   }))
-  return <MenuPopover anchorRef={anchorRef} placement="bottom-end" entries={entries} label="More tabs" onClose={onClose} />
+  return <MenuPopover anchorRef={anchorRef} placement="bottom-end" entries={entries} label={tr('ui.more_tabs')} onClose={onClose} />
 }

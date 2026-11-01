@@ -10,6 +10,7 @@ import { PredicateFieldPicker } from './PredicateFieldPicker'
 import { pointBelow } from './popover-point'
 import { useTooltip } from '../use-tooltip'
 import styles from './ListFilterChips.module.css'
+import { t } from '../../../i18n'
 
 /** A field picker to show: which field, where, and whether it adds the filter. */
 interface OpenPicker {
@@ -94,14 +95,13 @@ export function PredicateChips({
           setMenuAt(pointBelow(e.currentTarget, 'end'))
         }}
       >
-        <PlusIcon size={12} /> Filter
-      </button>
+        <PlusIcon size={12} /> {t('ui.filter')}</button>
       {menuAt && (
         <MenuPopover
           point={menuAt}
           placement="bottom-end"
           width={220}
-          label="Add a filter"
+          label={t('ui.add_a_filter')}
           entries={menuEntries}
           onClose={() => setMenuAt(null)}
         />
@@ -162,8 +162,8 @@ function ListChip({ chip, open, onEdit, onRemove }: {
         <button
           type="button"
           className={styles.chipRemove}
-          aria-label="Remove filter"
-          title="Remove filter"
+          aria-label={t('ui.remove_filter')}
+          title={t('ui.remove_filter')}
           onClick={(e) => { e.stopPropagation(); onRemove() }}
         >
           <CloseIcon size={9} />

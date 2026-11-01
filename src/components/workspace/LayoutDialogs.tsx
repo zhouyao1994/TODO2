@@ -3,6 +3,7 @@ import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import { LAYOUT_NAME_MAX } from '../../models/workspace-layout'
 import { deleteLayoutMessage } from './delete-layout-message'
 import styles from './LayoutDialogs.module.css'
+import { t } from '../../i18n'
 
 interface UnsavedChangesDialogProps {
   layoutName: string
@@ -19,15 +20,14 @@ export function UnsavedChangesDialog({ layoutName, lead, onSave, onDiscard, onCa
   return (
     <Dialog open onClose={onCancel} title={`Save changes to layout “${layoutName}”?`} initialFocusRef={saveRef} nested>
       <DialogBody>
-        {lead} If you don’t save, your changes to “{layoutName}” will be lost.
-      </DialogBody>
+        {lead} {t('ui.if_you_dont_save_your_changes')}{layoutName}{t('ui.will_be_lost')}</DialogBody>
       <DialogActions className={styles.actions}>
-        <button type="button" className={styles.dangerGhost} onClick={onDiscard}>Discard</button>
+        <button type="button" className={styles.dangerGhost} onClick={onDiscard}>{t('ui.discard')}</button>
         <span className={styles.spacer} />
         <button type="button" className={styles.ghost} onClick={onCancel}>
-          Cancel <kbd className={styles.kbd}>Esc</kbd>
+          {t('ui.cancel')}{' '}<kbd className={styles.kbd}>Esc</kbd>
         </button>
-        <button ref={saveRef} type="button" className={styles.primary} onClick={onSave}>Save layout</button>
+        <button ref={saveRef} type="button" className={styles.primary} onClick={onSave}>{t('ui.save_layout')}</button>
       </DialogActions>
     </Dialog>
   )
@@ -56,8 +56,7 @@ export function LayoutNameDialog({ title, confirmLabel, initialName, placeholder
         className={styles.form}
       >
         <label className={styles.label}>
-          Name
-          <input
+          {t('ui.name')}<input
             ref={inputRef}
             className={styles.input}
             value={name}
@@ -68,7 +67,7 @@ export function LayoutNameDialog({ title, confirmLabel, initialName, placeholder
           />
         </label>
         <DialogActions>
-          <button type="button" className={styles.ghost} onClick={onCancel}>Cancel</button>
+          <button type="button" className={styles.ghost} onClick={onCancel}>{t('ui.cancel')}</button>
           <button type="submit" className={styles.primary} disabled={!trimmed}>{confirmLabel}</button>
         </DialogActions>
       </form>
@@ -90,8 +89,8 @@ export function DeleteLayoutDialog({ layoutName, ownedLists = 0, onConfirm, onCa
     <Dialog open onClose={onCancel} title={`Delete layout “${layoutName}”?`} initialFocusRef={cancelRef} nested>
       <DialogBody>{deleteLayoutMessage(ownedLists)}</DialogBody>
       <DialogActions>
-        <button ref={cancelRef} type="button" className={styles.ghost} onClick={onCancel}>Cancel</button>
-        <button type="button" className={styles.danger} onClick={onConfirm}>Delete layout</button>
+        <button ref={cancelRef} type="button" className={styles.ghost} onClick={onCancel}>{t('ui.cancel')}</button>
+        <button type="button" className={styles.danger} onClick={onConfirm}>{t('ui.delete_layout')}</button>
       </DialogActions>
     </Dialog>
   )

@@ -6,6 +6,7 @@ import { DRAG_ACTIVATION_DISTANCE_PX } from '../../constants'
 import type { PersistedWorkspaceLayout } from '../../models/workspace-layout'
 import { LayoutIcon, PlusIcon } from '../shared/icons'
 import styles from './LayoutControls.module.css'
+import { t } from '../../i18n'
 
 type Layout = PersistedWorkspaceLayout
 
@@ -66,7 +67,7 @@ export function LayoutTabs({ layouts, activeLayoutId, unsavedNew, dirty, onActiv
     <div className={styles.tabStrip}>
       <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[horizontalOnly]} autoScroll={false} onDragEnd={onDragEnd}>
         <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
-          <div className={styles.tabs} role="tablist" aria-label="Layouts">
+          <div className={styles.tabs} role="tablist" aria-label={t('ui.layouts')}>
             {layouts.map((l) => {
               const key = dragIdOf(l.id)
               const active = !unsavedNew && l.id === activeLayoutId
@@ -109,8 +110,8 @@ export function LayoutTabs({ layouts, activeLayoutId, unsavedNew, dirty, onActiv
       <button
         type="button"
         className={styles.add}
-        aria-label="New layout"
-        title="New layout"
+        aria-label={t('ui.new_layout')}
+        title={t('ui.new_layout')}
         onClick={onNew}
         data-testid="layout-new"
       >
@@ -193,7 +194,7 @@ function LayoutTabView({ layout, active, dirty, focusable, onActivate, onOpenMen
     >
       <span className={styles.tabIcon}><LayoutIcon size={12} /></span>
       <span className={styles.tabName}>{layout.name}</span>
-      {dirty && <span className={styles.unsavedDot} role="img" aria-label="unsaved changes" />}
+      {dirty && <span className={styles.unsavedDot} role="img" aria-label={t('ui.unsaved_changes')} />}
     </div>
   )
 }

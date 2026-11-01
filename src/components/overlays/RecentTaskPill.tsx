@@ -22,6 +22,7 @@ import { usePersonStore } from '../../stores/person-store'
 import { TaskRow } from '../task/TaskRow'
 import { TaskRowGrid } from '../task/TaskRowGrid'
 import styles from './RecentTaskPill.module.css'
+import { t as tr } from '../../i18n'
 
 export function RecentTaskPill() {
   const recent = useUIStore((s) => s.recentlyCreated)
@@ -55,7 +56,7 @@ function RecentTaskPillBody({ todoId }: { todoId: number }) {
       aria-live="polite"
       onAnimationEnd={() => clearRecent()}
     >
-      <span className={styles.label}>New</span>
+      <span className={styles.label}>{tr('ui.new')}</span>
       {/* The default split: no divider here. */}
       <TaskRowGrid className={styles.rowWrapper}>
         <TaskRow
@@ -68,10 +69,9 @@ function RecentTaskPillBody({ todoId }: { todoId: number }) {
         type="button"
         className={styles.dismissButton}
         onClick={() => clearRecent()}
-        aria-label="Dismiss"
+        aria-label={tr('ui.dismiss')}
       >
-        ×
-      </button>
+        {tr('ui.c397')}</button>
     </div>
   )
 }

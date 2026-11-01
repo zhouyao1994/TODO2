@@ -1,6 +1,7 @@
 import type { PersistedTodoItem } from '../../models'
 import { formatDate, formatRelativeTime } from '../../utils/date'
 import styles from './TaskEditPopup.module.css'
+import { t } from '../../i18n'
 
 interface TaskEditFooterEditProps {
   mode: 'edit'
@@ -36,31 +37,29 @@ export function TaskEditFooter(props: TaskEditFooterProps) {
   if (props.isDraft) {
     return (
       <div className={`${styles.createFooter} ${styles.draftFooter}`}>
-        <span className={styles.draftNote}>Nothing is saved until you create the tasks</span>
+        <span className={styles.draftNote}>{t('ui.nothing_is_saved_until_you_create')}</span>
         <button className={styles.cancelButton} onClick={onClose}>
-          Cancel <kbd className={styles.footerKbd}>Esc</kbd>
+          {t('ui.cancel')}{' '}<kbd className={styles.footerKbd}>Esc</kbd>
         </button>
         <button
           className={styles.saveButton}
           disabled={!props.titleValid}
           onClick={props.onCreate}
         >
-          Save draft
-        </button>
+          {t('ui.save_draft')}</button>
       </div>
     )
   }
 
   return (
     <div className={styles.createFooter}>
-      <button className={styles.cancelButton} onClick={onClose}>Cancel</button>
+      <button className={styles.cancelButton} onClick={onClose}>{t('ui.cancel')}</button>
       <button
         className={styles.saveButton}
         disabled={!props.titleValid}
         onClick={props.onCreate}
       >
-        Create task
-      </button>
+        {t('ui.create_task')}</button>
     </div>
   )
 }
@@ -76,20 +75,17 @@ function EditFooter({ todo, onDelete, onDuplicate, onClose }: EditFooterProps) {
   return (
     <div className={styles.footer}>
       <span className={styles.timestamps}>
-        Created {formatDate(todo.createdAt)} · Modified {formatRelativeTime(todo.modifiedAt)}
+        {t('ui.created')}{' '}{formatDate(todo.createdAt)} {t('ui.modified')}{' '}{formatRelativeTime(todo.modifiedAt)}
       </span>
       <div className={styles.footerActions}>
         {onDuplicate && (
           <button className={styles.duplicateButton} onClick={onDuplicate}>
-            Duplicate
-          </button>
+            {t('ui.duplicate')}</button>
         )}
         <button className={styles.deleteButton} onClick={onDelete}>
-          Delete
-        </button>
+          {t('ui.delete')}</button>
         <button className={styles.saveButton} onClick={onClose}>
-          Done
-        </button>
+          {t('ui.done')}</button>
       </div>
     </div>
   )

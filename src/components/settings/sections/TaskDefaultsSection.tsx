@@ -11,20 +11,21 @@ import {
   type UrgentDueWithinDays,
 } from '../../../utils/urgency'
 import {
-  GROUP_LABEL,
   LIST_GROUP_CHOICES,
   LIST_SORT_CHOICES,
-  SORT_LABEL,
   choicesWith,
+  groupLabel,
+  sortLabel,
   sortOrderWords,
 } from '../../../utils/list-options'
 import { TODO_SORT_DIRECTIONS, isTodoGroupBy, isTodoSortBy, sortHasDirection } from '../../../models/todo-sort-group'
 import { SettingRow } from './SettingRow'
 import styles from './sections.module.css'
+import { t, translateText } from '../../../i18n'
 
 /** `Off` / `Today` / `Within 3 days` — a range choice as the select shows it. */
 function urgentChoiceLabel(range: UrgentDueWithinDays): string {
-  return range == null || range === 0 ? urgentRangeLabel(range) : `Within ${urgentRangeLabel(range)}`
+  return range == null || range === 0 ? urgentRangeLabel(range) : t('ui.within_range', { range: urgentRangeLabel(range) })
 }
 
 /**
@@ -47,14 +48,14 @@ export function TaskDefaultsSection() {
 
   return (
     <div className={styles.section}>
-      <SettingRow label="Default status" help="Given to every new task.">
+      <SettingRow label={t('ui.default_status')} help={t('ui.given_to_every_new_task')}>
         <select
           className={styles.select}
-          aria-label="Default status for new tasks"
+          aria-label={t('ui.default_status_for_new_tasks')}
           value={defaultStatusId ?? ''}
           onChange={(e) => setDefaultStatusId(e.target.value ? Number(e.target.value) : null)}
         >
-          <option value="">None</option>
+          <option value="">{t('ui.none')}</option>
           {statuses.map((s) => (
             <option key={s.id} value={s.id}>{s.name}</option>
           ))}
@@ -62,12 +63,12 @@ export function TaskDefaultsSection() {
       </SettingRow>
       <FollowupIntervalSetting />
       <SettingRow
-        label="Due date makes a task urgent"
-        help="Overdue tasks count too. They show a clock instead of the urgent mark."
+        label={t('ui.due_date_makes_a_task_urgent')}
+        help={t('ui.overdue_tasks_count_too_they_show')}
       >
         <select
           className={styles.select}
-          aria-label="Due date makes a task urgent"
+          aria-label={t('ui.due_date_makes_a_task_urgent')}
           value={formatUrgentDueWithinDays(urgentRange)}
           onChange={(e) => {
             const next = parseUrgentDueWithinDays(e.target.value)
@@ -82,21 +83,21 @@ export function TaskDefaultsSection() {
         </select>
       </SettingRow>
       <SettingRow
-        label={<span className={styles.labelWithIcon}><span className={styles.hotIcon}><HotIcon /></span>Hot tasks</span>}
-        help="A task is hot when it matches any line. Within a line it needs everything lit."
+        label={<span className={styles.labelWithIcon}><span className={styles.hotIcon}><HotIcon /></span>{t('ui.hot_tasks')}</span>}
+        help={t('ui.a_task_is_hot_when_it')}
         column
       >
         <HotRuleEditor />
       </SettingRow>
-      <SettingRow label="Week starts on" help="Calendars and the This Week group.">
+      <SettingRow label={t('ui.week_starts_on')} help={t('ui.calendars_and_the_this_week_group')}>
         <select
           className={styles.select}
-          aria-label="Week starts on"
+          aria-label={t('ui.week_starts_on')}
           value={weekStartsOn}
           onChange={(e) => setWeekStartsOn(Number(e.target.value) === 0 ? 0 : 1)}
         >
-          <option value={1}>Monday</option>
-          <option value={0}>Sunday</option>
+          <option value={1}>{t('ui.monday')}</option>
+          <option value={0}>{t('ui.sunday')}</option>
         </select>
       </SettingRow>
       <NewListDefaults />
@@ -117,40 +118,40 @@ function NewListDefaults() {
   const setGroup = useSettingsStore((s) => s.setNewListGroup)
   return (
     <>
-      <SettingRow label="New lists sort by" help="A list you create starts sorted this way. Edit list changes its own.">
+      <SettingRow label={t('ui.new_lists_sort_by')} help={t('ui.a_list_you_create_starts_sorted')}>
         <select
           className={styles.select}
-          aria-label="New lists sort by"
+          aria-label={t('ui.new_lists_sort_by')}
           value={sort}
           // A direction carries over to another sort with one (as in Edit list).
           onChange={(e) => { if (isTodoSortBy(e.target.value)) void setSort(e.target.value, direction) }}
         >
           {choicesWith(LIST_SORT_CHOICES, sort).map((choice) => (
-            <option key={choice} value={choice}>{SORT_LABEL[choice]}</option>
+            <option key={choice} value={choice}>{sortLabel(choice)}</option>
           ))}
         </select>
         {sortHasDirection(sort) && (
           <select
             className={styles.select}
-            aria-label="New lists sort order"
+            aria-label={t('ui.new_lists_sort_order')}
             value={direction}
             onChange={(e) => void setSort(sort, e.target.value === 'desc' ? 'desc' : 'asc')}
           >
             {TODO_SORT_DIRECTIONS.map((dir) => (
-              <option key={dir} value={dir}>{sortOrderWords(sort, dir)}</option>
+              <option key={dir} value={dir}>{translateText(sortOrderWords(sort, dir) ?? '')}</option>
             ))}
           </select>
         )}
       </SettingRow>
-      <SettingRow label="New lists group by" help="A list you create starts grouped this way.">
+      <SettingRow label={t('ui.new_lists_group_by')} help={t('ui.a_list_you_create_starts_grouped')}>
         <select
           className={styles.select}
-          aria-label="New lists group by"
+          aria-label={t('ui.new_lists_group_by')}
           value={group}
           onChange={(e) => { if (isTodoGroupBy(e.target.value)) void setGroup(e.target.value) }}
         >
           {choicesWith(LIST_GROUP_CHOICES, group).map((choice) => (
-            <option key={choice} value={choice}>{GROUP_LABEL[choice]}</option>
+            <option key={choice} value={choice}>{groupLabel(choice)}</option>
           ))}
         </select>
       </SettingRow>

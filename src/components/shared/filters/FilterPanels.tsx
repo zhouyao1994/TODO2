@@ -11,6 +11,7 @@ import markerStyles from './MarkersPanel.module.css'
 import { byName } from '../../../utils/sort-order'
 import { shortcutScope } from '../../../utils/dom-contract'
 import { splitOnTop, usePickerOrder } from '../../../hooks/use-picker-order'
+import { t } from '../../../i18n'
 
 /**
  * Bodies of the filter pickers, shared by the top bar's filter buttons
@@ -205,16 +206,14 @@ export function SelectionPanelBody({ mode, allSelected, noneSelected, onSelectAl
           className={`${picker.dropdownAction} ${allSelected ? picker.dropdownActionDisabled : ''}`}
           onClick={allSelected ? undefined : onSelectAll}
         >
-          Select all
-        </button>
+          {t('ui.select_all')}</button>
         <span className={picker.dropdownActionSep}>/</span>
         <button
           type="button"
           className={`${picker.dropdownAction} ${noneSelected ? picker.dropdownActionDisabled : ''}`}
           onClick={noneSelected ? undefined : onDeselectAll}
         >
-          Deselect all
-        </button>
+          {t('ui.deselect_all')}</button>
       </div>
       <div className={picker.dropdownDivider} />
       {search && (
@@ -223,13 +222,13 @@ export function SelectionPanelBody({ mode, allSelected, noneSelected, onSelectAl
             value={search.text}
             onClear={() => search.setText('')}
             inputRef={searchRef}
-            label="Clear search"
+            label={t('ui.clear_search')}
           >
             <input
               ref={searchRef}
               className={picker.dropdownSearchInput}
               type="text"
-              placeholder="Search..."
+              placeholder={t('ui.search_2')}
               value={search.text}
               onChange={(e) => search.setText(e.target.value)}
               {...{ [ESCAPE_CLEARS_ATTR]: '', [PICKER_SEARCH_ATTR]: '' }}
@@ -408,7 +407,7 @@ export function EntityDropdownItems({
       {rowIds.length > 0 && (
         <div ref={listRef} role="listbox" aria-multiselectable="true" aria-label={label} onKeyDown={onListKeyDown} {...shortcutScope('none')}>
           {rowIds.map((id) => {
-            if (id === 0) return row(0, <span className={picker.noneLabel}>None</span>, !!entityMenu)
+            if (id === 0) return row(0, <span className={picker.noneLabel}>{t('ui.none')}</span>, !!entityMenu)
             const entity = byId.get(id)
             return entity && row(id, (
               <>
@@ -427,7 +426,7 @@ export function EntityDropdownItems({
         </div>
       )}
       {q && !showNone && matching.length === 0 && (
-        <div className={picker.dropdownEmpty}>No matches</div>
+        <div className={picker.dropdownEmpty}>{t('ui.no_matches')}</div>
       )}
       {menu && entityMenu && (
         <PickerEntityMenu

@@ -19,6 +19,7 @@ import { CloseIcon, LinkIcon } from '../../shared/icons'
 import { EDIT_LIST_KEEP_ATTR } from './edit-list-keep'
 import styles from './EditList.module.css'
 import { shortcutScope } from '../../../utils/dom-contract'
+import { t as tr } from '../../../i18n'
 
 /** The side popover's width (px) and its gap to the panel. */
 const POPOVER_WIDTH_PX = 340
@@ -66,7 +67,7 @@ function useEditListModel(listDefinitionId: number, onClose: () => void) {
 
 /** `Shared · N widgets` / `In 1 widget`. */
 function sharedText(widgets: number): string {
-  return widgets === 1 ? 'In 1 widget' : `Shared · ${widgets} widgets`
+  return widgets === 1 ? tr('ui.in_one_widget') : tr('ui.in_widgets', { n: widgets })
 }
 
 /** A key that landed on the page itself: nothing is focused. */
@@ -348,14 +349,14 @@ function EditListPopover({ listDefinitionId, tabId, onClose }: SurfaceProps) {
     >
       {arrow && <span className={`${styles.arrow} ${arrow === 'right' ? styles.arrowRight : ''}`} aria-hidden="true" />}
       <header className={styles.header}>
-        <span className={styles.eyebrow}>Edit list</span>
-        <button type="button" className={styles.close} aria-label="Close Edit list" title="Close" onClick={onClose}>
+        <span className={styles.eyebrow}>{tr('ui.edit_list_2')}</span>
+        <button type="button" className={styles.close} aria-label={tr('ui.close_edit_list')} title={tr('ui.close')} onClick={onClose}>
           <CloseIcon size={12} />
         </button>
       </header>
       <div className={styles.body}>
         <ListEditorBody draft={model.def} saved={model.saved} onChange={model.onChange} variant="popover" nameRef={nameRef} copyFrom={model.copyFrom} />
-        <p className={styles.hint}>Changes show in the list right away and stay unsaved until you save.</p>
+        <p className={styles.hint}>{tr('ui.changes_show_in_the_list_right')}</p>
       </div>
       <Footer model={model} className={styles.footer} buttonClass={styles.footerButton} saveClass={styles.footerSave}>
         <span className={styles.shared}><LinkIcon /> {sharedText(model.widgets)}</span>
@@ -377,8 +378,7 @@ function Footer({ model, className, buttonClass, saveClass, children }: {
     <footer className={className}>
       {children}
       <button type="button" className={buttonClass} disabled={!model.dirty} onClick={model.revert}>
-        Revert
-      </button>
+        {tr('ui.revert')}</button>
       <button
         type="button"
         className={`${buttonClass} ${saveClass}`}
@@ -386,8 +386,7 @@ function Footer({ model, className, buttonClass, saveClass, children }: {
         title={model.dirty && !model.canSave ? 'Name the list to save it' : undefined}
         onClick={model.save}
       >
-        Save list
-      </button>
+        {tr('ui.save_list')}</button>
     </footer>
   )
 }
@@ -445,8 +444,8 @@ function EditListSheet({ listDefinitionId, tabId, onClose }: SurfaceProps) {
           onPointerCancel={() => { dragFrom.current = null }}
         />
         <header className={styles.sheetHeader}>
-          <span className={styles.sheetTitle}>Edit list</span>
-          <button type="button" className={styles.sheetClose} aria-label="Close Edit list" onClick={onClose}>
+          <span className={styles.sheetTitle}>{tr('ui.edit_list_2')}</span>
+          <button type="button" className={styles.sheetClose} aria-label={tr('ui.close_edit_list')} onClick={onClose}>
             <CloseIcon size={14} />
           </button>
         </header>

@@ -35,6 +35,7 @@ import {
   type FilterChipBarProps,
 } from './FilterChipBar.shared'
 import styles from './ScreenFilters.module.css'
+import { t, translateText } from '../../../i18n'
 
 type FieldKey = Extract<FilterChipField, 'people' | 'tags' | 'dates' | 'status' | 'markers'>
 
@@ -131,7 +132,7 @@ function PeopleCheckinAction({ people, onDone }: { people: readonly { id: number
     <>
       <div className={picker.dropdownDivider} />
       {people.length === 0 ? (
-        <div className={styles.checkinHint}>Narrow to some people to email them.</div>
+        <div className={styles.checkinHint}>{t('ui.narrow_to_some_people_to_email')}</div>
       ) : (
         <button
           type="button"
@@ -200,7 +201,7 @@ function FilterButton({ field, consumeEscape, valueWidth }: { field: FieldDef; c
           style={cut ? { maxWidth: valueWidth } : undefined}
           {...(on ? { [FOLD_VALUE_ATTR]: field.key } : {})}
         >
-          {field.value ?? field.label}
+          {field.value ?? translateText(field.label)}
         </span>
         {!on && <span className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`}><ChevronDownIcon /></span>}
       </button>
@@ -318,7 +319,7 @@ function FiltersMenu({ fields, onClearAll, consumeEscape }: { fields: FieldDef[]
         aria-label={count > 0 ? `Filters, ${count} active` : 'Filters'}
         onClick={() => (open ? closeAll() : setOpen(true))}
       >
-        <span className={styles.filterLabel}>Filters</span>
+        <span className={styles.filterLabel}>{t('ui.filters')}</span>
         {count > 0 && <span className={styles.countBadge}>{count}</span>}
         <span className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`}><ChevronDownIcon /></span>
       </button>
@@ -328,9 +329,9 @@ function FiltersMenu({ fields, onClearAll, consumeEscape }: { fields: FieldDef[]
           className={styles.menu}
           style={{ position: menuStyle.position, left: menuStyle.left, top: menuStyle.top }}
           role="group"
-          aria-label="Screen filters"
+          aria-label={t('ui.screen_filters')}
         >
-          <div className={styles.menuLabel}>Screen filters · apply to every widget</div>
+          <div className={styles.menuLabel}>{t('ui.screen_filters_apply_to_every_widget_2')}</div>
           {fields.map((field) => (
             <div key={field.key} className={`${styles.menuRow} ${sub?.key === field.key ? styles.menuRowOpen : ''}`}>
               <button
@@ -341,10 +342,10 @@ function FiltersMenu({ fields, onClearAll, consumeEscape }: { fields: FieldDef[]
                 onClick={(e) => openSub(field, e.currentTarget.parentElement ?? e.currentTarget)}
               >
                 <span className={styles.icon}>{field.icon}</span>
-                <span className={styles.menuRowName}>{field.label}</span>
+                <span className={styles.menuRowName}>{translateText(field.label)}</span>
                 {field.value != null
                   ? <span className={styles.menuRowValue}>{field.value}</span>
-                  : <span className={styles.menuRowAny}>Any <ChevronRightIcon size={10} /></span>}
+                  : <span className={styles.menuRowAny}>{t('ui.any')}{' '}<ChevronRightIcon size={10} /></span>}
               </button>
               {field.value != null && (
                 <button
@@ -365,8 +366,7 @@ function FiltersMenu({ fields, onClearAll, consumeEscape }: { fields: FieldDef[]
             disabled={count === 0}
             onClick={() => { onClearAll(); closeAll() }}
           >
-            Clear all filters
-          </button>
+            {t('ui.clear_all_filters')}</button>
         </div>,
         document.body,
       )}
@@ -504,7 +504,7 @@ export function FilterChipBarDesktop({
           <EntityDropdownItems
             searchText={searchText}
             entities={people}
-            label="People"
+            label={t('ui.people')}
             isChecked={h.isChecked}
             onToggle={h.onToggle}
             onSearchClear={clearSearch}
@@ -547,7 +547,7 @@ export function FilterChipBarDesktop({
           <EntityDropdownItems
             searchText={searchText}
             entities={sortedTags}
-            label="Tags"
+            label={t('ui.tags')}
             isChecked={h.isChecked}
             onToggle={h.onToggle}
             onSearchClear={clearSearch}
@@ -606,7 +606,7 @@ export function FilterChipBarDesktop({
           <EntityDropdownItems
             searchText={searchText}
             entities={statuses}
-            label="Status"
+            label={t('ui.status')}
             isChecked={h.isChecked}
             onToggle={h.onToggle}
             onSearchClear={clearSearch}
@@ -660,11 +660,10 @@ export function FilterChipBarDesktop({
         className={`${styles.completed} ${p.showCompleted ? styles.completedOn : ''}`}
         onClick={() => update({ showCompleted: !p.showCompleted })}
         aria-pressed={p.showCompleted}
-        aria-label="Show completed"
+        aria-label={t('ui.show_completed')}
       >
         <CheckIcon size={12} />
-        Completed
-      </button>
+        {t('ui.completed')}</button>
     </>
   )
 }

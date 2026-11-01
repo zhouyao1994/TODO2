@@ -8,6 +8,7 @@ import styles from './NlpPopup.module.css'
 import { useLatestRef } from '../../hooks/use-latest-ref'
 import { PickerEntityMenu } from './EntityMenu'
 import { registerModuleReset } from '../../utils/module-reset'
+import { t } from '../../i18n'
 
 /** A person / tag row's menu (Show tasks · Edit… · Delete…) on the popup's rows. */
 export interface NlpEntityMenuOptions {
@@ -263,7 +264,7 @@ export function NlpPopup({ view, selectedIndex, onPick, onHighlight, className, 
         <div className={styles.footer}>
           <span className={styles.kbd}>↑↓</span>
           <span className={styles.kbd}>⏎</span>
-          <span>pick · or type the whole command</span>
+          <span>{t('ui.pick_or_type_the_whole_command')}</span>
         </div>
       )}
       {menu && entityMenu && (

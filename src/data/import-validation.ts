@@ -17,6 +17,7 @@ import { checkLayoutBody, pickLayoutBody } from './layout-shape'
 import { formatPanesSetting, parseEisenhowerSource, readPanesSetting } from './eisenhower-shape'
 import { formatCheckinFilterSetting, readCheckinFilterSetting } from './checkin-filter-shape'
 import { isValidEmail, normalizeEmail } from '../utils/person'
+import { isLanguagePreference } from '../models/language'
 
 const VALID_RECURRENCE_TYPES = ['daily', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly']
 
@@ -359,6 +360,9 @@ function checkSetting(v: unknown): CheckResult {
   if (v.key === SETTING_KEYS.weekStartsOn) {
     const n = Number(v.value)
     return n === 0 || n === 1 ? true : 'value (weekStartsOn must be 0 or 1)'
+  }
+  if (v.key === SETTING_KEYS.language) {
+    return isLanguagePreference(v.value) ? true : 'value (language must be system, en or zh-CN)'
   }
   if (v.key === SETTING_KEYS.followupDefaultInterval) {
     return parseFollowupInterval(v.value as string)

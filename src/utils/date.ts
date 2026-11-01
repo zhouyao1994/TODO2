@@ -1,4 +1,5 @@
 import { registerModuleReset } from './module-reset'
+import { locale, t } from '../i18n'
 
 /** Milliseconds in one day */
 export const MS_PER_DAY = 86_400_000
@@ -24,24 +25,25 @@ export function startOfToday(): Date {
   return startOfDay(new Date())
 }
 
-/** `en-US` date formats by their options, built once each (a formatter is costly to build). */
+/** Date formats by locale and options, built once each (a formatter is costly to build). */
 const formats = new Map<string, Intl.DateTimeFormat>()
 // A formatter keeps the time zone it was built in.
 registerModuleReset(() => formats.clear())
 
 /**
- * `date` in `en-US` with `options` — what `toLocaleDateString('en-US',
- * options)` gives, without building a new formatter on every call (rows
- * format dates on every render).
+ * `date` in the UI language's date format with `options` — what
+ * `toLocaleDateString(locale(), options)` gives, without building a new
+ * formatter on every call (rows format dates on every render).
  */
 export function formatDateWith(date: Date, options: Intl.DateTimeFormatOptions): string {
   const d = new Date(date)
+  const language = locale()
   // A formatter throws on an invalid date; toLocaleDateString reads it.
-  if (Number.isNaN(d.getTime())) return d.toLocaleDateString('en-US', options)
-  const key = JSON.stringify(options)
+  if (Number.isNaN(d.getTime())) return d.toLocaleDateString(language, options)
+  const key = `${language}|${JSON.stringify(options)}`
   let format = formats.get(key)
   if (!format) {
-    format = new Intl.DateTimeFormat('en-US', options)
+    format = new Intl.DateTimeFormat(language, options)
     formats.set(key, format)
   }
   return format.format(d)
@@ -71,20 +73,20 @@ export function formatRelativeTime(date: Date): string {
   const diff = now.getTime() - new Date(date).getTime()
   if (diff < 0) {
     const futureMins = Math.floor(-diff / 60000)
-    if (futureMins < 1) return 'just now'
-    if (futureMins < 60) return `in ${futureMins}m`
+    if (futureMins < 1) return t('ui.just_now')
+    if (futureMins < 60) return t('ui.in_minutes', { n: futureMins })
     const futureHours = Math.floor(futureMins / 60)
-    if (futureHours < 24) return `in ${futureHours}h`
+    if (futureHours < 24) return t('ui.in_hours', { n: futureHours })
     const futureDays = Math.floor(futureHours / 24)
-    return `in ${futureDays}d`
+    return t('ui.in_days', { n: futureDays })
   }
   const minutes = Math.floor(diff / 60000)
-  if (minutes < 1) return 'just now'
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 1) return t('ui.just_now')
+  if (minutes < 60) return t('ui.minutes_ago', { n: minutes })
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return t('ui.hours_ago', { n: hours })
   const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  return t('ui.days_ago_short', { n: days })
 }
 
 /** The local calendar day of `d` as a key: `YYYY-MM-DD` (any time of that day gives the same key). */

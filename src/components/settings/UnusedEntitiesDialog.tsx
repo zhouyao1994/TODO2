@@ -8,6 +8,7 @@ import { ConfirmDialog } from '../shared/Dialog'
 import { EditorModal } from './EditorModal'
 import sectionStyles from './sections/sections.module.css'
 import styles from './UnusedEntitiesDialog.module.css'
+import { t as tr } from '../../i18n'
 
 type Ticks = ReadonlySet<number>
 const NONE: Ticks = new Set()
@@ -53,11 +54,10 @@ export function UnusedEntitiesDialog({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <EditorModal title="Unused people & tags" onClose={onClose}>
+    <EditorModal title={tr('ui.unused_people_tags')} onClose={onClose}>
       <div className={`${sectionStyles.section} ${styles.body}`} data-testid="unused-entities">
         <p className={sectionStyles.help}>
-          People and tags no task has. Tick the ones to remove.
-        </p>
+          {tr('ui.people_and_tags_no_task_has')}</p>
         <div className={styles.checkLine}>
           <input
             id={ignoreId}
@@ -67,16 +67,16 @@ export function UnusedEntitiesDialog({ onClose }: { onClose: () => void }) {
             onChange={(e) => setIgnoreCompleted(e.target.checked)}
           />
           <span className={styles.checkText}>
-            <label htmlFor={ignoreId}>Ignore completed tasks</label>
-            <span id={`${ignoreId}-help`} className={sectionStyles.help}>Also list people and tags that only completed tasks have.</span>
+            <label htmlFor={ignoreId}>{tr('ui.ignore_completed_tasks')}</label>
+            <span id={`${ignoreId}-help`} className={sectionStyles.help}>{tr('ui.also_list_people_and_tags_that')}</span>
           </span>
         </div>
         {!ready ? (
-          <p className={sectionStyles.muted}>Looking for unused people and tags…</p>
+          <p className={sectionStyles.muted}>{tr('ui.looking_for_unused_people_and_tags')}</p>
         ) : (
           <div className={styles.groups}>
             <UnusedGroup<Person>
-              title="People"
+              title={tr('ui.people')}
               noun="people"
               empty="No unused people"
               entries={people}
@@ -89,7 +89,7 @@ export function UnusedEntitiesDialog({ onClose }: { onClose: () => void }) {
               )}
             />
             <UnusedGroup<Tag>
-              title="Tags"
+              title={tr('ui.tags')}
               noun="tags"
               empty="No unused tags"
               entries={tags}
@@ -164,8 +164,7 @@ function UnusedGroup<E extends { name: string }>({ title, noun, empty, entries, 
               checked={all}
               onChange={() => onTicked(all ? NONE : new Set(entries.map((e) => e.id)))}
             />
-            Select all
-          </label>
+            {tr('ui.select_all')}</label>
         )}
       </div>
       {entries.length === 0 ? (

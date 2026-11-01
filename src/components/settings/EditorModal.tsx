@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from 'react'
 import { DialogFrame, type DialogInitialFocus, type DialogLayer } from '../shared/Dialog'
 import styles from './EntityEditor.module.css'
+import { t } from '../../i18n'
 
 export interface EditorModalProps {
   title: ReactNode
@@ -32,7 +33,7 @@ export function EditorModal({ title, onClose, children, className, initialFocus,
     >
       <div className={styles.header}>
         <div id={titleId} className={styles.title}>{title}</div>
-        <button type="button" className={styles.closeBtn} onClick={onClose}>&times;</button>
+        <button type="button" className={styles.closeBtn} onClick={onClose}>{t('ui.c397')}</button>
       </div>
       {children}
     </DialogFrame>

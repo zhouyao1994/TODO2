@@ -9,16 +9,17 @@ import { BandDivider } from './BandDivider'
 import { AddWidgetButtons } from './AddWidgetFlow'
 import { useWorkspaceDrag } from './workspace-drag'
 import styles from './WorkspaceView.module.css'
+import { t } from '../../i18n'
 
 function EmptyLayout() {
   return (
     <div className={styles.emptyLayout}>
-      <p className={styles.emptyTitle}>This layout is empty</p>
-      <p className={styles.emptyHint}>Pick a widget to start the first column.</p>
+      <p className={styles.emptyTitle}>{t('ui.this_layout_is_empty')}</p>
+      <p className={styles.emptyHint}>{t('ui.pick_a_widget_to_start_the')}</p>
       <div className={styles.tiles}>
         <AddWidgetButtons target={{ kind: 'layout' }} buttonClassName={styles.tile} iconClassName={styles.tileIcon} iconSize={16} />
       </div>
-      <p className={styles.emptyHint}>Or open another layout from the top bar.</p>
+      <p className={styles.emptyHint}>{t('ui.or_open_another_layout_from_the')}</p>
     </div>
   )
 }
@@ -51,7 +52,7 @@ function Column({ column }: { column: LayoutColumn }) {
                 onResize={setCellWeights}
                 onResizeEnd={endResize}
                 onCollapse={(id) => { void setCellCollapsed(id, true) }}
-                label="Resize cells"
+                label={t('ui.resize_cells')}
               />
             ))}
             <WorkspaceCell cell={cell} style={style} />
@@ -176,7 +177,7 @@ export function WorkspaceView({ layout }: { layout: WorkspaceLayout }) {
                       min={COLUMN_MIN_PX}
                       onResize={setColumnWeights}
                       onResizeEnd={endResize}
-                      label="Resize columns"
+                      label={t('ui.resize_columns')}
                     />
                   )}
                   <Column column={column} />

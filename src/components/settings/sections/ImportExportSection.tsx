@@ -16,6 +16,7 @@ import { plural } from './plural'
 import styles from './sections.module.css'
 import { dayKey } from '../../../utils/date'
 import { restoreFromImport } from '../../../services/replace-data'
+import { t } from '../../../i18n'
 
 /** Pending append import: the prepared file waiting in the duplicate picker. */
 interface PendingAppend {
@@ -205,31 +206,27 @@ export function ImportExportSection() {
 
   return (
     <div className={styles.section}>
-      <SettingRow label="Export" help="A full backup (JSON) you can import again, or a readable Markdown list.">
+      <SettingRow label={t('ui.export')} help={t('ui.a_full_backup_json_you_can')}>
         <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} onClick={handleExport}>
-          Export JSON
-        </button>
+          {t('ui.export_json')}</button>
         <button type="button" className={secondary} onClick={handleExportMarkdown}>
-          Export Markdown
-        </button>
+          {t('ui.export_markdown')}</button>
       </SettingRow>
-      <SettingRow label="Import" help="Import JSON replaces all data with a backup. Append adds the tasks from a backup or task archive.">
+      <SettingRow label={t('ui.import')} help={t('ui.import_json_replaces_all_data_with')}>
         <button
           type="button"
           className={secondary}
           onClick={() => pickJsonFile(importRef.current, doImport)}
-          title="Replace all data with a full backup"
+          title={t('ui.replace_all_data_with_a_full')}
         >
-          Import JSON
-        </button>
+          {t('ui.import_json')}</button>
         <button
           type="button"
           className={secondary}
           onClick={() => pickJsonFile(appendImportRef.current, doAppendImport)}
-          title="Add the tasks from a task archive or backup to your current data"
+          title={t('ui.add_the_tasks_from_a_task')}
         >
-          Import tasks (append)…
-        </button>
+          {t('ui.import_tasks_append')}</button>
         <input
           ref={importRef}
           type="file"
@@ -259,10 +256,9 @@ export function ImportExportSection() {
       {message && <div className={styles.successMsg}>{message}</div>}
       {exportWarning && (
         <div className={`${styles.errorMsg} ${styles.exportWarning}`} role="alert" data-testid="export-self-check-warning">
-          <span>The file was saved, but it would not import back: {exportWarning}</span>
+          <span>{t('ui.the_file_was_saved_but_it')}{' '}{exportWarning}</span>
           <button type="button" className={secondary} onClick={() => setExportWarning(null)}>
-            Dismiss
-          </button>
+            {t('ui.dismiss')}</button>
         </div>
       )}
 

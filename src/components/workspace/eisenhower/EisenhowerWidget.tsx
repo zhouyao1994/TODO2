@@ -62,6 +62,7 @@ import { openEditList } from '../widget-hooks'
 import { countOpen, useEisenhowerSource, type ListSourceContext } from '../../../hooks/use-eisenhower-source'
 import { openEisenhowerSettings } from './eisenhower-settings-link'
 import { SELECTION_SCOPE_ATTR } from '../../../utils/dom-contract'
+import { t as tr } from '../../../i18n'
 
 /** Below this cell width the quadrants stack as collapsible sections. */
 export const EISENHOWER_STACK_BREAKPOINT_PX = 560
@@ -290,7 +291,7 @@ function Quadrant({ pane, subtitle, addHint: hint, tasks, openCount, stacked, co
       {stacked && <span className={styles.chevron} aria-hidden="true"><ChevronDownIcon /></span>}
       <PaneGlyphs pane={pane} />
       <span className={styles.name}>{pane.name}</span>
-      {pane.customFilter && <span className={styles.customDot} role="img" aria-label="custom filter" title="This pane’s filter differs from its default" data-testid="eisenhower-pane-custom" />}
+      {pane.customFilter && <span className={styles.customDot} role="img" aria-label={tr('ui.custom_filter')} title={tr('ui.this_panes_filter_differs_from_its')} data-testid="eisenhower-pane-custom" />}
       <span className={styles.subtitle} data-testid="eisenhower-pane-subtitle">{subtitle}</span>
     </>
   )
@@ -548,21 +549,19 @@ function EisenhowerBody({ tab, onResult, shown, openTotal, list }: BodyProps) {
         ))}
         {listHidesAll && !drag && (
           <div className={styles.notePanel} role="status">
-            <span className={styles.noteTitle}>No tasks match</span>
+            <span className={styles.noteTitle}>{tr('ui.no_tasks_match')}</span>
             <span className={styles.noteHint}>
-              All {list.appOpen} open {tasksAre(list.appOpen)} hidden by the filters of “{list.title}”.
+              {tr('ui.all')}{' '}{list.appOpen} {tr('ui.open_2')}{' '}{tasksAre(list.appOpen)} {tr('ui.hidden_by_the_filters_of')}{list.title}”.
             </span>
             <button type="button" className={styles.noteAction} onClick={() => openEditList(tab.id, list.definition.id)}>
-              Edit list
-            </button>
+              {tr('ui.edit_list_2')}</button>
           </div>
         )}
         {screenHidesAll && !drag && (
           <div className={styles.notePanel} role="status">
-            <span className={styles.noteTitle}>No tasks match</span>
+            <span className={styles.noteTitle}>{tr('ui.no_tasks_match')}</span>
             <span className={styles.noteHint}>
-              All {openTotal} open {tasksAre(openTotal, list?.narrows ? ` in “${list.title}”` : '')} hidden by the screen filter.
-            </span>
+              {tr('ui.all')}{' '}{openTotal} {tr('ui.open_2')}{' '}{tasksAre(openTotal, list?.narrows ? ` in “${list.title}”` : '')} {tr('ui.hidden_by_the_screen_filter')}</span>
             <button type="button" className={styles.noteAction} onClick={() => useFilterStore.getState().clearAll()}>
               {filterCount === 1 ? 'Clear screen filter' : 'Clear screen filters'}
             </button>
@@ -585,8 +584,7 @@ function EisenhowerBody({ tab, onResult, shown, openTotal, list }: BodyProps) {
           data-testid="eisenhower-no-pane"
           onClick={() => useUIStore.getState().showTaskDialog(noPaneTaskDialog(noneOpen.map((t) => t.id)))}
         >
-          {noneOpen.length} open {noneOpen.length === 1 ? 'task' : 'tasks'} in no pane
-        </button>
+          {noneOpen.length} {tr('ui.open_2')}{' '}{noneOpen.length === 1 ? 'task' : 'tasks'} {tr('ui.in_no_pane')}</button>
       )}
       {paneMenu && paneMenuEntries.length > 0 && (
         <MenuPopover

@@ -10,6 +10,7 @@ import { LayoutTabs } from './LayoutTabs'
 import { UnsavedPrompt } from './UnsavedPrompt'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CopyIcon, LayoutIcon, PencilIcon, PlusIcon, RevertIcon, SaveIcon, TrashIcon } from '../shared/icons'
 import styles from './LayoutControls.module.css'
+import { t } from '../../i18n'
 
 /** How the top bar shows the layouts: one tab each, or folded into the picker's drop-down. */
 export type LayoutControlsMode = 'tabs' | 'menu'
@@ -190,7 +191,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
         <MenuPopover
           anchorRef={pickerRef}
           width={260}
-          label="Layouts"
+          label={t('ui.layouts')}
           entries={pickerEntries}
           onReorder={(dragId, to) => { void store().moveLayout(Number(dragId), to) }}
           onClose={() => setMenuOpen(false)}
@@ -219,10 +220,10 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       )}
       {pending?.kind === 'new-name' && (
         <LayoutNameDialog
-          title="New layout"
+          title={t('ui.new_layout')}
           confirmLabel="Create layout"
           initialName=""
-          placeholder="Layout name"
+          placeholder={t('ui.layout_name')}
           onConfirm={(n) => {
             if (unsaved) setPending({ kind: 'new-confirm', name: n })
             else { close(); create(n) }
@@ -241,7 +242,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       )}
       {pending?.kind === 'save-as' && (
         <LayoutNameDialog
-          title="Save as new layout"
+          title={t('ui.save_as_new_layout')}
           confirmLabel="Save layout"
           initialName={`${name} copy`}
           onConfirm={(n) => { close(); void store().saveAs(n) }}
@@ -250,7 +251,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       )}
       {pending?.kind === 'save-new' && (
         <LayoutNameDialog
-          title="Save layout"
+          title={t('ui.save_layout')}
           confirmLabel="Save layout"
           initialName={name}
           onConfirm={(n) => { close(); void store().saveAs(n) }}
@@ -259,7 +260,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       )}
       {pending?.kind === 'rename' && (
         <LayoutNameDialog
-          title="Rename layout"
+          title={t('ui.rename_layout')}
           confirmLabel="Rename"
           initialName={pending.name}
           onConfirm={(n) => { close(); void store().rename(pending.id ?? UNSAVED_LAYOUT_ID, n) }}

@@ -15,6 +15,7 @@ import {
 } from './FilterChipBar.shared'
 import { byName } from '../../../utils/sort-order'
 import { splitOnTop, usePickerOrder } from '../../../hooks/use-picker-order'
+import { t } from '../../../i18n'
 
 type MobileSection = EntityKey | 'markers' | 'toggles' | 'date'
 
@@ -155,7 +156,7 @@ function MobileEntityList({
         value={searchText}
         onClear={() => onSearchChange('')}
         inputRef={searchRef}
-        label="Clear search"
+        label={t('ui.clear_search')}
       >
         <input
           ref={searchRef}
@@ -266,7 +267,7 @@ export function FilterChipBarMobile({
               onClick={() => update({ markers: toggleHot(p.markers) })}
               role="switch"
               aria-checked={hot}
-              aria-label="Only hot tasks"
+              aria-label={t('ui.only_hot_tasks')}
             />
           </div>
           {MARKER_KEYS.map((key) => (
@@ -283,7 +284,7 @@ export function FilterChipBarMobile({
 
       {/* Tags */}
       <AccordionSection
-        label="Tags"
+        label={t('ui.tags')}
         badge={sectionCount('tags', tagIdsSet)}
         value={notValues.tags}
         valueOn
@@ -293,7 +294,7 @@ export function FilterChipBarMobile({
         {sortedTags.length === 0 ? (
           <div className={sheet.entityList}>
             <div className={sheet.entityItem}>
-              <span className={`${sheet.entityName} ${sheet.entityNone}`}>No tags yet.</span>
+              <span className={`${sheet.entityName} ${sheet.entityNone}`}>{t('ui.no_tags_yet_2')}</span>
             </div>
           </div>
         ) : (
@@ -316,7 +317,7 @@ export function FilterChipBarMobile({
       {/* People */}
       {people.length > 0 && (
         <AccordionSection
-          label="People"
+          label={t('ui.people')}
           badge={sectionCount('people', personIdsSet)}
           value={notValues.people}
           valueOn
@@ -340,7 +341,7 @@ export function FilterChipBarMobile({
 
       {/* Dates: the date panel at touch sizes */}
       <AccordionSection
-        label="Dates"
+        label={t('ui.dates')}
         value={dates ?? 'Any'}
         valueOn={dates != null}
         open={openSection === 'date'}
@@ -354,7 +355,7 @@ export function FilterChipBarMobile({
       {/* Status */}
       {statuses.length > 0 && (
         <AccordionSection
-          label="Status"
+          label={t('ui.status')}
           badge={sectionCount('status', statusIdsSet)}
           value={notValues.status}
           valueOn
@@ -378,7 +379,7 @@ export function FilterChipBarMobile({
 
       {/* Toggles section */}
       <AccordionSection
-        label="Show / hide"
+        label={t('ui.show_hide')}
         badge={p.showCompleted ? 1 : 0}
         open={openSection === 'toggles'}
         onToggle={() => handleSection('toggles')}
@@ -387,14 +388,13 @@ export function FilterChipBarMobile({
           <div className={sheet.filterRow}>
             <span className={sheet.filterLabel}>
               <span className={sheet.filterLabelIcon}>✓</span>
-              Completed
-            </span>
+              {t('ui.completed')}</span>
             <button
               className={`${sheet.toggle} ${p.showCompleted ? sheet.toggleActive : ''}`}
               onClick={() => update({ showCompleted: !p.showCompleted })}
               role="switch"
               aria-checked={p.showCompleted}
-              aria-label="Show completed"
+              aria-label={t('ui.show_completed')}
             />
           </div>
         </div>
@@ -402,8 +402,7 @@ export function FilterChipBarMobile({
 
       {showClearAll && active && (
         <button className={sheet.clearButton} onClick={clearAll}>
-          Clear all filters
-        </button>
+          {t('ui.clear_all_filters')}</button>
       )}
     </>
   )

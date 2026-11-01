@@ -5,6 +5,7 @@ import { useTooltip } from '../../shared/use-tooltip'
 import { RevertIcon, SaveIcon } from '../../shared/icons'
 import { EDIT_LIST_KEEP_ATTR } from './edit-list-keep'
 import styles from './ListFilterRow.module.css'
+import { t } from '../../../i18n'
 
 /**
  * The filter line's Revert · Save for a list with unsaved edits. The edits
@@ -25,14 +26,14 @@ export function ListDraftButtons({ listDefinitionId }: { listDefinitionId: numbe
       <button
         type="button"
         className={`${styles.draftButton} ${styles.revertButton}`}
-        aria-label="Revert list changes"
+        aria-label={t('ui.revert_list_changes')}
         data-testid="revert-list"
         {...{ [EDIT_LIST_KEEP_ATTR]: listDefinitionId }}
         onClick={() => useListDraftStore.getState().revert(listDefinitionId)}
         {...revertTip.triggerProps}
       >
         <RevertIcon size={12} />
-        <span className={styles.draftLabel}>Revert</span>
+        <span className={styles.draftLabel}>{t('ui.revert')}</span>
       </button>
       {revertTip.tooltip}
       <button
@@ -46,7 +47,7 @@ export function ListDraftButtons({ listDefinitionId }: { listDefinitionId: numbe
         {...saveTip.triggerProps}
       >
         <SaveIcon size={12} />
-        <span className={styles.draftLabel}>Save</span>
+        <span className={styles.draftLabel}>{t('ui.save')}</span>
       </button>
       {saveTip.tooltip}
     </>

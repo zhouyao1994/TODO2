@@ -5,6 +5,7 @@ import { formatFollowupDate, formatFollowupDay } from '../../../utils/followup'
 import { addDays } from '../../../utils/calendar-grid'
 import { lineMarkers, type HotRule } from '../../../utils/hot'
 import { urgentRangeLabel, type UrgentDueWithinDays } from '../../../utils/urgency'
+import { locale } from '../../../i18n'
 
 /**
  * The dashboard's words: tile sub-lines, the Hot rule in words, counts as
@@ -148,14 +149,14 @@ export function sinceLabel(start: Date, today: Date): string {
 /** A trend bar's label: the day number (daily) or `Sep 28` (weekly). */
 export function trendBucketLabel(start: Date, granularity: 'day' | 'week'): string {
   if (granularity === 'day') return String(start.getDate())
-  return start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return start.toLocaleDateString(locale(), { month: 'short', day: 'numeric' })
 }
 
 /** A Next 7 days column's labels: `Late` / `–`, `Today` / `10`, `Sun` / `11`. */
 export function nextDayLabels(date: Date | null, index: number): [string, string] {
   if (date == null) return ['Late', '–']
   if (index === 1) return ['Today', String(date.getDate())]
-  return [date.toLocaleDateString('en-US', { weekday: 'short' }), String(date.getDate())]
+  return [date.toLocaleDateString(locale(), { weekday: 'short' }), String(date.getDate())]
 }
 
 // ── The task dialog's words ──────────────────────────────────────────────────

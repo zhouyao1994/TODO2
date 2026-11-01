@@ -10,6 +10,7 @@ import { isNotesConvertOpen } from './notes/NotesConvert'
 import { TOAST_VISIBLE_MS } from '../../constants'
 import { hasModalAbove, isInLayerAbove } from '../../utils/dom-layers'
 import styles from './TaskNotePopover.module.css'
+import { t as tr } from '../../i18n'
 
 // The notes' `@ # /` popup is portalled to the body, and so are the notes →
 // tasks dialogs and anything opened above the popover (the popup's person /
@@ -165,10 +166,10 @@ export function TaskNotePopover({ todoId, anchorRef, onClose }: TaskNotePopoverP
       onDoubleClick={(e) => e.stopPropagation()}
       onContextMenu={(e) => e.stopPropagation()}
       role="dialog"
-      aria-label="Progress and notes"
+      aria-label={tr('ui.progress_and_notes')}
     >
       <div className={styles.progress}>
-        <label className={styles.label} htmlFor={progressId}>Progress</label>
+        <label className={styles.label} htmlFor={progressId}>{tr('ui.progress')}</label>
         <input
           id={progressId}
           ref={progressRef}
@@ -182,11 +183,11 @@ export function TaskNotePopover({ todoId, anchorRef, onClose }: TaskNotePopoverP
           onKeyDown={onProgressKeyDown}
         />
       </div>
-      <div className={`${styles.label} ${styles.notesLabel}`}>Notes</div>
+      <div className={`${styles.label} ${styles.notesLabel}`}>{tr('ui.notes')}</div>
       <NotesBody
         source={notes.source}
         showToolbar
-        placeholder="Add notes…"
+        placeholder={tr('ui.add_notes_2')}
         onConvertToast={handleToast}
       />
       {toast && <div className={styles.toast}>{toast}</div>}

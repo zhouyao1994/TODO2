@@ -49,6 +49,7 @@ import { CUSTOMIZE_PANES_LABEL, openEisenhowerSettings } from './eisenhower/eise
 import { useDashboardMenuActions } from './dashboard/dashboard-menu'
 import { DashGlyph } from '../shared/DashGlyph'
 import styles from './WorkspaceCell.module.css'
+import { t as tr } from '../../i18n'
 
 function anchorBelow(ref: RefObject<HTMLElement | null>): { x: number; y: number } {
   const r = ref.current?.getBoundingClientRect()
@@ -74,17 +75,17 @@ function EmptyCell({ cell, style }: { cell: LayoutCell; style?: CSSProperties })
       style={style}
       data-ws-cell={cell.id}
       data-empty="true"
-      aria-label="Empty cell"
+      aria-label={tr('ui.empty_cell')}
     >
-      <button type="button" className={styles.emptyClose} aria-label="Close empty cell" title="Close cell" onClick={() => closeCell(cell.id)}>
+      <button type="button" className={styles.emptyClose} aria-label={tr('ui.close_empty_cell')} title={tr('ui.close_cell')} onClick={() => closeCell(cell.id)}>
         <CloseIcon size={12} />
       </button>
       <span className={styles.emptyPlus}><PlusIcon size={16} /></span>
-      <span className={styles.emptyTitle}>Add a widget</span>
+      <span className={styles.emptyTitle}>{tr('ui.add_a_widget')}</span>
       <div className={styles.kindRow}>
         <AddWidgetButtons target={{ kind: 'cell', cellId: cell.id }} buttonClassName={styles.kindButton} iconClassName={styles.kindButtonIcon} />
       </div>
-      <span className={styles.emptyHint}>or drag a tab here</span>
+      <span className={styles.emptyHint}>{tr('ui.or_drag_a_tab_here')}</span>
     </section>
   )
 }
@@ -100,21 +101,21 @@ export function EmptyColumnArea() {
     <section
       className={`${styles.emptyCell} ${styles.emptyColumns} ${over ? styles.emptyCellOver : ''}`}
       data-ws-columns-empty
-      aria-label="No columns"
+      aria-label={tr('ui.no_columns')}
     >
       <span className={styles.emptyPlus}><PlusIcon size={16} /></span>
-      <span className={styles.emptyTitle}>Add a widget</span>
+      <span className={styles.emptyTitle}>{tr('ui.add_a_widget')}</span>
       <div className={styles.kindRow}>
         <AddWidgetButtons target={{ kind: 'layout' }} buttonClassName={styles.kindButton} iconClassName={styles.kindButtonIcon} />
       </div>
-      <span className={styles.emptyHint}>or drag a tab here</span>
+      <span className={styles.emptyHint}>{tr('ui.or_drag_a_tab_here')}</span>
     </section>
   )
 }
 
 /** What the middle of a body adds while a tab or a panel is dragged over it. */
 function joinLabel(panelDrag: boolean, count: number) {
-  return panelDrag ? <>Merge {tabsCount(count)} here</> : <><PlusIcon size={12} strokeWidth={2} /> Add as tab</>
+  return panelDrag ? <>{tr('ui.merge')}{' '}{tabsCount(count)} {tr('ui.here')}</> : <><PlusIcon size={12} strokeWidth={2} /> {tr('ui.add_as_tab')}</>
 }
 
 /** Scrim + three drop zones shown over a cell body while a tab or panel is dragged over it. */
@@ -122,9 +123,9 @@ function DropZones({ zone, accepts, join }: { zone: 'top' | 'middle' | 'bottom';
   const cls = (z: typeof zone) => `${styles.zone} ${accepts && zone === z ? styles.zoneActive : ''}`
   return (
     <div className={styles.zones} aria-hidden="true" data-testid="ws-drop-zones" data-active-zone={accepts ? zone : ''}>
-      <div className={cls('top')}>New cell above</div>
+      <div className={cls('top')}>{tr('ui.new_cell_above')}</div>
       <div className={cls('middle')}>{join}</div>
-      <div className={cls('bottom')}>New cell below</div>
+      <div className={cls('bottom')}>{tr('ui.new_cell_below')}</div>
     </div>
   )
 }
@@ -377,7 +378,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
               className={styles.action}
               aria-label={`Collapse ${noun}`}
               aria-expanded={true}
-              title="Collapse"
+              title={tr('ui.collapse')}
               onClick={() => { void setCellCollapsed(cell.id, true) }}
             >
               <ChevronUpIcon />

@@ -1,6 +1,7 @@
 import type { AutocompleteRow, AutocompleteState } from '../../hooks/use-nlp-autocomplete'
 import { NlpPopup } from '../shared/NlpPopup'
 import styles from './TaskEditPopup.module.css'
+import { t } from '../../i18n'
 
 interface TaskEditHeaderProps {
   isEdit: boolean
@@ -59,10 +60,9 @@ export function TaskEditHeader({
           />
         )}
       </div>
-      {isDraft && <span className={styles.draftBadge}>Draft</span>}
-      <button className={styles.closeButton} onClick={onClose} aria-label="Close">
-        ×
-      </button>
+      {isDraft && <span className={styles.draftBadge}>{t('ui.draft')}</span>}
+      <button className={styles.closeButton} onClick={onClose} aria-label={t('ui.close')}>
+        {t('ui.c397')}</button>
     </div>
   )
 }

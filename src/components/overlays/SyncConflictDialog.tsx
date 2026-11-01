@@ -2,6 +2,7 @@ import { useId, useState, type ReactNode } from 'react'
 import type { SyncConflictInfo, SyncConflictChoice } from '../../services/file-storage'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import styles from './FileSyncDialogs.module.css'
+import { t } from '../../i18n'
 
 interface SyncConflictDialogProps {
   info: SyncConflictInfo
@@ -63,11 +64,10 @@ export function SyncConflictDialog({ info, onChoose }: SyncConflictDialogProps) 
       onClose={() => onChoose('cancel')}
       blockBackdropClose
       size="md"
-      title="Browser data and sync file differ"
+      title={t('ui.browser_data_and_sync_file_differ')}
     >
       <DialogBody>
-        {intro} Choose which version to keep — the other one is replaced. Nothing has changed yet.
-        <div className={styles.sides} data-testid="sync-conflict-sides" role="radiogroup" aria-label="Version to keep">
+        {intro} {t('ui.choose_which_version_to_keep_the')}<div className={styles.sides} data-testid="sync-conflict-sides" role="radiogroup" aria-label={t('ui.version_to_keep')}>
           {card('browser', 'This browser', (
             <>
               <span className={styles.sideLine}>{tasks(browser.taskCount)}</span>
@@ -76,30 +76,28 @@ export function SyncConflictDialog({ info, onChoose }: SyncConflictDialogProps) 
                   ? `Unsaved changes since ${formatTime(browser.unsyncedSince)}`
                   : 'No unsaved changes recorded'}
               </span>
-              <span className={styles.sideLine}>Schema v{browser.schemaVersion}</span>
+              <span className={styles.sideLine}>{t('ui.schema_v')}{browser.schemaVersion}</span>
             </>
           ))}
           {card('file', info.fileName, (
             <>
               <span className={styles.sideLine}>{tasks(file.taskCount)}</span>
               <span className={styles.sideLine}>
-                Saved {formatTime(file.savedAt ?? file.lastModified)}
+                {t('ui.saved')}{' '}{formatTime(file.savedAt ?? file.lastModified)}
               </span>
               <span className={styles.sideLine}>
-                Schema v{file.schemaVersion ?? '?'}{fileOlder ? ' (older format)' : ''}
+                {t('ui.schema_v')}{file.schemaVersion ?? '?'}{fileOlder ? ' (older format)' : ''}
               </span>
             </>
           ))}
         </div>
         <div className={styles.note}>
-          A backup of the side being replaced is saved first (Settings → Database → Backups).
-          {fileOlder ? ` Either choice saves the file in the v${browser.schemaVersion} format, which older TODO2 builds can't open.` : ''}
+          {t('ui.a_backup_of_the_side_being')}{fileOlder ? ` Either choice saves the file in the v${browser.schemaVersion} format, which older TODO2 builds can't open.` : ''}
         </div>
       </DialogBody>
       <DialogActions>
         <button className={styles.cancelButton} onClick={() => onChoose('cancel')}>
-          Cancel (pause sync)
-        </button>
+          {t('ui.cancel_pause_sync')}</button>
         <button
           className={styles.primaryButton}
           disabled={picked === null}

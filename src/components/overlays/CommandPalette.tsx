@@ -3,6 +3,7 @@ import Fuse, { type FuseResult } from 'fuse.js'
 import type { Command, CommandCategory } from '../../services/command-registry'
 import { DialogFrame } from '../shared/Dialog'
 import styles from './CommandPalette.module.css'
+import { t, translateText } from '../../i18n'
 
 interface CommandPaletteProps {
   commands: Command[]
@@ -126,14 +127,14 @@ export function CommandPalette({ commands, onSearchDynamic, onClose }: CommandPa
     for (const cat of CATEGORY_ORDER) {
       const items = results.filter((r) => r.category === cat)
       if (items.length > 0) {
-        groups.push({ category: cat, label: CATEGORY_LABELS[cat], items })
+        groups.push({ category: cat, label: translateText(CATEGORY_LABELS[cat]), items })
         seen.add(cat)
       }
     }
     // Any categories not in the predefined order
     for (const item of results) {
       if (!seen.has(item.category)) {
-        groups.push({ category: item.category, label: item.category, items: results.filter((r) => r.category === item.category) })
+        groups.push({ category: item.category, label: translateText(item.category), items: results.filter((r) => r.category === item.category) })
         seen.add(item.category)
       }
     }
@@ -184,7 +185,7 @@ export function CommandPalette({ commands, onSearchDynamic, onClose }: CommandPa
       // Top-anchored, not centred.
       style={{ marginTop: '10vh' }}
       initialFocus={inputRef}
-      aria-label="Command palette"
+      aria-label={t('ui.command_palette')}
     >
         <div className={styles.inputRow}>
           <input
@@ -197,7 +198,7 @@ export function CommandPalette({ commands, onSearchDynamic, onClose }: CommandPa
               setActiveIndex(0)
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search tasks, commands... (> for commands only)"
+            placeholder={t('ui.search_tasks_commands_for_commands_only')}
             role="combobox"
             aria-expanded
             aria-controls={listboxId}
@@ -209,7 +210,7 @@ export function CommandPalette({ commands, onSearchDynamic, onClose }: CommandPa
 
         <div className={styles.results} role="listbox" id={listboxId}>
           {flatResults.length === 0 && (
-            <div className={styles.empty}>No matching results</div>
+            <div className={styles.empty}>{t('ui.no_matching_results')}</div>
           )}
           {grouped.map((group) => (
             <div key={group.category} role="group" aria-label={group.label}>
@@ -249,10 +250,10 @@ export function CommandPalette({ commands, onSearchDynamic, onClose }: CommandPa
         </div>
 
         <div className={styles.footer}>
-          <span><span className={styles.footerKey}>↑↓</span> Navigate</span>
-          <span><span className={styles.footerKey}>Enter</span> Select</span>
-          <span><span className={styles.footerKey}>Esc</span> Close</span>
-          <span><span className={styles.footerKey}>&gt;</span> Commands only</span>
+          <span><span className={styles.footerKey}>↑↓</span> {t('ui.navigate')}</span>
+          <span><span className={styles.footerKey}>{t('ui.enter')}</span> {t('ui.select')}</span>
+          <span><span className={styles.footerKey}>{t('ui.esc')}</span> {t('ui.close')}</span>
+          <span><span className={styles.footerKey}>&gt;</span> {t('ui.commands_only')}</span>
         </div>
     </DialogFrame>
   )

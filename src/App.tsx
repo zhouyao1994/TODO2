@@ -49,6 +49,7 @@ const WorkspacePage = lazy(() => import('./views/WorkspacePage').then(m => ({ de
 import styles from './App.module.css'
 import './styles/fonts.css'
 import './styles/tokens.css'
+import { t } from './i18n'
 
 /**
  * The command palette, mounted while it shows (so the shell never re-renders
@@ -345,10 +346,10 @@ function AppShell() {
   if (initError) {
     return (
       <div className={styles.initError}>
-        <h2>Failed to start TODO2</h2>
-        <p>The database could not be opened. This can happen in private browsing mode, if storage is full, or if the database is corrupted.</p>
+        <h2>{t('ui.failed_to_start_todo2')}</h2>
+        <p>{t('ui.the_database_could_not_be_opened')}</p>
         <code>{initError}</code>
-        <p>Try reloading the page, or clearing site data in your browser settings.</p>
+        <p>{t('ui.try_reloading_the_page_or_clearing')}</p>
       </div>
     )
   }
@@ -359,8 +360,7 @@ function AppShell() {
     return (
       <div className={styles.initLoading} data-testid="start-screen">
         <div className={styles.spinner} />
-        Loading…
-      </div>
+        {t('ui.loading')}</div>
     )
   }
 
@@ -387,7 +387,7 @@ function AppShell() {
       </div>
       {showFab && (
         <div className={styles.fabGroup}>
-          <button className={styles.fab} onClick={() => useUIStore.getState().openQuickAdd()} aria-label="Quick add" title={`Quick add (${quickAddKeys})`}>
+          <button className={styles.fab} onClick={() => useUIStore.getState().openQuickAdd()} aria-label={t('ui.quick_add')} title={`Quick add (${quickAddKeys})`}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <line x1="9" y1="3" x2="9" y2="15" />
               <line x1="3" y1="9" x2="15" y2="9" />
@@ -451,8 +451,7 @@ export default function App() {
     return (
       <div className={styles.initLoading}>
         <div className={styles.spinner} />
-        Loading…
-      </div>
+        {t('ui.loading')}</div>
     )
   }
 

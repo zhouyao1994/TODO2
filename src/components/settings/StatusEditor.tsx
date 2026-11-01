@@ -26,6 +26,7 @@ import { useSortableRow, useSortableReorderHandler } from '../../hooks/use-sorta
 import { bySortOrder } from '../../utils/sort-order'
 import { EditorModal } from './EditorModal'
 import styles from './EntityEditor.module.css'
+import { t } from '../../i18n'
 
 interface EditState {
   id: number
@@ -97,7 +98,7 @@ function SortableStatusRow({ status, onEdit, onDelete }: {
       </span>
       <span className={styles.nameEditable} onClick={() => onEdit(status)}>{status.name}</span>
       <div className={styles.actions}>
-        <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => onDelete(status.id)} title="Delete">&times;</button>
+        <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => onDelete(status.id)} title={t('ui.delete')}>{t('ui.c397')}</button>
       </div>
     </div>
   )
@@ -207,21 +208,21 @@ export function StatusEditor({ onClose }: StatusEditorProps) {
 
   return (
     <>
-      <EditorModal title="Statuses" onClose={onClose}>
+      <EditorModal title={t('ui.statuses')} onClose={onClose}>
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Search statuses..."
+          placeholder={t('ui.search_statuses')}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
 
         <div className={styles.list}>
           {sorted.length === 0 && !adding && (
-            <div className={styles.empty}>No statuses yet</div>
+            <div className={styles.empty}>{t('ui.no_statuses_yet')}</div>
           )}
           {sorted.length > 0 && visible.length === 0 && (
-            <div className={styles.empty}>No matching statuses</div>
+            <div className={styles.empty}>{t('ui.no_matching_statuses')}</div>
           )}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={visibleIds} strategy={verticalListSortingStrategy}>
@@ -237,12 +238,12 @@ export function StatusEditor({ onClose }: StatusEditorProps) {
                           className={styles.editInput}
                           value={ed.name}
                           onChange={(e) => { setEditing({ ...ed, name: e.target.value }); setNameError('') }}
-                          placeholder="Status name"
+                          placeholder={t('ui.status_name')}
                           autoFocus
                         />
                         <div className={styles.editActions}>
-                          <button className={styles.saveBtn} onClick={saveEdit}>Save</button>
-                          <button className={styles.cancelBtn} onClick={() => { setEditing(null); setNameError('') }}>Cancel</button>
+                          <button className={styles.saveBtn} onClick={saveEdit}>{t('ui.save')}</button>
+                          <button className={styles.cancelBtn} onClick={() => { setEditing(null); setNameError('') }}>{t('ui.cancel')}</button>
                         </div>
                       </div>
                       {nameError && <div className={styles.errorHint}>{nameError}</div>}
@@ -272,18 +273,18 @@ export function StatusEditor({ onClose }: StatusEditorProps) {
                 className={styles.editInput}
                 value={newName}
                 onChange={(e) => { setNewName(e.target.value); setNameError('') }}
-                placeholder="Status name"
+                placeholder={t('ui.status_name')}
                 autoFocus
               />
               <div className={styles.editActions}>
-                <button className={styles.saveBtn} onClick={saveAdd}>Add</button>
-                <button className={styles.cancelBtn} onClick={() => { setAdding(false); setNameError('') }}>Cancel</button>
+                <button className={styles.saveBtn} onClick={saveAdd}>{t('ui.add_2')}</button>
+                <button className={styles.cancelBtn} onClick={() => { setAdding(false); setNameError('') }}>{t('ui.cancel')}</button>
               </div>
             </div>
             {nameError && <div className={styles.errorHint}>{nameError}</div>}
           </div>
         ) : (
-          <button className={styles.addBtn} onClick={startAdd}>+ Add Status</button>
+          <button className={styles.addBtn} onClick={startAdd}>{t('ui.add_status')}</button>
         )}
       </EditorModal>
       {deleteId != null && (() => {
@@ -292,10 +293,10 @@ export function StatusEditor({ onClose }: StatusEditorProps) {
         return (
           <ConfirmDialog
             open
-            title="Delete status"
+            title={t('ui.delete_status')}
             message={
               <>
-                Delete <strong>{target.name}</strong>?
+                {t('ui.delete')}{' '}<strong>{target.name}</strong>?
                 {deleteCount > 0 && ` Used on ${deleteCount} task${deleteCount !== 1 ? 's' : ''}.`}
               </>
             }

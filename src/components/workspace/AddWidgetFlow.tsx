@@ -1,4 +1,5 @@
 import { WIDGET_KIND_SPECS, WIDGET_KINDS, widgetKindLabel, type WidgetKind } from '../../models/workspace-layout'
+import { translateText } from '../../i18n'
 import type { LayoutDropTarget } from '../../utils/workspace-layout-ops'
 import { WidgetKindMenu } from '../shared/WidgetKindMenu'
 import { WidgetKindIcon } from '../shared/icons'
@@ -42,7 +43,7 @@ export function AddWidgetFlow({ target, anchor, onClose }: AddWidgetFlowProps) {
   return (
     <WidgetKindMenu
       anchor={anchor}
-      heading="Add widget"
+      heading={translateText('Add widget')}
       unavailableKinds={useUnavailableKinds()}
       onChangeKind={addKind}
       onClose={onClose}
@@ -76,7 +77,7 @@ export function AddWidgetButtons({ target, buttonClassName, iconClassName, iconS
           onClick={() => addKind(kind)}
         >
           <span className={iconClassName}><WidgetKindIcon kind={kind} size={iconSize} /></span>
-          {widgetKindLabel(kind)}
+          {translateText(widgetKindLabel(kind))}
         </button>
       ))}
     </>

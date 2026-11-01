@@ -1,6 +1,7 @@
 import type { TodoItem } from '../models/todo-item'
 import { daysUntil } from './effective-date'
 import { formatFollowupDay } from './followup'
+import { t } from '../i18n'
 
 /**
  * App-wide Urgent. A task is urgent when it is flagged urgent, or when its
@@ -42,13 +43,13 @@ export function formatUrgentDueWithinDays(range: UrgentDueWithinDays): string {
 
 /** `Off`, `Today`, `1 day`, `3 days`, `1 week`, `2 weeks`. */
 export function urgentRangeLabel(range: UrgentDueWithinDays): string {
-  if (range == null) return 'Off'
-  if (range === 0) return 'Today'
+  if (range == null) return t('ui.off')
+  if (range === 0) return t('ui.today')
   if (range % 7 === 0) {
     const weeks = range / 7
-    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'}`
+    return weeks === 1 ? t('ui.weeks_count_one') : t('ui.weeks_count_many', { n: weeks })
   }
-  return `${range} ${range === 1 ? 'day' : 'days'}`
+  return range === 1 ? t('ui.days_count_one') : t('ui.days_count_many', { n: range })
 }
 
 type UrgencyFields = Pick<TodoItem, 'urgent' | 'dueDate' | 'isCompleted'>

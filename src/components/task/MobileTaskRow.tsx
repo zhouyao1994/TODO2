@@ -17,6 +17,7 @@ import { useTaskRowPickers } from './use-task-row-pickers'
 import { keepRowTextUnselected } from './row-events'
 import styles from './MobileTaskRow.module.css'
 import { TODO_ID_ATTR } from '../../utils/dom-contract'
+import { t } from '../../i18n'
 
 interface MobileTaskRowProps {
   todo: PersistedTodoItem
@@ -98,7 +99,7 @@ export const MobileTaskRow = memo(function MobileTaskRow({
       type="button"
       className={`${styles.emptyFollowupAction} ${followupOpen ? styles.emptyFollowupActionOpen : ''}`}
       onClick={toggleFollowup}
-      aria-label="Set follow-up"
+      aria-label={t('ui.set_follow_up')}
       aria-haspopup="dialog"
       aria-expanded={followupOpen}
     >
@@ -126,7 +127,7 @@ export const MobileTaskRow = memo(function MobileTaskRow({
           checked={todo.isCompleted}
           onChange={handleToggleComplete}
           onClick={(e) => e.stopPropagation()}
-          aria-label="Toggle complete"
+          aria-label={t('ui.toggle_complete')}
         />
 
         <span className={styles.markers} role="img" aria-label={markers.label}>
@@ -163,7 +164,7 @@ export const MobileTaskRow = memo(function MobileTaskRow({
           )}
         </button>
 
-        <button className={styles.chevron} onClick={handleChevronTap} aria-label="Open task details">
+        <button className={styles.chevron} onClick={handleChevronTap} aria-label={t('ui.open_task_details')}>
           ▸
         </button>
       </div>
@@ -227,7 +228,7 @@ export const MobileTaskRow = memo(function MobileTaskRow({
               type="button"
               className={styles.notesIcon}
               onClick={toggleNotes}
-              aria-label="Edit progress and notes"
+              aria-label={t('ui.edit_progress_and_notes')}
             >
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 1.5h6.5L13 5v9a0.5 0.5 0 0 1-0.5 0.5h-9.5A0.5 0.5 0 0 1 2.5 14V2a0.5 0.5 0 0 1 0.5-0.5Z" />
@@ -256,7 +257,7 @@ export const MobileTaskRow = memo(function MobileTaskRow({
             type="button"
             className={styles.emptyDateAction}
             onClick={(e) => { e.stopPropagation(); openDeadlinePicker() }}
-            aria-label="Set due date"
+            aria-label={t('ui.set_due_date')}
           >
             <StatusIcon icon="calendar" />
           </button>

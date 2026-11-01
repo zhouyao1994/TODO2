@@ -4,6 +4,7 @@ import { defaultAppendChoices } from '../../services/append-import'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import buttons from './FileSyncDialogs.module.css'
 import styles from './TaskArchiveDialogs.module.css'
+import { t } from '../../i18n'
 
 interface AppendImportDialogProps {
   fileName: string
@@ -63,18 +64,14 @@ export function AppendImportDialog({ fileName, candidates, busy, error, onConfir
       title={`Import tasks from ${fileName}`}
     >
       <DialogBody>
-        {plural(candidates.length, 'task')} in the file
-        {duplicateCount > 0 ? `; ${plural(duplicateCount, 'possible duplicate')} — choose what to do with each.` : '.'}
-        {' '}Imported tasks are added next to your current ones; nothing is replaced.
-        {duplicateCount > 0 && (
+        {plural(candidates.length, 'task')} {t('ui.in_the_file')}{duplicateCount > 0 ? `; ${plural(duplicateCount, 'possible duplicate')} — choose what to do with each.` : '.'}
+        {' '}{t('ui.imported_tasks_are_added_next_to')}{duplicateCount > 0 && (
           <div className={styles.applyAll}>
-            <span>All duplicates:</span>
+            <span>{t('ui.all_duplicates')}</span>
             <button type="button" className={styles.linkButton} onClick={() => setAllDuplicates('skip')} disabled={busy}>
-              Skip
-            </button>
+              {t('ui.skip')}</button>
             <button type="button" className={styles.linkButton} onClick={() => setAllDuplicates('import')} disabled={busy}>
-              Import as new
-            </button>
+              {t('ui.import_as_new')}</button>
           </div>
         )}
         <ul className={styles.list} data-testid="append-import-list">
@@ -105,19 +102,18 @@ export function AppendImportDialog({ fileName, candidates, busy, error, onConfir
                     ))}
                   </div>
                 ) : (
-                  <span className={styles.newBadge}>Will import</span>
+                  <span className={styles.newBadge}>{t('ui.will_import')}</span>
                 )}
               </li>
             )
           })}
         </ul>
-        <div className={styles.note}>A backup snapshot is taken before importing (Settings → Database → Backups).</div>
+        <div className={styles.note}>{t('ui.a_backup_snapshot_is_taken_before')}</div>
         {error && <div className={styles.error} role="alert">{error}</div>}
       </DialogBody>
       <DialogActions>
         <button className={buttons.cancelButton} onClick={onCancel} disabled={busy}>
-          Cancel
-        </button>
+          {t('ui.cancel')}</button>
         <button
           className={buttons.primaryButton}
           onClick={() => onConfirm(choices)}

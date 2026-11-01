@@ -27,6 +27,7 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import sectionStyles from './sections.module.css'
 import styles from './EisenhowerSection.module.css'
+import { t as tr } from '../../../i18n'
 
 /** Saves pane `q`'s settings patched (`null` = reset), from the panes as they are now (two quick edits mustn't drop one another). */
 function patchPane(q: EisenhowerQuadrant, patch: Parameters<typeof withPaneConfig>[2], description: string, mergeKey?: string): void {
@@ -68,8 +69,8 @@ export function EisenhowerSection() {
   return (
     <div className={sectionStyles.section}>
       <SettingRow
-        label="Tasks"
-        help="What every Eisenhower and the dashboard sort into the panes: the Eisenhower’s own list. No filter = every task."
+        label={tr('ui.tasks')}
+        help={tr('ui.what_every_eisenhower_and_the_dashboard')}
         column
       >
         {source.list && (
@@ -79,10 +80,7 @@ export function EisenhowerSection() {
         )}
       </SettingRow>
       <p className={styles.intro}>
-        A task shows in the first pane whose filter it matches, checked in order: top left, top right, bottom left,
-        bottom right. Dropping a task on a pane gives it what the filter sets. The panes are the same in every
-        Eisenhower and on the dashboard; changes are saved at once.
-      </p>
+        {tr('ui.a_task_shows_in_the_first')}</p>
       <div className={styles.grid}>
         {panes.map((pane) => (
           <PaneCard
@@ -99,7 +97,7 @@ export function EisenhowerSection() {
       <div className={styles.footer}>
         <p className={styles.noPane} data-testid="customize-panes-no-pane">
           {noneOpen === 0
-            ? 'Every open task is in a pane.'
+            ? tr('ui.every_open_task_is_in_a_pane')
             : `${noneOpen} open ${noneOpen === 1 ? 'task is' : 'tasks are'} in no pane — hidden from the matrix, counted under it.`}
           {screenFilters > 0 && (
             <span data-testid="eisenhower-settings-filter-note">
@@ -113,12 +111,11 @@ export function EisenhowerSection() {
           disabled={!anyCustom}
           onClick={() => setConfirmReset(true)}
         >
-          Reset all panes…
-        </button>
+          {tr('ui.reset_all_panes')}</button>
       </div>
       <ConfirmDialog
         open={confirmReset}
-        title="Reset all panes?"
+        title={tr('ui.reset_all_panes_2')}
         message="Every pane goes back to its default name and filter (Do, Schedule, Delegate, Drop), in every Eisenhower and on the dashboard."
         confirmLabel="Reset all panes"
         onConfirm={() => {
@@ -163,7 +160,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
       style={{ '--pane-color': QUADRANT_COLOR[pane.id] } as CSSProperties}
     >
       <div className={styles.cardHead}>
-        <label htmlFor={nameId} className={styles.nameLabel}>Name</label>
+        <label htmlFor={nameId} className={styles.nameLabel}>{tr('ui.name')}</label>
         <input
           id={nameId}
           className={styles.nameInput}
@@ -181,8 +178,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
           role="img"
           aria-label={`${count} open ${count === 1 ? 'task' : 'tasks'} now`}
         >
-          {count} now
-        </span>
+          {count} {tr('ui.now')}</span>
       </div>
       <div className={styles.chips} data-testid="customize-pane-filter">
         <PredicateChips
@@ -190,7 +186,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
           onChange={onFilter}
           addLabel="Add a filter to this pane"
           inDialog
-          before={hasChips ? undefined : <span className={styles.noFilter}>No filter — every task</span>}
+          before={hasChips ? undefined : <span className={styles.noFilter}>{tr('ui.no_filter_every_task')}</span>}
         />
       </div>
       <div className={styles.cardFoot}>
@@ -201,8 +197,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
           disabled={!pane.customName && !pane.customFilter}
           onClick={onReset}
         >
-          Reset pane
-        </button>
+          {tr('ui.reset_pane')}</button>
       </div>
     </section>
   )

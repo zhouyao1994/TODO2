@@ -1,5 +1,6 @@
 import type { ReactNode, RefObject } from 'react'
 import styles from './ClearableField.module.css'
+import { t } from '../../i18n'
 
 interface ClearableFieldProps {
   /** The text input (one `<input>`). */
@@ -40,8 +41,7 @@ export function ClearableField({ children, value, onClear, inputRef, label, clas
             inputRef.current?.focus()
           }}
         >
-          &times;
-        </button>
+          {t('ui.c397')}</button>
       )}
     </div>
   )

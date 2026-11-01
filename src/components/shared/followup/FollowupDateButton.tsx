@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { startOfDay, toDateInputValue } from '../../../utils/date'
 import { StatusIcon } from '../StatusIcon'
 import styles from './Followup.module.css'
+import { t } from '../../../i18n'
 
 interface FollowupDateButtonProps {
   /** The button's accessible name (`Pick next follow-up date`). */
@@ -28,7 +29,7 @@ export function FollowupDateButton({ label, value, max, onPick }: FollowupDateBu
         type="button"
         className={styles.inputClear}
         aria-label={label}
-        title="Pick a date"
+        title={t('ui.pick_a_date')}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           try { pickerRef.current?.showPicker?.() } catch { pickerRef.current?.focus() }

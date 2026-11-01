@@ -5,6 +5,7 @@ import { SettingsLayerContext } from './sections/settings-layer'
 import { SettingsSectionBody } from './sections/SettingsSectionBody'
 import { DialogFrame } from '../shared/Dialog'
 import styles from './SettingsModal.module.css'
+import { t, translateText } from '../../i18n'
 
 /**
  * Desktop Settings: a large modal over the workspace, one section at a time
@@ -69,16 +70,16 @@ function SettingsModalFrame() {
       backdropClassName={styles.backdrop}
     >
       <div className={styles.header}>
-        <h1 id={titleId} className={styles.title}>Settings</h1>
+        <h1 id={titleId} className={styles.title}>{t('ui.settings')}</h1>
         <kbd className={styles.kbd} aria-hidden="true">Esc</kbd>
-        <button type="button" className={styles.close} aria-label="Close settings" onClick={close}>
+        <button type="button" className={styles.close} aria-label={t('ui.close_settings')} onClick={close}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
         </button>
       </div>
       <div className={styles.body}>
-        <nav className={styles.nav} aria-label="Settings sections">
+        <nav className={styles.nav} aria-label={t('ui.settings_sections')}>
           {SETTINGS_SECTIONS.map(({ id, label, Icon }) => (
             <button
               key={id}
@@ -88,12 +89,12 @@ function SettingsModalFrame() {
               onClick={() => setSection(id)}
             >
               <span className={styles.navIcon}><Icon /></span>
-              {label}
+              {translateText(label)}
             </button>
           ))}
         </nav>
         <section ref={contentRef} className={styles.content} aria-labelledby={sectionTitleId}>
-          <h2 id={sectionTitleId} className={styles.sectionTitle}>{section.label}</h2>
+          <h2 id={sectionTitleId} className={styles.sectionTitle}>{translateText(section.label)}</h2>
           <div className={styles.rule} />
           <SettingsLayerContext.Provider value={registerLayer}>
             <SettingsSectionBody key={section.id} section={section} mobile={false} />

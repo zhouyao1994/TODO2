@@ -19,6 +19,7 @@
  */
 import type { Person, PersistedTodoItem, Tag } from '../../models'
 import { startOfDay, toDateInputValue } from '../../utils/date'
+import { locale } from '../../i18n'
 import { daysUntil } from '../../utils/effective-date'
 import { escapeHtml } from '../../utils/html'
 import { mdToHtml } from '../notes-export'
@@ -112,7 +113,7 @@ export function checkinFirstName(name: string): string {
 function formatEmailDay(date: Date, today: Date): string {
   const d = startOfDay(new Date(date))
   if (d.getTime() === startOfDay(today).getTime()) return 'Today'
-  return d.toLocaleDateString('en-US', {
+  return d.toLocaleDateString(locale(), {
     weekday: 'short',
     month: 'short',
     day: 'numeric',

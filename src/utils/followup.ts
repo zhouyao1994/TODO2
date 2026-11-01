@@ -1,6 +1,7 @@
 import type { TodoItem } from '../models/todo-item'
 import { parseDatePhrase } from './date-phrase'
 import { formatDateNumeric, formatDateWith, MS_PER_DAY, startOfDay } from './date'
+import { t } from '../i18n'
 
 /**
  * Follow-up dates. `nextFollowupAt` is a calendar day stored at local
@@ -44,12 +45,15 @@ export function formatFollowupInterval(i: FollowupInterval): string {
   return `${i.count}${i.unit}`
 }
 
-const UNIT_WORDS: Record<FollowupUnit, string> = { d: 'day', w: 'week', m: 'month', y: 'year' }
-
 /** Human form: `{2, 'w'}` → `2 weeks`. */
 export function describeFollowupInterval(i: FollowupInterval): string {
-  const word = UNIT_WORDS[i.unit]
-  return `${i.count} ${word}${i.count === 1 ? '' : 's'}`
+  const one = i.count === 1
+  switch (i.unit) {
+    case 'd': return one ? t('ui.days_count_one') : t('ui.days_count_many', { n: i.count })
+    case 'w': return one ? t('ui.weeks_count_one') : t('ui.weeks_count_many', { n: i.count })
+    case 'm': return one ? t('ui.months_count_one') : t('ui.months_count_many', { n: i.count })
+    case 'y': return one ? t('ui.years_count_one') : t('ui.years_count_many', { n: i.count })
+  }
 }
 
 /** Calendar months, clamped to the target month's last day (Jan 31 + 1m → Feb 28/29). */

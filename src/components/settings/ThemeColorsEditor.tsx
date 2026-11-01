@@ -6,6 +6,7 @@ import styles from './EntityEditor.module.css'
 import settingsStyles from './modal-chrome.module.css'
 import { EditorModal } from './EditorModal'
 import editorStyles from './ThemeColorsEditor.module.css'
+import { t } from '../../i18n'
 
 const colorLabels: Record<keyof ThemeColors, string> = {
   accent: 'Accent',
@@ -36,8 +37,8 @@ export function ThemeColorsEditor({ onClose }: ThemeColorsEditorProps) {
   const workingColors = colors[workingTheme]
 
   return (
-    <EditorModal title={<>Theme Colors — {themeLabel[workingTheme]}</>} onClose={onClose}>
-      <div className={editorStyles.themeToggle} role="tablist" aria-label="Working theme">
+    <EditorModal title={<>{t('ui.theme_colors')}{' '}{themeLabel[workingTheme]}</>} onClose={onClose}>
+      <div className={editorStyles.themeToggle} role="tablist" aria-label={t('ui.working_theme')}>
         {(['dark', 'light'] as const).map((theme) => (
           <button
             key={theme}
@@ -63,8 +64,7 @@ export function ThemeColorsEditor({ onClose }: ThemeColorsEditorProps) {
 
       <div className={settingsStyles.buttonRow}>
         <button className={`${settingsStyles.button} ${settingsStyles.buttonSecondary}`} onClick={() => resetColors(workingTheme)}>
-          Reset {themeLabel[workingTheme]} to Defaults
-        </button>
+          {t('ui.reset')}{' '}{themeLabel[workingTheme]} {t('ui.to_defaults')}</button>
       </div>
     </EditorModal>
   )

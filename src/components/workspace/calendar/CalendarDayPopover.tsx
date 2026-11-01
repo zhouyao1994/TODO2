@@ -6,6 +6,7 @@ import type { CalendarEntry } from '../../../services/calendar-entries'
 import { dayLabel } from '../../../utils/calendar-grid'
 import { CloseIcon } from '../../shared/icons'
 import styles from './CalendarWidget.module.css'
+import { t } from '../../../i18n'
 
 interface CalendarDayPopoverProps {
   day: Date
@@ -51,7 +52,7 @@ export function CalendarDayPopover({ day, at, entries, renderEntry, onClose }: C
       <div className={styles.dayPopoverHeader}>
         <span className={styles.dayPopoverTitle}>{dayLabel(day)}</span>
         <span className={styles.dayPopoverCount}>{count}</span>
-        <button type="button" className={styles.dayPopoverClose} aria-label="Close" onClick={onClose}>
+        <button type="button" className={styles.dayPopoverClose} aria-label={t('ui.close')} onClick={onClose}>
           <CloseIcon size={10} />
         </button>
       </div>

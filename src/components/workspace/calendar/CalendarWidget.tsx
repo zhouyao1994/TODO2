@@ -53,6 +53,7 @@ import {
 } from './calendar-drag'
 import { useElementSize } from '../../../hooks/use-element-size'
 import styles from './CalendarWidget.module.css'
+import { t as tr } from '../../../i18n'
 
 /** Width assumed before the widget is measured. */
 const UNMEASURED_WIDTH = 1000
@@ -200,8 +201,7 @@ function MoreButton({ day, more, open, onMore, md }: {
         if (cell) onMore(day, cell)
       }}
     >
-      +{more} more
-    </button>
+      +{more} {tr('ui.more')}</button>
   )
 }
 
@@ -416,7 +416,7 @@ function DayList({ day, entries, ctx, touch }: { day: Date; entries: CalendarEnt
     <div className={styles.dayList} data-cal-day-list={dayKey(day)}>
       <div className={styles.dayListHeader}>
         <span className={styles.dayListTitle}>{dayLabel(day)}</span>
-        {isToday && <span className={styles.dayListToday}>Today</span>}
+        {isToday && <span className={styles.dayListToday}>{tr('ui.today')}</span>}
         <span className={styles.dayListCount}>{entries.length} {entries.length === 1 ? 'task' : 'tasks'}</span>
       </div>
       <div className={styles.dayListEntries}>
@@ -665,15 +665,15 @@ export function CalendarWidget({ tab }: { tab: CalendarTab }) {
         </button>
         <span className={styles.rangeLabel} aria-live="polite" data-testid="calendar-range-label">{label}</span>
         {narrow && !isMobile ? (
-          <button type="button" className={styles.iconButton} aria-label="Today" title="Today" onClick={() => setOffset(0)}>
+          <button type="button" className={styles.iconButton} aria-label={tr('ui.today')} title={tr('ui.today')} onClick={() => setOffset(0)}>
             <TodayIcon size={14} />
           </button>
         ) : (
-          <button type="button" className={styles.todayButton} onClick={() => setOffset(0)}>Today</button>
+          <button type="button" className={styles.todayButton} onClick={() => setOffset(0)}>{tr('ui.today')}</button>
         )}
         <span className={styles.spacer} />
         {!isMobile && (
-          <div className={styles.typeToggles} role="group" aria-label="Date types shown">
+          <div className={styles.typeToggles} role="group" aria-label={tr('ui.date_types_shown')}>
             {(['due', 'followup'] as const).map((type) => (
               <TypeToggle
                 key={type}
@@ -685,7 +685,7 @@ export function CalendarWidget({ tab }: { tab: CalendarTab }) {
             ))}
           </div>
         )}
-        <div className={styles.segmented} role="group" aria-label="Calendar view">
+        <div className={styles.segmented} role="group" aria-label={tr('ui.calendar_view')}>
           {(['month', 'week'] as const).map((v) => (
             <button
               key={v}
@@ -706,15 +706,14 @@ export function CalendarWidget({ tab }: { tab: CalendarTab }) {
           <div className={styles.emptyWrap}>
             {noTypes ? (
               <div className={styles.emptyNote} data-testid="calendar-empty" data-empty="no-types">
-                <div className={styles.emptyLine1}>No date types shown</div>
-                <div className={styles.emptyLine2}>Turn on Due or Follow-up to see tasks here.</div>
+                <div className={styles.emptyLine1}>{tr('ui.no_date_types_shown')}</div>
+                <div className={styles.emptyLine2}>{tr('ui.turn_on_due_or_follow_up')}</div>
               </div>
             ) : hiddenCount > 0 ? (
               <div className={styles.emptyNote} data-testid="calendar-empty" data-empty="filtered">
-                <div className={styles.emptyLine1}>No tasks match</div>
+                <div className={styles.emptyLine1}>{tr('ui.no_tasks_match')}</div>
                 <div className={styles.emptyLine2}>
-                  {hiddenCount} {hiddenCount === 1 ? 'task' : 'tasks'} {view === 'week' && rangeName === 'this week' ? rangeName : `in ${rangeName}`} {hiddenCount === 1 ? 'is' : 'are'} hidden by the screen filter.
-                </div>
+                  {hiddenCount} {hiddenCount === 1 ? 'task' : 'tasks'} {view === 'week' && rangeName === 'this week' ? rangeName : `in ${rangeName}`} {hiddenCount === 1 ? 'is' : 'are'} {tr('ui.hidden_by_the_screen_filter')}</div>
                 <button type="button" className={styles.emptyAction} onClick={() => useFilterStore.getState().clearAll()}>
                   {filterCount === 1 ? 'Clear screen filter' : 'Clear screen filters'}
                 </button>
@@ -727,7 +726,7 @@ export function CalendarWidget({ tab }: { tab: CalendarTab }) {
                     : dateTypes.due ? 'Nothing due' : 'Nothing to follow up'}
                   {' '}{view === 'week' && rangeName === 'this week' ? rangeName : `in ${rangeName}`}
                 </div>
-                <div className={styles.emptyLine2}>Drag a task from a list onto a day to set its date.</div>
+                <div className={styles.emptyLine2}>{tr('ui.drag_a_task_from_a_list')}</div>
               </div>
             )}
           </div>

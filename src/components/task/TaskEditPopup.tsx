@@ -28,6 +28,7 @@ import { useLatestRef } from '../../hooks/use-latest-ref'
 import { isInLayerAbove } from '../../utils/dom-layers'
 import { DialogFrame } from '../shared/Dialog'
 import styles from './TaskEditPopup.module.css'
+import { t as tr } from '../../i18n'
 
 interface TaskEditPopupBaseProps {
   assignedPeople: Person[]
@@ -611,8 +612,7 @@ export function TaskEditPopup(props: TaskEditPopupProps) {
                     }}
                   >
                     <span style={{ color: 'var(--color-text-muted)' }}><StatusIcon icon="circle" /></span>
-                    No Status
-                  </button>
+                    {tr('ui.no_status')}</button>
                   {statuses.map(s => (
                     <button
                       key={s.id}
@@ -640,8 +640,7 @@ export function TaskEditPopup(props: TaskEditPopupProps) {
             onClick={handleToggleFocus}
             tooltip={focusOn ? 'Remove from Focus' : 'Add to Focus'}
           >
-            <FocusIcon /> Focus
-          </MarkerToggle>
+            <FocusIcon /> {tr('ui.focus')}</MarkerToggle>
           <MarkerToggle
             className={`${styles.markerToggle} ${urgentOn ? styles.markerToggleUrgentOn : ''}`}
             pressed={urgentOn}
@@ -649,8 +648,7 @@ export function TaskEditPopup(props: TaskEditPopupProps) {
             tooltip={`${urgentOn ? 'Remove urgent' : 'Mark urgent'}${urgentHint ? `\n${urgentHint}` : ''}`}
             data-urgent={urgentState ?? undefined}
           >
-            <UrgentIcon /> Urgent
-            {urgentState === 'date' && (
+            <UrgentIcon /> {tr('ui.urgent')}{urgentState === 'date' && (
               <span className={styles.markerToggleHint} data-urgent-hint=""><UrgentClockIcon /></span>
             )}
           </MarkerToggle>
@@ -660,8 +658,7 @@ export function TaskEditPopup(props: TaskEditPopupProps) {
             onClick={handleToggleImportant}
             tooltip={importantOn ? 'Remove important' : 'Mark important'}
           >
-            <ImportantIcon outline={!importantOn} /> Important
-          </MarkerToggle>
+            <ImportantIcon outline={!importantOn} /> {tr('ui.important')}</MarkerToggle>
         </div>
 
         <div className={`${styles.scrollBody} ${openDropdown ? styles.scrollBodyDropdownOpen : ''}`}>
@@ -699,25 +696,25 @@ export function TaskEditPopup(props: TaskEditPopupProps) {
 
           {/* Progress */}
           <div className={styles.notesSection}>
-            <div className={styles.notesLabel}>Progress</div>
+            <div className={styles.notesLabel}>{tr('ui.progress')}</div>
             <input
               className={styles.metaInput}
               value={progress}
               maxLength={500}
               onChange={(e) => setProgress(e.target.value)}
               onBlur={() => { if (isEdit) saveEdit() }}
-              placeholder="e.g. 50% done, Waiting on review..."
+              placeholder={tr('ui.e_g_50_done_waiting_on')}
             />
           </div>
 
           {/* Notes */}
           <div className={styles.notesSection}>
-            <div className={styles.notesLabel}>Notes</div>
+            <div className={styles.notesLabel}>{tr('ui.notes')}</div>
             <div className={styles.notesBodyWrap}>
               <NotesBody
                 source={notesSession.source}
                 showToolbar
-                placeholder="Add notes..."
+                placeholder={tr('ui.add_notes')}
                 convert={!seed}
               />
             </div>

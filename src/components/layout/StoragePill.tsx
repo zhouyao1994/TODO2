@@ -5,11 +5,12 @@ import { useUIStore, type SettingsTarget } from '../../stores/ui-store'
 import { usePopoverAnchor } from '../../hooks/use-popover-anchor'
 import { formatRelativeTime } from '../../utils/date'
 import { GearIcon } from '../shared/icons'
-import { storagePillLabel, useStorageStatus, warningTone } from './sync-status'
+import { useStorageStatus, warningTone } from './sync-status'
 import { SyncWarningIcon, SyncWarningSections } from './SyncWarningSections'
 import { SyncWarningAnnouncer } from './SyncWarningAnnouncer'
 import { usePopoverFocus } from '../shared/use-popover-focus'
 import styles from './StoragePill.module.css'
+import { t, translateText } from '../../i18n'
 
 /**
  * Where the data lives, in the top bar, and every sync warning: Local only /
@@ -52,8 +53,7 @@ export function StoragePill() {
     <div className={styles.footer}>
       <button type="button" className={styles.footerLink} onClick={() => openSettings('file-storage')}>
         <GearIcon size={14} />
-        File storage settings…
-      </button>
+        {t('ui.file_storage_settings')}</button>
     </div>
   )
 
@@ -76,14 +76,13 @@ export function StoragePill() {
       <>
         <div className={styles.title} id={titleId}>
           <span className={`${styles.titleDot} ${styles.syncing}`} aria-hidden="true" />
-          {`Syncing to ${fileName ?? 'file'}`}
+          {t('ui.syncing_to', { file: fileName ?? 'file' })}
         </div>
         <p className={styles.line}>
-          {lastSavedAt ? `Last saved ${formatRelativeTime(lastSavedAt)}. ` : ''}
-          Every change is written to the file a moment after you make it.
-        </p>
+          {lastSavedAt ? t('ui.last_saved', { time: formatRelativeTime(lastSavedAt) }) : ''}
+          {t('ui.every_change_is_written_to_the')}</p>
         <div className={styles.actions}>
-          <button type="button" className={styles.secondary} onClick={() => openSettings('file-storage')}>File storage settings…</button>
+          <button type="button" className={styles.secondary} onClick={() => openSettings('file-storage')}>{t('ui.file_storage_settings')}</button>
         </div>
       </>
     )
@@ -92,20 +91,19 @@ export function StoragePill() {
       <>
         <div className={styles.title} id={titleId}>
           <span className={styles.titleDot} aria-hidden="true" />
-          Stored in this browser only
-        </div>
+          {t('ui.stored_in_this_browser_only')}</div>
         {isSupported ? (
           <>
-            <p className={styles.body}>Your tasks live in this browser’s storage. Connect a file to keep a copy you can back up or move to another machine.</p>
+            <p className={styles.body}>{t('ui.your_tasks_live_in_this_browsers')}</p>
             <div className={styles.actions}>
-              <button type="button" className={styles.primary} onClick={() => openSettings('file-storage')}>Set up file storage…</button>
+              <button type="button" className={styles.primary} onClick={() => openSettings('file-storage')}>{t('ui.set_up_file_storage')}</button>
             </div>
           </>
         ) : (
           <>
-            <p className={styles.body}>This browser can’t sync to a file. Use Import / Export to keep a backup.</p>
+            <p className={styles.body}>{t('ui.this_browser_cant_sync_to_a')}</p>
             <div className={styles.actions}>
-              <button type="button" className={styles.primary} onClick={() => openSettings('import-export')}>Import / Export…</button>
+              <button type="button" className={styles.primary} onClick={() => openSettings('import-export')}>{t('ui.import_export')}</button>
             </div>
           </>
         )}
@@ -121,8 +119,8 @@ export function StoragePill() {
         className={`${styles.pill} ${styles[state.kind] ?? ''} ${tone ? styles[tone] : ''} ${open ? styles.open : ''}`}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={storagePillLabel(state)}
-        title={state.kind === 'syncing' ? `Syncing to ${fileName ?? 'file'}` : state.text}
+        aria-label={state.warningCount > 1 ? t('ui.storage_warnings', { text: translateText(state.text), count: state.warningCount }) : t('ui.storage_label', { text: translateText(state.text) })}
+        title={state.kind === 'syncing' ? t('ui.syncing_to', { file: fileName ?? 'file' }) : translateText(state.text)}
         onClick={() => setOpen((o) => !o)}
         data-testid="storage-pill"
         data-state={state.kind}
@@ -130,7 +128,7 @@ export function StoragePill() {
         {state.kind === 'local' || state.kind === 'syncing'
           ? <span className={styles.dot} aria-hidden="true" />
           : <span className={styles.icon} aria-hidden="true"><SyncWarningIcon kind={state.kind} size={12} /></span>}
-        <span className={styles.text}>{state.text}</span>
+        <span className={styles.text}>{translateText(state.text)}</span>
         {state.warningCount > 1 && <span className={styles.count} aria-hidden="true">{state.warningCount}</span>}
       </button>
       <SyncWarningAnnouncer warnings={warnings} />

@@ -28,6 +28,7 @@ import { MenuPopover, type MenuEntry } from './MenuPopover'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, SortDirectionIcon } from './icons'
 import { useTooltip } from './use-tooltip'
 import styles from './ListEditorBody.module.css'
+import { t, translateText } from '../../i18n'
 
 /**
  * How the form is laid out: `popover` — the workspace's compact side
@@ -100,7 +101,7 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
     setCopiedFrom(source.name)
   }
   const copiedNote = copiedFrom != null && (
-    <span className={styles.copiedNote} role="status">Copied from “{copiedFrom}” · unsaved</span>
+    <span className={styles.copiedNote} role="status">{t('ui.copied_from')}{copiedFrom}{t('ui.unsaved')}</span>
   )
   const predicate = draft.membership.predicate
   const changed = useMemo(() => (saved ? changedListFields(draft, saved) : new Set<ListDefField>()), [draft, saved])
@@ -138,7 +139,7 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
     const content = (
       <>
         {changed.has(field) && <span className={styles.changedDot} aria-hidden="true" />}
-        {ROW_LABEL[field]}
+        {translateText(ROW_LABEL[field])}
       </>
     )
     const className = `${styles.label} ${changed.has(field) ? styles.labelChanged : ''}`
@@ -159,14 +160,14 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
         value={draft.name}
         aria-invalid={nameEmpty || undefined}
         onChange={(e) => onChange({ ...draft, name: e.target.value })}
-        placeholder="List name"
+        placeholder={t('ui.list_name')}
       />
     </div>
   )
 
   const showCompleted = (
     <label className={variant === 'sheet' ? styles.switchRow : styles.check}>
-      {variant === 'sheet' && <span className={styles.switchLabel}>Show completed tasks</span>}
+      {variant === 'sheet' && <span className={styles.switchLabel}>{t('ui.show_completed_tasks')}</span>}
       <input
         type="checkbox"
         role={variant === 'sheet' ? 'switch' : undefined}
@@ -174,18 +175,17 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
         checked={predicate.showCompleted}
         onChange={(e) => setShowCompleted(e.target.checked)}
       />
-      {variant !== 'sheet' && 'Show completed tasks'}
+      {variant !== 'sheet' && t('ui.show_completed_tasks_2')}
     </label>
   )
 
   const filterLineShown = draft.showFilterLine !== false
   const filterLineSwitch = variant === 'sheet'
     ? (
-      <label className={styles.switchRow} title={FILTER_LINE_HINT}>
+      <label className={styles.switchRow} title={translateText(FILTER_LINE_HINT)}>
         <span className={`${styles.switchLabel} ${changed.has('filterLine') ? styles.labelChanged : ''}`} data-changed={changed.has('filterLine') || undefined}>
           {changed.has('filterLine') && <span className={styles.changedDot} aria-hidden="true" />}
-          Show filter line
-        </span>
+          {t('ui.show_filter_line')}</span>
         <input
           type="checkbox"
           role="switch"
@@ -198,15 +198,14 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
     : (
       <div className={styles.row}>
         {label('filterLine')}
-        <label className={styles.check} title={FILTER_LINE_HINT}>
+        <label className={styles.check} title={translateText(FILTER_LINE_HINT)}>
           <input
             type="checkbox"
-            aria-label="Show filter line"
+            aria-label={t('ui.show_filter_line')}
             checked={filterLineShown}
             onChange={(e) => setShowFilterLine(e.target.checked)}
           />
-          Show
-        </label>
+          {t('ui.show')}</label>
       </div>
     )
 
@@ -255,10 +254,10 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
       return (
         <div className={`${styles.form} ${styles.sheet}`}>
           <div className={styles.choiceHeader}>
-            <button type="button" className={styles.back} aria-label="Back" onClick={() => setChoiceList(null)}>
+            <button type="button" className={styles.back} aria-label={t('ui.back')} onClick={() => setChoiceList(null)}>
               <ChevronLeftIcon size={16} />
             </button>
-            <span className={styles.choiceTitle}>Copy from</span>
+            <span className={styles.choiceTitle}>{t('ui.copy_from')}</span>
           </div>
           <CopyFromSheetList groups={copyFrom.groups} onPick={(source) => { pickCopy(source); setChoiceList(null) }} />
         </div>
@@ -269,7 +268,7 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
       return (
         <div className={`${styles.form} ${styles.sheet}`}>
           <div className={styles.choiceHeader}>
-            <button type="button" className={styles.back} aria-label="Back" onClick={() => setChoiceList(null)}>
+            <button type="button" className={styles.back} aria-label={t('ui.back')} onClick={() => setChoiceList(null)}>
               <ChevronLeftIcon size={16} />
             </button>
             <span className={styles.choiceTitle}>{ROW_LABEL[choiceList]}</span>
@@ -302,7 +301,7 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
         {copyFrom && (
           <div className={styles.copyRow}>
             <button type="button" className={styles.sheetRow} onClick={() => setChoiceList('copyFrom')}>
-              <span className={styles.sheetRowLabel}>{COPY_FROM_LABEL}</span>
+              <span className={styles.sheetRowLabel}>{translateText(COPY_FROM_LABEL)}</span>
               <ChevronRightIcon size={14} />
             </button>
             {copiedNote}
@@ -321,13 +320,13 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
                 key={field}
                 type="button"
                 className={styles.sheetRow}
-                aria-label={current ? `${ROW_LABEL[field]}: ${current}` : ROW_LABEL[field]}
+                aria-label={current ? `${translateText(ROW_LABEL[field])}: ${current}` : translateText(ROW_LABEL[field])}
                 data-changed={changed.has(field) || undefined}
                 onClick={() => setChoiceList(field)}
               >
                 <span className={`${styles.sheetRowLabel} ${changed.has(field) ? styles.labelChanged : ''}`}>
                   {changed.has(field) && <span className={styles.changedDot} aria-hidden="true" />}
-                  {ROW_LABEL[field]}
+                  {translateText(ROW_LABEL[field])}
                 </span>
                 <span className={styles.sheetRowValue}>{current}</span>
                 <ChevronRightIcon size={14} />
@@ -364,10 +363,10 @@ export function ListEditorBody({ draft, onChange, saved, variant = 'popover', na
           {label(field)}
           <ChoiceSelect
             labelId={`${idBase}-${field}-label`}
-            label={ROW_LABEL[field]}
+            label={translateText(ROW_LABEL[field])}
             value={choiceSpec[field].value}
             choices={choiceSpec[field].choices}
-            placeholder={choiceSpec[field].value === choiceSpec[field].unset ? `${ROW_LABEL[field]}…` : undefined}
+            placeholder={choiceSpec[field].value === choiceSpec[field].unset ? `${translateText(ROW_LABEL[field])}…` : undefined}
             onPick={pick[field]}
           />
           {field === 'sort' && directionToggle}
@@ -398,17 +397,17 @@ function CopyFromButton({ groups, onPick }: {
         className={`${styles.copyFrom} ${open ? styles.selectOpen : ''}`}
         aria-haspopup="menu"
         aria-expanded={open}
-        title="Take the filters, group, sort, prompt and filter line of another list"
+        title={t('ui.take_the_filters_group_sort_prompt')}
         // The menu leaves a press on its own button to the button: it toggles.
         onClick={() => setOpen((o) => !o)}
       >
-        {COPY_FROM_LABEL}
+        {translateText(COPY_FROM_LABEL)}
         <ChevronDownIcon />
       </button>
       {open && (
         <CopyFromMenu
           anchorRef={ref}
-          label="Copy from"
+          label={t('ui.copy_from')}
           groups={groups}
           onPick={onPick}
           onClose={() => setOpen(false)}
@@ -423,7 +422,7 @@ function CopyFromSheetList({ groups, onPick }: {
   groups: readonly CopySourceGroup<CopySource>[]
   onPick: (source: CopySource) => void
 }) {
-  if (groups.length === 0) return <p className={styles.choiceNote}>No lists to copy from.</p>
+  if (groups.length === 0) return <p className={styles.choiceNote}>{t('ui.no_lists_to_copy_from')}</p>
   return (
     <div className={styles.choiceList}>
       {groups.map((group) => (
@@ -460,7 +459,7 @@ function SortDirectionToggle({ sort, direction, onChange }: {
       <button
         type="button"
         className={styles.direction}
-        aria-label="Sort descending"
+        aria-label={t('ui.sort_descending')}
         aria-pressed={desc}
         data-direction={direction}
         onClick={() => onChange(desc ? 'asc' : 'desc')}
@@ -492,8 +491,8 @@ function ChoiceSelect({ labelId, label, value, choices, placeholder, onPick }: {
   const current = choices.find((c) => c.value === value)
   const entries: MenuEntry[] = choices.map((c) => ({
     kind: 'item',
-    label: c.label,
-    description: c.description,
+    label: translateText(c.label),
+    description: c.description == null ? undefined : translateText(c.description),
     radio: true,
     indicator: 'radio',
     checked: c.value === value,
@@ -512,8 +511,8 @@ function ChoiceSelect({ labelId, label, value, choices, placeholder, onPick }: {
         onClick={() => setOpen((o) => !o)}
       >
         {placeholder
-          ? <span className={`${styles.selectValue} ${styles.selectPlaceholder}`} data-placeholder="" aria-hidden="true">{placeholder}</span>
-          : <span id={valueId} className={styles.selectValue}>{current?.label ?? value}</span>}
+          ? <span className={`${styles.selectValue} ${styles.selectPlaceholder}`} data-placeholder="" aria-hidden="true">{translateText(placeholder)}</span>
+          : <span id={valueId} className={styles.selectValue}>{current ? translateText(current.label) : value}</span>}
         <ChevronDownIcon />
       </button>
       {open && (

@@ -4,6 +4,7 @@ import { useIsMobile } from '../../hooks/use-is-mobile'
 import { DialogFrame } from '../shared/Dialog'
 import { AlertCircleIcon, FileIcon, InfoIcon, LayoutIcon, LockIcon, PauseIcon } from '../shared/icons'
 import styles from './LaunchPermissionDialog.module.css'
+import { t } from '../../i18n'
 
 /**
  * The launch question, over the start screen, when the attached sync file
@@ -34,7 +35,7 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
     middle = (
       <div className={styles.status} role="status">
         <InfoIcon size={14} />
-        <span>Answer the prompt your browser shows to allow access.</span>
+        <span>{t('ui.answer_the_prompt_your_browser_shows')}</span>
       </div>
     )
   } else if (phase === 'refused') {
@@ -42,18 +43,17 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
       <div className={styles.refused} role="alert">
         <span className={styles.refusedIcon}><AlertCircleIcon size={14} /></span>
         <span>
-          <span className={styles.refusedTitle}>Your browser didn’t allow access.</span>
+          <span className={styles.refusedTitle}>{t('ui.your_browser_didnt_allow_access')}</span>
           <span className={styles.refusedLine}>
-            Try again, or continue without the file. Sync stays paused and you can grant access later from the storage pill.
-          </span>
+            {t('ui.try_again_or_continue_without_the')}</span>
         </span>
       </div>
     )
   } else if (isMobile) {
     middle = (
       <div className={styles.optionLines}>
-        <p><strong>Grant access</strong> — your browser asks you to allow editing the file, then it loads as usual.</p>
-        <p><strong>Continue without the file</strong> — open this browser’s data. Sync stays paused; nothing is written to the file.</p>
+        <p><strong>{t('ui.grant_access')}</strong> {t('ui.your_browser_asks_you_to_allow')}</p>
+        <p><strong>{t('ui.continue_without_the_file')}</strong> {t('ui.open_this_browsers_data_sync_stays')}</p>
       </div>
     )
   } else {
@@ -62,17 +62,16 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
         <div className={styles.option}>
           <span className={`${styles.optionIcon} ${styles.optionIconGrant}`}><LockIcon size={13} /></span>
           <span>
-            <span className={styles.optionTitle}>Grant access</span>
-            <span className={styles.optionLine}>Your browser asks you to allow editing the file. Then TODO2 loads it as usual and keeps syncing.</span>
+            <span className={styles.optionTitle}>{t('ui.grant_access')}</span>
+            <span className={styles.optionLine}>{t('ui.your_browser_asks_you_to_allow_2')}</span>
           </span>
         </div>
         <div className={styles.option}>
           <span className={`${styles.optionIcon} ${styles.optionIconContinue}`}><PauseIcon size={13} /></span>
           <span>
-            <span className={styles.optionTitle}>Continue without the file</span>
+            <span className={styles.optionTitle}>{t('ui.continue_without_the_file')}</span>
             <span className={styles.optionLine}>
-              Opens the copy of your data in this browser. Sync stays paused and nothing is written to {fileName}. You can grant access later from the storage pill.
-            </span>
+              {t('ui.opens_the_copy_of_your_data')}{' '}{fileName}{t('ui.you_can_grant_access_later_from')}</span>
           </span>
         </div>
       </div>
@@ -93,8 +92,7 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
   )
   const continueButton = (
     <button type="button" className={styles.secondary} onClick={continueWithout}>
-      Continue without the file
-      {!isMobile && <kbd className={styles.kbd}>Esc</kbd>}
+      {t('ui.continue_without_the_file')}{!isMobile && <kbd className={styles.kbd}>Esc</kbd>}
     </button>
   )
 
@@ -109,13 +107,12 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
       aria-describedby={bodyId}
       data={{ 'launch-permission': phase }}
     >
-      <div className={styles.mark} aria-hidden="true"><LayoutIcon size={16} />TODO2</div>
+      <div className={styles.mark} aria-hidden="true"><LayoutIcon size={16} />{t('ui.todo2')}</div>
       <div className={styles.card} aria-busy={waiting ? 'true' : undefined}>
         <span className={styles.icon}><FileIcon size={18} /></span>
-        <h2 id={titleId} className={styles.title}>Allow access to {fileName}</h2>
+        <h2 id={titleId} className={styles.title}>{t('ui.allow_access_to')}{' '}{fileName}</h2>
         <p id={bodyId} className={styles.body}>
-          TODO2 syncs your tasks with {file}. After a browser restart, the browser needs your OK before TODO2 can open the file again.
-        </p>
+          {t('ui.todo2_syncs_your_tasks_with')}{' '}{file}{t('ui.after_a_browser_restart_the_browser')}</p>
         {middle}
         <div className={styles.footer}>
           {isMobile ? <>{grantButton}{continueButton}</> : <>{continueButton}{grantButton}</>}

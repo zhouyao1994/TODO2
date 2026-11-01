@@ -11,6 +11,7 @@ import { StatusIcon } from '../../shared/StatusIcon'
 import { TaskMarkers } from '../../shared/TaskMarkers'
 import { DialogFrame } from '../../shared/Dialog'
 import styles from './NotesConvert.module.css'
+import { t as tr } from '../../../i18n'
 
 export interface PreviewRow {
   key: number
@@ -67,7 +68,7 @@ function DraftChips({ draft, lookups }: { draft: TaskDraft; lookups: PreviewLook
         <span className={styles.chip} data-tint="due"><CalendarIcon /> {formatFollowupDay(draft.dueDate, today)}</span>
       )}
       {draft.nextFollowupAt === undefined ? defaultFollowup && (
-        <span className={`${styles.chip} ${styles.chipDefault}`} title="The default next follow-up">
+        <span className={`${styles.chip} ${styles.chipDefault}`} title={tr('ui.the_default_next_follow_up')}>
           <FollowupFlagIcon /> {formatFollowupDate(defaultFollowup, today)}
         </span>
       ) : draft.nextFollowupAt ? (
@@ -116,7 +117,7 @@ function DraftRowItem({ row, lookups, onEdit, onRemove, rowRef }: {
       <TaskMarkers todo={markerTodo} today={lookups.today} size={13} className={styles.markers} />
       <span className={styles.title}>{row.draft.title}</span>
       <DraftChips draft={row.draft} lookups={lookups} />
-      {row.edited && <span className={styles.edited}>edited</span>}
+      {row.edited && <span className={styles.edited}>{tr('ui.edited')}</span>}
       <span className={styles.rowActions}>
         <button
           type="button"
@@ -134,8 +135,7 @@ function DraftRowItem({ row, lookups, onEdit, onRemove, rowRef }: {
           tabIndex={-1}
           onClick={(e) => { e.stopPropagation(); onRemove() }}
         >
-          ×
-        </button>
+          {tr('ui.c397')}</button>
       </span>
       {tooltip}
     </li>
@@ -235,13 +235,13 @@ export function NotesConvertPreview({
       escapeBelongsElsewhere={() => editing}
     >
       <div className={styles.header}>
-        <h2 id={titleId} className={styles.dialogTitle}>Convert to tasks</h2>
+        <h2 id={titleId} className={styles.dialogTitle}>{tr('ui.convert_to_tasks')}</h2>
         <span className={styles.countBadge}>{plural(rows.length, 'draft', 'drafts')}</span>
-        <button type="button" className={styles.closeBtn} aria-label="Close" onClick={onCancel}>×</button>
+        <button type="button" className={styles.closeBtn} aria-label={tr('ui.close')} onClick={onCancel}>{tr('ui.c397')}</button>
       </div>
-      <p className={styles.subline}>{sourceName} · not saved yet · click a draft to edit it</p>
-      <ul className={styles.list} aria-label="Drafts">
-        {rows.length === 0 && <li className={styles.empty}>No drafts left</li>}
+      <p className={styles.subline}>{sourceName} {tr('ui.not_saved_yet_click_a_draft')}</p>
+      <ul className={styles.list} aria-label={tr('ui.drafts')}>
+        {rows.length === 0 && <li className={styles.empty}>{tr('ui.no_drafts_left')}</li>}
         {rows.map((row) => (
           <DraftRowItem
             key={row.key}
@@ -259,10 +259,10 @@ export function NotesConvertPreview({
       <div className={styles.footer}>
         <span className={styles.footerNote}>{notes.join(' · ')}</span>
         <button type="button" className={styles.cancelBtn} onClick={onCancel}>
-          Cancel <kbd className={styles.kbd}>Esc</kbd>
+          {tr('ui.cancel')}{' '}<kbd className={styles.kbd}>Esc</kbd>
         </button>
         <button type="button" className={styles.createBtn} disabled={!canCreate} onClick={onCreate}>
-          Create {plural(rows.length, 'task', 'tasks')}
+          {tr('ui.create_2')}{' '}{plural(rows.length, 'task', 'tasks')}
         </button>
       </div>
     </DialogFrame>

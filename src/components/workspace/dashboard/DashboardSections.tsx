@@ -36,6 +36,7 @@ import { SECTION_META, type DashboardSectionMeta } from './section-meta'
 import type { DashboardData } from '../../../hooks/use-dashboard-data'
 import type { DashboardRowKit, OnDashboardDrill } from './types'
 import styles from './DashboardWidget.module.css'
+import { t as tr } from '../../../i18n'
 
 /** What every section is rendered with. */
 export interface DashboardSectionProps {
@@ -201,7 +202,7 @@ export function HotSection({ data, rows, onDrill, style }: DashboardSectionProps
     >
       <div className={styles.panelBody}>
         {ids.length === 0
-          ? <Empty title="Nothing hot" hint="Tasks matching the Hot setting show here." />
+          ? <Empty title={tr('ui.nothing_hot')} hint="Tasks matching the Hot setting show here." />
           : <RowsGrid kit={rows}><TaskRows sectionKey="hot" ids={ids} data={data} kit={rows} /></RowsGrid>}
       </div>
     </Panel>
@@ -237,7 +238,7 @@ export function FollowupSection({ data, options, rows, onDrill, style }: Dashboa
       <div className={styles.panelBody}>
         {groups.length === 0 ? (
           <Empty
-            title="Nothing needs follow-up"
+            title={tr('ui.nothing_needs_follow_up')}
             hint={`No follow-ups are late, due today or due in the next ${lookAhead} days.`}
           />
         ) : (
@@ -277,7 +278,7 @@ export function NextDaysSection({ data, onDrill, style }: DashboardSectionProps)
     <Panel
       def={SECTION_META.next7}
       style={style}
-      extras={<><Legend color="var(--color-overdue)" label="Due" glyph="calendar" /><Legend color="var(--color-followup)" label="Follow-up" glyph="followup" /></>}
+      extras={<><Legend color="var(--color-overdue)" label={tr('ui.due')} glyph="calendar" /><Legend color="var(--color-followup)" label={tr('ui.follow_up')} glyph="followup" /></>}
     >
       <div ref={ref} className={styles.days}>
         {cols.map((c, i) => {
@@ -348,7 +349,7 @@ export function TrendSection({ data, onDrill, style }: DashboardSectionProps) {
       def={SECTION_META.trend}
       style={style}
       sub={trendRangeLabel(trendRange)}
-      extras={<><Legend color="var(--color-chart-created)" label="Created" /><Legend color="var(--color-accent)" label="Completed" /></>}
+      extras={<><Legend color="var(--color-chart-created)" label={tr('ui.created')} /><Legend color="var(--color-accent)" label={tr('ui.completed')} /></>}
     >
       <div className={styles.trend}>
         <div className={styles.trendStats}>
@@ -364,8 +365,7 @@ export function TrendSection({ data, onDrill, style }: DashboardSectionProps) {
               source: { kind: 'todos', todoIds: buckets.flatMap((b) => b.completedIds) },
             }) : undefined}
           >
-            <b style={{ color: 'var(--color-accent-text)' }}>{trend?.completed ?? 0}</b>completed
-          </Clickable>
+            <b style={{ color: 'var(--color-accent-text)' }}>{trend?.completed ?? 0}</b>{tr('ui.completed_2')}</Clickable>
           <Clickable
             as="span"
             className={styles.trendStat}
@@ -378,8 +378,7 @@ export function TrendSection({ data, onDrill, style }: DashboardSectionProps) {
               source: { kind: 'todos', todoIds: buckets.flatMap((b) => b.createdIds) },
             }) : undefined}
           >
-            <b>{trend?.created ?? 0}</b>created
-          </Clickable>
+            <b>{trend?.created ?? 0}</b>{tr('ui.created_2')}</Clickable>
           {trend && <span className={styles.trendStat}><b>{signed(trend.net)}</b>{sinceLabel(trend.window.start, ctx.today)}</span>}
         </div>
         <div ref={ref} className={styles.trendChart} style={columns}>
@@ -450,7 +449,7 @@ export function StatusSection({ data, onDrill, style }: DashboardSectionProps) {
       }) : undefined}
     >
       {openTotal === 0 ? (
-        <Empty title="No open tasks" hint="Open tasks show here by status." />
+        <Empty title={tr('ui.no_open_tasks')} hint="Open tasks show here by status." />
       ) : (
         <>
           <div className={styles.statusBar} role="img" aria-label={`${open} open tasks by status`}>
@@ -507,11 +506,11 @@ export function PeopleSection({ data, options, onDrill, style }: DashboardSectio
   return (
     <Panel def={SECTION_META.people} style={style} sub="Open tasks by person">
       {all.length === 0 ? (
-        <Empty title="No open tasks" hint="Open tasks show here by person." />
+        <Empty title={tr('ui.no_open_tasks')} hint="Open tasks show here by person." />
       ) : (
         <>
           <div className={`${styles.peopleGrid} ${styles.peopleHead}`}>
-            <span>Person</span><span>Open</span><span /><span className={styles.num}>Hot</span><span className={styles.num}>Follow-up</span>
+            <span>{tr('ui.person_2')}</span><span>{tr('ui.open')}</span><span /><span className={styles.num}>{tr('ui.hot')}</span><span className={styles.num}>{tr('ui.follow_up')}</span>
           </div>
           <div className={styles.panelBody}>
             {all.map(({ key, person, stats }) => {
@@ -589,11 +588,11 @@ export function TagsSection({ data, options, onDrill, style }: DashboardSectionP
       sub="Open tasks by tag"
     >
       {all.length === 0 ? (
-        <Empty title="No tagged tasks" hint="Open tasks show here by tag." />
+        <Empty title={tr('ui.no_tagged_tasks')} hint="Open tasks show here by tag." />
       ) : (
         <>
           <div className={`${styles.tagsGrid} ${styles.peopleHead}`}>
-            <span>Tag</span><span>Open</span><span className={styles.tagsBarCol} /><span className={styles.num}>Hot</span><span className={styles.num}>Follow-up</span>
+            <span>{tr('ui.tag_2')}</span><span>{tr('ui.open')}</span><span className={styles.tagsBarCol} /><span className={styles.num}>{tr('ui.hot')}</span><span className={styles.num}>{tr('ui.follow_up')}</span>
           </div>
           <div className={styles.panelBody}>
             {all.map(({ key, tag, stats, totalOpen }) => {
@@ -652,7 +651,7 @@ export function StaleSection({ data, rows, onDrill, style }: DashboardSectionPro
     >
       <div className={styles.panelBody}>
         {ids.length === 0
-          ? <Empty title="Nothing stale" hint={`Every open task changed in the last ${days} days.`} />
+          ? <Empty title={tr('ui.nothing_stale')} hint={`Every open task changed in the last ${days} days.`} />
           : <RowsGrid kit={rows}><TaskRows sectionKey="stale" ids={ids} data={data} kit={rows} /></RowsGrid>}
       </div>
     </Panel>
@@ -676,7 +675,7 @@ export function RecentSection({ data, rows, onDrill, style }: DashboardSectionPr
     >
       <div className={styles.panelBody}>
         {ids.length === 0
-          ? <Empty title="Nothing completed" hint={`Tasks completed in the last ${days} days show here.`} />
+          ? <Empty title={tr('ui.nothing_completed')} hint={`Tasks completed in the last ${days} days show here.`} />
           : <RowsGrid kit={rows}><TaskRows sectionKey="recent" ids={ids} data={data} kit={rows} /></RowsGrid>}
       </div>
     </Panel>
@@ -725,9 +724,9 @@ export function EisenhowerSection({ data, onDrill, style }: DashboardSectionProp
               <span className={styles.quadrantSub}>{subtitle}</span>
               <span className={styles.quadrantCount} style={{ color: n === 0 ? 'var(--color-text-muted)' : undefined }} data-testid="dash-eis-count">
                 {n}
-                {n !== t && <span className={styles.of}>of {t}</span>}
+                {n !== t && <span className={styles.of}>{tr('ui.of')}{' '}{t}</span>}
               </span>
-              {byDate > 0 && <span className={styles.quadrantSub}>{byDate} by due date</span>}
+              {byDate > 0 && <span className={styles.quadrantSub}>{byDate} {tr('ui.by_due_date')}</span>}
             </Clickable>
           )
         })}

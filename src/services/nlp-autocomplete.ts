@@ -8,6 +8,7 @@ import {
   relativeDayPhrase,
   type FollowupInterval,
 } from '../utils/followup'
+import { locale } from '../i18n'
 import { BARE_MENTION_NAME, BARE_TAG_NAME, mentionToken, parseInput, tagToken } from './natural-language-parser'
 import { TYPED_NAME_MAX_RANK, rankByName } from './nlp-resolver'
 import {
@@ -405,7 +406,7 @@ function dateRows(
   return { rows: [{ kind: 'error', text: `Can't read "${typed}"`, hint: `Try ${DATE_ARGUMENT_HINT[command]}` }] }
 }
 
-const weekdayShort = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'short' })
+const weekdayShort = (d: Date) => d.toLocaleDateString(locale(), { weekday: 'short' })
 
 function repeatDetail(frequency: RecurrenceType, due: Date | undefined): string | undefined {
   if (frequency === 'weekly') return due ? `every ${weekdayShort(due)}` : 'every week'

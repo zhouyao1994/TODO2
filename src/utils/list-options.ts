@@ -1,6 +1,7 @@
 import type { TodoGroupBy, TodoSortBy, TodoSortDirection } from '../models/todo-sort-group'
 import { effectiveSortDirection, sortHasDirection } from '../models/todo-sort-group'
 import type { ListDefinition, RuntimeFilterField } from '../models/list-definition'
+import { t, type MessageKey } from '../i18n'
 
 /** Groupings a list definition offers, in menu order. */
 export const LIST_GROUP_CHOICES: readonly TodoGroupBy[] = ['none', 'priority', 'deadline', 'followup', 'people', 'status', 'tag']
@@ -74,12 +75,45 @@ export function sortOrderWords(sort: TodoSortBy, direction: TodoSortDirection): 
   return SORT_ORDER_WORDS[sort]?.[direction] ?? null
 }
 
+/** The catalog key of each group choice's label. */
+const GROUP_KEY: Record<TodoGroupBy, MessageKey> = {
+  none: 'ui.no_grouping',
+  priority: 'ui.priority',
+  deadline: 'ui.due_date',
+  followup: 'ui.follow_up_date',
+  people: 'ui.people',
+  status: 'ui.status',
+  tag: 'ui.tag_2',
+}
+
+/** The catalog key of each sort choice's label. */
+const SORT_KEY: Record<TodoSortBy, MessageKey> = {
+  manual: 'ui.manual',
+  priority: 'ui.priority',
+  deadline: 'ui.due_date',
+  followup: 'ui.follow_up_date',
+  name: 'ui.name',
+  created: 'ui.created_label',
+  people: 'ui.people',
+  status: 'ui.status',
+}
+
+/** The localized label of a group choice. */
+export function groupLabel(grouping: TodoGroupBy): string {
+  return GROUP_KEY[grouping] ? t(GROUP_KEY[grouping]) : GROUP_LABEL[grouping] ?? grouping
+}
+
+/** The localized label of a sort choice. */
+export function sortLabel(sort: TodoSortBy): string {
+  return SORT_KEY[sort] ? t(SORT_KEY[sort]) : SORT_LABEL[sort] ?? sort
+}
+
 /**
  * A sort's label with its direction: `Due date ↓` when descending; the
  * natural order (and Manual) shows no arrow.
  */
 export function sortSummary(sort: TodoSortBy, direction?: TodoSortDirection): string {
-  const label = SORT_LABEL[sort] ?? sort
+  const label = SORT_KEY[sort] ? t(SORT_KEY[sort]) : sort
   return effectiveSortDirection(sort, direction) === 'desc' ? `${label} ↓` : label
 }
 
@@ -91,7 +125,7 @@ export function sortSummary(sort: TodoSortBy, direction?: TodoSortDirection): st
 export function groupSortSummary(grouping: TodoGroupBy, sort: TodoSortBy, direction?: TodoSortDirection): string {
   const sortLabel = sortSummary(sort, direction)
   if (grouping === 'none') return sortLabel
-  return `${GROUP_LABEL[grouping] ?? grouping} · ${sortLabel}`
+  return `${GROUP_KEY[grouping] ? t(GROUP_KEY[grouping]) : grouping} · ${sortLabel}`
 }
 
 /**

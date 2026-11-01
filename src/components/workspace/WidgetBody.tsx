@@ -8,6 +8,7 @@ import type { DashboardSummary } from './dashboard/dashboard-summary'
 import { EisenhowerWidget } from './eisenhower/EisenhowerWidget'
 import { ListWidget, type ListWidgetResult } from './list/ListWidget'
 import styles from './WidgetBody.module.css'
+import { t } from '../../i18n'
 
 /** What a widget reports to its cell (tab count, and what its menu's copy items copy). */
 export interface WidgetResult extends ListWidgetResult {
@@ -61,8 +62,7 @@ export function WidgetBody({ tab, onResult, onCustomize }: WidgetBodyProps): Rea
       const unknown: never = tab
       return (
         <div className={styles.unknown} data-unknown-widget={String((unknown as { kind?: unknown }).kind)}>
-          This widget can't be shown in this version of TODO2.
-        </div>
+          {t('ui.this_widget_cant_be_shown_in')}</div>
       )
     }
   }

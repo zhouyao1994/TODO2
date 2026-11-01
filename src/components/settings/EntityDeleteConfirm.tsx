@@ -3,6 +3,7 @@ import { usePersonStore } from '../../stores/person-store'
 import { useTagStore } from '../../stores/tag-store'
 import { ConfirmDialog } from '../shared/Dialog'
 import { plural } from './sections/plural'
+import { t as tr } from '../../i18n'
 
 /**
  * "Delete person": names the person and how many tasks they're assigned to
@@ -23,10 +24,10 @@ export function DeletePersonConfirm({ personId, onDone }: { personId: number; on
   return (
     <ConfirmDialog
       open
-      title="Delete person"
+      title={tr('ui.delete_person')}
       message={
         <>
-          Delete <strong>{person.name}</strong>?
+          {tr('ui.delete')}{' '}<strong>{person.name}</strong>?
           {count > 0 && ` Assigned to ${plural(count, 'task')}.`}
         </>
       }
@@ -58,10 +59,10 @@ export function DeleteTagConfirm({ tagId, onDone }: { tagId: number; onDone: () 
   return (
     <ConfirmDialog
       open
-      title="Delete tag"
+      title={tr('ui.delete_tag')}
       message={
         <>
-          Delete <strong>{tag.name}</strong>?
+          {tr('ui.delete')}{' '}<strong>{tag.name}</strong>?
           {count > 0 && ` ${plural(count, 'task')} currently tagged.`}
         </>
       }

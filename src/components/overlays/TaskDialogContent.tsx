@@ -27,6 +27,7 @@ import { TaskRowGrid } from '../task/TaskRowGrid'
 import { DashGlyph } from '../shared/DashGlyph'
 import { EnvelopeIcon } from '../shared/icons'
 import styles from './TaskDialog.module.css'
+import { t as tr } from '../../i18n'
 
 interface Resolved {
   payload: TaskDialogPayload
@@ -155,12 +156,12 @@ export function TaskDialogContent({ payload, titleId, panelRef, onClose, filterB
         <DashGlyph name={payload.glyph} className={styles.glyph} />
         <h2 id={titleId} className={styles.title}>{payload.title}</h2>
         <span className={styles.countBadge} data-testid="task-dialog-count">{count}</span>
-        <button type="button" className={styles.closeBtn} aria-label="Close" onClick={onClose}>×</button>
+        <button type="button" className={styles.closeBtn} aria-label={tr('ui.close')} onClick={onClose}>{tr('ui.c397')}</button>
       </div>
       {filterBar}
       <p className={styles.description}>{screen ? screenTaskDialogDescription(screen) : payload.description}</p>
-      <div className={styles.body} aria-label="Tasks" role="group">
-        {count === 0 && <div className={styles.empty}>No tasks</div>}
+      <div className={styles.body} aria-label={tr('ui.tasks')} role="group">
+        {count === 0 && <div className={styles.empty}>{tr('ui.no_tasks')}</div>}
         {/* The default split: no divider here. */}
         <TaskRowGrid>
           {groups.map((g) => (g.label == null
@@ -190,15 +191,14 @@ export function TaskDialogContent({ payload, titleId, panelRef, onClose, filterB
             onClick={() => { void sendPersonCheckin(personId) }}
           >
             <EnvelopeIcon size={12} />
-            Email check-in
-          </button>
+            {tr('ui.email_check_in')}</button>
         )}
         <span className={styles.spacer} />
         {tabTarget && (
-          <button type="button" className={styles.ghostBtn} onClick={openAsTab}>Open as tab</button>
+          <button type="button" className={styles.ghostBtn} onClick={openAsTab}>{tr('ui.open_as_tab')}</button>
         )}
         <button type="button" className={styles.closeTextBtn} onClick={onClose}>
-          Close<kbd className={styles.kbd}>Esc</kbd>
+          {tr('ui.close')}<kbd className={styles.kbd}>Esc</kbd>
         </button>
       </div>
     </>

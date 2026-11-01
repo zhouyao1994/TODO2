@@ -18,6 +18,7 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import { plural } from './plural'
 import styles from './sections.module.css'
+import { t as tr } from '../../../i18n'
 
 const RETENTION_OPTIONS: ReadonlyArray<{ value: string; label: string }> = [
   { value: '', label: 'Keep forever' },
@@ -138,48 +139,47 @@ export function CompletedTasksSection() {
   return (
     <div className={styles.section}>
       <SettingRow
-        label="Offer to delete after"
-        help="Completed tasks older than this are listed when the app starts. Nothing is deleted without asking."
+        label={tr('ui.offer_to_delete_after')}
+        help={tr('ui.completed_tasks_older_than_this_are')}
         column
       >
         <select
           className={styles.select}
-          aria-label="Offer to delete completed tasks after"
+          aria-label={tr('ui.offer_to_delete_completed_tasks_after')}
           value={completedRetentionDays ?? ''}
           onChange={(e) => setCompletedRetentionDays(e.target.value ? Number(e.target.value) : null)}
         >
-          {RETENTION_OPTIONS.map(({ value, label }) => (
-            <option key={value} value={value}>{label}</option>
+          {RETENTION_OPTIONS.map(({ value }) => (
+            <option key={value} value={value}>{value === '' ? tr('ui.keep_forever') : tr('ui.days_count_many', { n: Number(value) })}</option>
           ))}
         </select>
         {retentionStats && (
           <>
             {retentionStats.expired > 0 && (
               <span className={styles.warningText}>
-                {plural(retentionStats.expired, 'completed task')} past retention ({nextAsk
+                {plural(retentionStats.expired, 'completed task')} {tr('ui.past_retention')}{nextAsk
                   ? `you'll be asked at a launch from ${formatDateShort(nextAsk)}`
                   : 'you\'ll be asked on next launch'})
               </span>
             )}
             {retentionStats.expiringThisWeek > 0 && (
-              <span className={styles.muted}>{retentionStats.expiringThisWeek} more will expire in the next 7 days</span>
+              <span className={styles.muted}>{retentionStats.expiringThisWeek} {tr('ui.more_will_expire_in_the_next')}</span>
             )}
             {retentionStats.expired === 0 && retentionStats.expiringThisWeek === 0 && (
-              <span className={styles.muted}>{plural(retentionStats.total, 'completed task')}, none expiring soon</span>
+              <span className={styles.muted}>{plural(retentionStats.total, 'completed task')}{tr('ui.none_expiring_soon')}</span>
             )}
           </>
         )}
       </SettingRow>
       {completedRetentionDays != null && <PurgePromptIntervalSetting />}
-      <SettingRow label="Delete completed tasks" help="A backup is taken first. Export & delete also saves them to a file." column>
+      <SettingRow label={tr('ui.delete_completed_tasks')} help={tr('ui.a_backup_is_taken_first_export')} column>
         <button
           type="button"
           className={`${styles.button} ${styles.buttonDanger}`}
           disabled={completedCount === 0}
           onClick={() => setShowCleanup(true)}
         >
-          Delete completed tasks…
-        </button>
+          {tr('ui.delete_completed_tasks_2')}</button>
         {message && <span className={styles.successMsg}>{message}</span>}
       </SettingRow>
 
@@ -189,19 +189,19 @@ export function CompletedTasksSection() {
         <DialogFrame
           onClose={() => { if (!busy) closeCleanup() }}
           className={styles.cleanupPopup}
-          aria-label="Delete completed tasks"
+          aria-label={tr('ui.delete_completed_tasks')}
         >
-            <div className={styles.cleanupTitle}>Delete completed tasks</div>
+            <div className={styles.cleanupTitle}>{tr('ui.delete_completed_tasks')}</div>
             <div className={styles.cleanupRow}>
-              <span className={styles.label}>Older than</span>
+              <span className={styles.label}>{tr('ui.older_than')}</span>
               <select
                 className={styles.select}
-                aria-label="Older than"
+                aria-label={tr('ui.older_than')}
                 value={cleanupDays}
                 onChange={(e) => { setCleanupDays(Number(e.target.value)); setConfirming(false) }}
               >
-                {CLEANUP_OPTIONS.map(({ value, label }) => (
-                  <option key={value} value={value}>{label}</option>
+                {CLEANUP_OPTIONS.map(({ value }) => (
+                  <option key={value} value={value}>{value === 0 ? tr('ui.all_completed') : tr('ui.days_count_many', { n: value })}</option>
                 ))}
               </select>
             </div>
@@ -231,8 +231,7 @@ export function CompletedTasksSection() {
                   : `Delete ${plural(matchCount, 'task')}`}
               </button>
               <button type="button" className={`${styles.button} ${styles.buttonSecondary}`} onClick={closeCleanup} disabled={busy}>
-                Cancel
-              </button>
+                {tr('ui.cancel')}</button>
             </div>
         </DialogFrame>
       )}
@@ -270,8 +269,8 @@ function PurgePromptIntervalSetting() {
 
   return (
     <SettingRow
-      label="Ask at most every"
-      help="Days between two of those launch prompts, counted from the last one — whatever you answered."
+      label={tr('ui.ask_at_most_every')}
+      help={tr('ui.days_between_two_of_those_launch')}
     >
       <input
         type="number"
@@ -293,7 +292,7 @@ function PurgePromptIntervalSetting() {
             setDraft(stored)
           }
         }}
-        aria-label="Ask at most every (days)"
+        aria-label={tr('ui.ask_at_most_every_days')}
         aria-invalid={!valid}
         style={{ width: 64, textAlign: 'right' }}
         autoComplete="off"

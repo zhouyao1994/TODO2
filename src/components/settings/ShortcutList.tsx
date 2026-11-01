@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import settingsStyles from './modal-chrome.module.css'
 import { useSettingsStore } from '../../stores/settings-store'
 import { shortcutListSections } from '../../utils/shortcut-bindings'
+import { translateText } from '../../i18n'
 
 /**
  * Every keyboard shortcut with its live keys, by category — the `?` modal
@@ -15,12 +16,12 @@ export function ShortcutList() {
     <>
       {sections.map(section => (
         <div key={section.category}>
-          <div className={settingsStyles.shortcutCategory}>{section.label}</div>
+          <div className={settingsStyles.shortcutCategory}>{translateText(section.label)}</div>
           <div className={settingsStyles.shortcutGrid}>
             {section.rows.map((row, idx) => (
               <Fragment key={row.id ?? `${section.category}-${idx}`}>
                 <span className={settingsStyles.shortcutKey}>{row.label}</span>
-                <span className={settingsStyles.shortcutDesc}>{row.description}</span>
+                <span className={settingsStyles.shortcutDesc}>{translateText(row.description)}</span>
               </Fragment>
             ))}
           </div>

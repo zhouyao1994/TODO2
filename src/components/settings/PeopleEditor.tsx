@@ -13,6 +13,7 @@ import styles from './EntityEditor.module.css'
 import { EditorModal } from './EditorModal'
 import { TaskCount } from './TaskCount'
 import { byName } from '../../utils/sort-order'
+import { t } from '../../i18n'
 
 interface PersonEditState {
   id: number
@@ -51,8 +52,8 @@ function EmailField({ value, onChange, showError, onBlur, errorId, autoFocus }: 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
-      placeholder="Email (optional)"
-      aria-label="Email"
+      placeholder={t('ui.email_optional')}
+      aria-label={t('ui.email')}
       maxLength={PERSON_EMAIL_MAX}
       aria-invalid={invalid || undefined}
       aria-describedby={invalid ? errorId : undefined}
@@ -85,11 +86,10 @@ function PersonColorField({ color, onChange }: { color: string | undefined; onCh
           type="button"
           className={styles.iconBtn}
           onClick={() => onChange(undefined)}
-          title="Remove color"
-          aria-label="Remove color"
+          title={t('ui.remove_color')}
+          aria-label={t('ui.remove_color')}
         >
-          &times;
-        </button>
+          {t('ui.c397')}</button>
       )}
     </>
   )
@@ -225,11 +225,11 @@ export function PeopleEditor({ onClose, editPersonId, focusField = 'email', laye
         <div key={p.id}>
           <div className={`${styles.editRow} ${styles.editRowWrap}`} onKeyDown={handleKeyDown(saveEditPerson, () => { setEditing(null); setNameError(''); setEmailTouched(false) })}>
             <PersonColorField color={ed.color} onChange={(color) => setEditing({ ...ed, color })} />
-            <input className={styles.editInput} value={ed.name} onChange={(e) => { const name = e.target.value; setEditing({ ...ed, name, ...(!editInitialsManual ? { initials: generateInitials(name) } : {}) }); setNameError('') }} placeholder="Name" autoFocus={!focusEmail} />
-            <input className={styles.editInputSmall} value={ed.initials} onChange={(e) => { setEditInitialsManual(true); setEditing({ ...ed, initials: e.target.value.toUpperCase().slice(0, 2) }) }} placeholder="AB" />
+            <input className={styles.editInput} value={ed.name} onChange={(e) => { const name = e.target.value; setEditing({ ...ed, name, ...(!editInitialsManual ? { initials: generateInitials(name) } : {}) }); setNameError('') }} placeholder={t('ui.name')} autoFocus={!focusEmail} />
+            <input className={styles.editInputSmall} value={ed.initials} onChange={(e) => { setEditInitialsManual(true); setEditing({ ...ed, initials: e.target.value.toUpperCase().slice(0, 2) }) }} placeholder={t('ui.ab')} />
             <div className={styles.editActions}>
-              <button className={styles.saveBtn} onClick={saveEditPerson}>Save</button>
-              <button className={styles.cancelBtn} onClick={() => { setEditing(null); setNameError(''); setEmailTouched(false) }}>Cancel</button>
+              <button className={styles.saveBtn} onClick={saveEditPerson}>{t('ui.save')}</button>
+              <button className={styles.cancelBtn} onClick={() => { setEditing(null); setNameError(''); setEmailTouched(false) }}>{t('ui.cancel')}</button>
             </div>
             <EmailField
               value={ed.email}
@@ -254,7 +254,7 @@ export function PeopleEditor({ onClose, editPersonId, focusField = 'email', laye
         <span className={styles.initials}>{p.initials}</span>
         <TaskCount count={counts.get(p.id!) ?? 0} />
         <div className={styles.actions}>
-          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => startDeletePerson(p.id!)} title="Delete">&times;</button>
+          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => startDeletePerson(p.id!)} title={t('ui.delete')}>{t('ui.c397')}</button>
         </div>
       </div>
     )
@@ -262,11 +262,11 @@ export function PeopleEditor({ onClose, editPersonId, focusField = 'email', laye
 
   return (
     <>
-      <EditorModal title="People" onClose={onClose} layer={layer}>
+      <EditorModal title={t('ui.people')} onClose={onClose} layer={layer}>
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Search people..."
+          placeholder={t('ui.search_people')}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
@@ -282,10 +282,10 @@ export function PeopleEditor({ onClose, editPersonId, focusField = 'email', laye
             return (
               <>
                 {people.length === 0 && !adding && (
-                  <div className={styles.empty}>No people yet</div>
+                  <div className={styles.empty}>{t('ui.no_people_yet')}</div>
                 )}
                 {people.length > 0 && sorted.length === 0 && (
-                  <div className={styles.empty}>No matching people</div>
+                  <div className={styles.empty}>{t('ui.no_matching_people')}</div>
                 )}
                 {sorted.map(renderPersonRow)}
               </>
@@ -296,11 +296,11 @@ export function PeopleEditor({ onClose, editPersonId, focusField = 'email', laye
             <div>
               <div className={`${styles.editRow} ${styles.editRowWrap}`} onKeyDown={handleKeyDown(saveAddPerson, () => { setAdding(false); setNameError(''); setEmailTouched(false) })}>
                 <PersonColorField color={newColor} onChange={setNewColor} />
-                <input className={styles.editInput} value={newName} onChange={(e) => { setNewName(e.target.value); if (!newInitialsManual) setNewInitials(generateInitials(e.target.value)); setNameError('') }} placeholder="Name" autoFocus />
-                <input className={styles.editInputSmall} value={newInitials} onChange={(e) => { setNewInitialsManual(true); setNewInitials(e.target.value.toUpperCase().slice(0, 2)) }} placeholder="AB" />
+                <input className={styles.editInput} value={newName} onChange={(e) => { setNewName(e.target.value); if (!newInitialsManual) setNewInitials(generateInitials(e.target.value)); setNameError('') }} placeholder={t('ui.name')} autoFocus />
+                <input className={styles.editInputSmall} value={newInitials} onChange={(e) => { setNewInitialsManual(true); setNewInitials(e.target.value.toUpperCase().slice(0, 2)) }} placeholder={t('ui.ab')} />
                 <div className={styles.editActions}>
-                  <button className={styles.saveBtn} onClick={saveAddPerson}>Add</button>
-                  <button className={styles.cancelBtn} onClick={() => { setAdding(false); setNameError(''); setEmailTouched(false) }}>Cancel</button>
+                  <button className={styles.saveBtn} onClick={saveAddPerson}>{t('ui.add_2')}</button>
+                  <button className={styles.cancelBtn} onClick={() => { setAdding(false); setNameError(''); setEmailTouched(false) }}>{t('ui.cancel')}</button>
                 </div>
                 <EmailField
                   value={newEmail}
@@ -315,7 +315,7 @@ export function PeopleEditor({ onClose, editPersonId, focusField = 'email', laye
             </div>
           )}
           {!adding && (
-            <button className={styles.addBtn} onClick={startAddPerson}>+ Add Person</button>
+            <button className={styles.addBtn} onClick={startAddPerson}>{t('ui.add_person')}</button>
           )}
         </div>
       </EditorModal>
