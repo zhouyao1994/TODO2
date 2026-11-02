@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../../i18n'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PersistedTodoItem } from '../../../models'
 import type { LensTab } from '../../../models/workspace-layout'
@@ -56,7 +57,6 @@ import { useDropRefusedCursor } from '../../../hooks/use-drop-refused-cursor'
 import styles from './ListWidget.module.css'
 import { useWidgetSelection } from '../../../hooks/use-widget-selection'
 import { LIST_SECTION_ATTR, SELECTION_SCOPE_ATTR } from '../../../utils/dom-contract'
-import { t as tr } from '../../../i18n'
 
 /** What a list widget reports to its cell (tab count, Copy tasks). */
 export interface ListWidgetResult {
@@ -328,7 +328,7 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
         <EmptyState
           title={tr('ui.no_tasks_match')}
           hint={`All ${baseCount} ${baseCount === 1 ? 'task' : 'tasks'} in this list ${baseCount === 1 ? 'is' : 'are'} hidden by the screen filter.`}
-          action={{ label: screenChips.length === 1 ? 'Clear screen filter' : 'Clear screen filters', onClick: () => useFilterStore.getState().clearAll() }}
+          action={{ label: screenChips.length === 1 ? t('ui.clear_screen_filter_one') : t('ui.clear_screen_filters'), onClick: () => useFilterStore.getState().clearAll() }}
         />
       )
     } else if (hasNarrowingFilters(predicate)) {
@@ -337,7 +337,7 @@ function ListWidgetBody({ tab, definition, onResult }: { tab: LensTab; definitio
           title={tr('ui.no_tasks_match')}
           hint={describeFilters(listChips)}
           action={{
-            label: 'Edit filters',
+            label: t('ui.edit_filters'),
             onClick: () => openEditList(tab.id, definition.id),
           }}
         />

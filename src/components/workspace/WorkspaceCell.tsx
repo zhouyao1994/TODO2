@@ -22,7 +22,7 @@ import { WidgetBody, type WidgetResult } from './WidgetBody'
 import { AddWidgetButtons, AddWidgetFlow } from './AddWidgetFlow'
 import { countListWidgets } from '../../hooks/use-list-widget-count'
 import { layoutTabs } from '../../utils/workspace-layout-ops'
-import { createListThenEdit, NO_LIST_LAYOUT_REASON, openEditList, useListOwnerLayoutId, useTabTitle, useTabTitles } from './widget-hooks'
+import { createListThenEdit, noListLayoutReason, openEditList, useListOwnerLayoutId, useTabTitle, useTabTitles } from './widget-hooks'
 import { UnsavedPrompt } from './UnsavedPrompt'
 import { MenuPopover, type MenuEntry } from '../shared/MenuPopover'
 import {
@@ -46,7 +46,7 @@ import {
 } from './workspace-drag'
 import { useUrgentRangeSetting } from './eisenhower/urgent-range-setting'
 import { CustomizeDashboardDialog } from './dashboard/CustomizeDashboardDialog'
-import { CUSTOMIZE_PANES_LABEL, openEisenhowerSettings } from './eisenhower/eisenhower-settings-link'
+import { customizePanesLabel, openEisenhowerSettings } from './eisenhower/eisenhower-settings-link'
 import { useDashboardMenuActions } from './dashboard/dashboard-menu'
 import { DashGlyph } from '../shared/DashGlyph'
 import styles from './WorkspaceCell.module.css'
@@ -221,8 +221,8 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
     if (listIds.length === 0) run()
     else setGuard({ listIds, lead, run })
   }
-  const closeTabGuarded = (tabId: string) => guarded([tabId], 'You’re closing the last widget that shows it.', () => closeTab(tabId))
-  const closeCellGuarded = () => guarded(cell.tabs.map((t) => t.id), 'You’re closing the last widget that shows them.', () => closeCell(cell.id))
+  const closeTabGuarded = (tabId: string) => guarded([tabId], t('ui.closing_last_widget'), () => closeTab(tabId))
+  const closeCellGuarded = () => guarded(cell.tabs.map((t) => t.id), t('ui.closing_last_widget_them'), () => closeCell(cell.id))
   const closeCustomize = () => setCustomize(null)
 
   const hit = drag?.hit
@@ -285,7 +285,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
     ...(active?.kind === 'dashboard' ? [
       {
         kind: 'item' as const,
-        label: 'Customize dashboard…',
+        label: t('ui.customize_dashboard_menu'),
         icon: <DashGlyph name="sliders" />,
         onSelect: () => setCustomize(active.id),
       },
@@ -294,7 +294,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
     ...(active?.kind === 'eisenhower' ? [
       {
         kind: 'item' as const,
-        label: CUSTOMIZE_PANES_LABEL,
+        label: customizePanesLabel(),
         icon: <DashGlyph name="sliders" />,
         onSelect: () => openEisenhowerSettings(),
       },
@@ -302,17 +302,17 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
     ] : []),
     {
       kind: 'item',
-      label: 'Add widget',
+      label: t('ui.add_widget_menu'),
       icon: <PlusIcon />,
       submenu: true,
       onSelect: () => setAddFlow({ anchor: anchorBelow(moreRef) }),
     },
     ...(band ? [
       bandMoveEntry(band === 'top' ? 'bottom' : 'top'),
-      { kind: 'item' as const, label: 'Move to a new column', icon: <SplitRightIcon />, onSelect: () => movePanel(cell.id, { kind: 'layout' }) },
+      { kind: 'item' as const, label: t('ui.move_to_new_column'), icon: <SplitRightIcon />, onSelect: () => movePanel(cell.id, { kind: 'layout' }) },
     ] : [
-      { kind: 'item' as const, label: 'Split right', icon: <SplitRightIcon />, onSelect: () => { splitCell(cell.id, 'right') } },
-      { kind: 'item' as const, label: 'Split below', icon: <SplitBelowIcon />, onSelect: () => { splitCell(cell.id, 'below') } },
+      { kind: 'item' as const, label: t('ui.split_right'), icon: <SplitRightIcon />, onSelect: () => { splitCell(cell.id, 'right') } },
+      { kind: 'item' as const, label: t('ui.split_below'), icon: <SplitBelowIcon />, onSelect: () => { splitCell(cell.id, 'below') } },
       bandMoveEntry('top'),
       bandMoveEntry('bottom'),
     ]),
@@ -388,10 +388,10 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
               ref={moreRef}
               type="button"
               className={`${styles.action} ${cellMenuOpen ? styles.actionPressed : ''}`}
-              aria-label={band ? 'Band options' : 'Cell options'}
+              aria-label={band ? t('ui.band_options') : t('ui.cell_options')}
               aria-haspopup="menu"
               aria-expanded={cellMenuOpen}
-              title={band ? 'Band options' : 'Cell options'}
+              title={band ? t('ui.band_options') : t('ui.cell_options')}
               onClick={() => setCellMenuOpen((o) => !o)}
             >
               <MoreIcon />
@@ -422,7 +422,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
           anchorRef={moreRef}
           placement="bottom-end"
           width={232}
-          label={band ? 'Band options' : 'Cell options'}
+          label={band ? t('ui.band_options') : t('ui.cell_options')}
           entries={cellMenuEntries}
           onClose={() => setCellMenuOpen(false)}
         />
@@ -439,7 +439,7 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
           anchor={{ x: tabMenu.x, y: tabMenu.y }}
           currentKind={menuTab.kind}
           onChangeKind={(kind) => changeKind(menuTab, kind)}
-          unavailableKinds={layoutId == null ? { lens: NO_LIST_LAYOUT_REASON } : undefined}
+          unavailableKinds={layoutId == null ? { lens: noListLayoutReason() } : undefined}
           pickListForLens={menuTab.kind === 'lens'
             ? (id) => {
                 if (id === menuTab.config.listDefinitionId) return
@@ -452,12 +452,12 @@ function FilledCell({ cell, band, style }: WorkspaceCellProps) {
           currentListName={menuListName}
           listLayoutId={layoutId}
           sourceActions={menuTab.kind === 'eisenhower'
-            ? [{ label: CUSTOMIZE_PANES_LABEL, onSelect: () => openEisenhowerSettings() }]
+            ? [{ label: customizePanesLabel(), onSelect: () => openEisenhowerSettings() }]
             : undefined}
           widgetSetting={menuTab.kind === 'eisenhower' ? urgentRangeSetting : undefined}
           widgetActions={menuTab.kind === 'dashboard' ? dashboardActions : menuTab.kind === 'lens' && widgetResult && widgetResult.tabId === menuTab.id
             ? [{
-                label: 'Copy tasks',
+                label: t('ui.copy_tasks'),
                 icon: '⧉',
                 onSelect: () => {
                   const sections = widgetResult.result.sections

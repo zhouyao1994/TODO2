@@ -1,3 +1,4 @@
+import { t } from '../i18n'
 import { create } from 'zustand'
 import { byLayoutOrder, layoutRepository, type ListCopy, type OwnedListsRemoved, type ReadLayout } from '../data/layout-repository'
 import { trackWrite } from './store-helpers'
@@ -401,7 +402,7 @@ function recordRemovedLists(layoutId: number, removed: OwnedListsRemoved | null,
       if (!back) {
         useUndoStore.getState().notify(defs.length === 1
           ? `“${first.name}” can’t come back: its layout is gone.`
-          : 'The lists can’t come back: their layout is gone.')
+          : t('ui.lists_come_back_none'))
         return
       }
       await Promise.all([useListDefinitionStore.getState().load(), useListOrderStore.getState().load()])
@@ -919,7 +920,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => {
       return true
     },
 
-    async reorderLayouts(orderedIds, description = 'Reordered layouts') {
+    async reorderLayouts(orderedIds, description = t('ui.reordered_layouts')) {
       const before = get().layouts.map((l) => l.id)
       if (!(await applyOrder(orderedIds))) return false
       const after = get().layouts.map((l) => l.id)

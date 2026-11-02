@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { EditorView } from '@codemirror/view'
 import { useNoteStore } from '../../../stores/note-store'
@@ -138,7 +139,7 @@ export function NotesBody({ onConvertToast, showToolbar = true, source, placehol
         latest = useNoteStore.getState().notes.get(activeId)?.content ?? ''
       }
       const ok = await copyNotesRich(latest)
-      onConvertToast?.(ok ? 'Copied rich text — paste into OneNote/Word' : 'Copy failed')
+      onConvertToast?.(ok ? t('ui.copy_rich_ok') : t('ui.copy_rich_fail'))
     } finally {
       setCopying(false)
     }

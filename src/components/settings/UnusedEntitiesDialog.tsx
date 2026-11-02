@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../i18n'
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { NEUTRAL_PERSON_COLOR } from '../../constants'
 import { useUnusedEntities } from '../../hooks/use-unused-entities'
@@ -8,7 +9,6 @@ import { ConfirmDialog } from '../shared/Dialog'
 import { EditorModal } from './EditorModal'
 import sectionStyles from './sections/sections.module.css'
 import styles from './UnusedEntitiesDialog.module.css'
-import { t as tr } from '../../i18n'
 
 type Ticks = ReadonlySet<number>
 const NONE: Ticks = new Set()
@@ -78,7 +78,7 @@ export function UnusedEntitiesDialog({ onClose }: { onClose: () => void }) {
             <UnusedGroup<Person>
               title={tr('ui.people')}
               noun="people"
-              empty="No unused people"
+              empty={t('ui.no_unused_people')}
               entries={people}
               ticked={tickedPeople}
               onTicked={setTickedPeople}
@@ -91,7 +91,7 @@ export function UnusedEntitiesDialog({ onClose }: { onClose: () => void }) {
             <UnusedGroup<Tag>
               title={tr('ui.tags')}
               noun="tags"
-              empty="No unused tags"
+              empty={t('ui.no_unused_tags')}
               entries={tags}
               ticked={tickedTags}
               onTicked={setTickedTags}

@@ -1,3 +1,4 @@
+import { t } from '../../i18n'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
@@ -26,7 +27,6 @@ import { useSortableRow, useSortableReorderHandler } from '../../hooks/use-sorta
 import { bySortOrder } from '../../utils/sort-order'
 import { EditorModal } from './EditorModal'
 import styles from './EntityEditor.module.css'
-import { t } from '../../i18n'
 
 interface EditState {
   id: number
@@ -58,7 +58,7 @@ function IconPicker({ value, onChange, color }: { value?: StatusIconKey; onChang
         className={styles.iconPickerBtn}
         style={{ color }}
         onClick={() => setOpen(!open)}
-        title={value ? `Icon: ${value}` : 'No icon — click to pick'}
+        title={value ? t('ui.icon_aria', { icon: value }) : t('ui.no_icon_pick')}
       >
         <StatusIcon icon={value || DEFAULT_STATUS_ICON} />
       </button>

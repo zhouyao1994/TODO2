@@ -28,7 +28,7 @@ import { useLatestRef } from '../../hooks/use-latest-ref'
 import { isInLayerAbove } from '../../utils/dom-layers'
 import { DialogFrame } from '../shared/Dialog'
 import styles from './TaskEditPopup.module.css'
-import { t as tr } from '../../i18n'
+import { t as tr, t } from '../../i18n'
 
 interface TaskEditPopupBaseProps {
   assignedPeople: Person[]
@@ -638,7 +638,7 @@ export function TaskEditPopup(props: TaskEditPopupProps) {
             className={`${styles.markerToggle} ${focusOn ? styles.markerToggleFocusOn : ''}`}
             pressed={focusOn}
             onClick={handleToggleFocus}
-            tooltip={focusOn ? 'Remove from Focus' : 'Add to Focus'}
+            tooltip={focusOn ? t('ui.remove_from_focus') : t('ui.add_to_focus')}
           >
             <FocusIcon /> {tr('ui.focus')}</MarkerToggle>
           <MarkerToggle

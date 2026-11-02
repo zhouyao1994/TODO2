@@ -52,7 +52,7 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
   } else if (isMobile) {
     middle = (
       <div className={styles.optionLines}>
-        <p><strong>{t('ui.grant_access')}</strong> {t('ui.your_browser_asks_you_to_allow')}</p>
+        <p><strong>{t('ui.grant_access_menu')}</strong> {t('ui.your_browser_asks_you_to_allow')}</p>
         <p><strong>{t('ui.continue_without_the_file')}</strong> {t('ui.open_this_browsers_data_sync_stays')}</p>
       </div>
     )
@@ -62,7 +62,7 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
         <div className={styles.option}>
           <span className={`${styles.optionIcon} ${styles.optionIconGrant}`}><LockIcon size={13} /></span>
           <span>
-            <span className={styles.optionTitle}>{t('ui.grant_access')}</span>
+            <span className={styles.optionTitle}>{t('ui.grant_access_menu')}</span>
             <span className={styles.optionLine}>{t('ui.your_browser_asks_you_to_allow_2')}</span>
           </span>
         </div>
@@ -87,7 +87,7 @@ export function LaunchPermissionDialog({ prompt }: { prompt: LaunchPermissionPro
       disabled={waiting}
     >
       {waiting && <span className={styles.spinner} aria-hidden="true" />}
-      {waiting ? 'Waiting for your browser…' : phase === 'refused' ? 'Try again' : 'Grant access…'}
+      {waiting ? t('ui.waiting_browser') : phase === 'refused' ? t('ui.try_again') : t('ui.grant_access_menu')}
     </button>
   )
   const continueButton = (

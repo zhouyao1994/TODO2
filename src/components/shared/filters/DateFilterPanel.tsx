@@ -1,3 +1,4 @@
+import { t as tr, t, translateText } from '../../../i18n'
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { DATE_FIELD_VALUES, type DateAnchor, type DateFilters } from '../../../models'
 import type { DateField } from '../../../models/app-view'
@@ -15,21 +16,20 @@ import { DateAnchorInput } from '../DateAnchorInput'
 import styles from './DateFilterPanel.module.css'
 import sheetStyles from './FilterChipBarMobile.module.css'
 import { shortcutScope } from '../../../utils/dom-contract'
-import { t, translateText } from '../../../i18n'
 
 /** Which tasks a Due / Follow-up clause keeps. */
 type ShowMode = 'range' | 'set' | 'unset'
 
-const SHOW_CHOICES: readonly { mode: ShowMode; label: string }[] = [
-  { mode: 'range', label: 'In range' },
-  { mode: 'set', label: 'Has a date' },
-  { mode: 'unset', label: 'No date' },
+const SHOW_CHOICES: readonly { mode: ShowMode; label: 'ui.mode_in_range' | 'ui.mode_has_date' | 'ui.mode_no_date' }[] = [
+  { mode: 'range', label: 'ui.mode_in_range' },
+  { mode: 'set', label: 'ui.mode_has_date' },
+  { mode: 'unset', label: 'ui.mode_no_date' },
 ]
 
 /** "Also tasks with no …" and the Has a date / No date lines, per type that offers them. */
-const NO_DATE_NAME: Partial<Record<DateField, string>> = {
-  deadline: 'due date',
-  followup: 'follow-up',
+const NO_DATE_NAME: Partial<Record<DateField, 'ui.no_name_due' | 'ui.no_name_followup'>> = {
+  deadline: 'ui.no_name_due',
+  followup: 'ui.no_name_followup',
 }
 
 interface HiddenRange {
@@ -147,7 +147,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
 
   const tabId = (f: DateField) => `${id}-tab-${f}`
   const panelId = `${id}-panel`
-  const noDateLabel = noDateName ? `Also tasks with no ${noDateName}` : undefined
+  const noDateLabel = noDateName ? t('ui.also_no_date', { name: t(noDateName) }) : undefined
 
   return (
     <div ref={rootRef} className={`${styles.panel} ${sheet ? styles.sheet : ''}`} {...shortcutScope('none')}>
@@ -201,7 +201,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
                     onClick={() => setShow(c.mode)}
                     onKeyDown={onShowKeyDown}
                   >
-                    {c.label}
+                    {tr(c.label)}
                   </button>
                 )
               })}
@@ -246,7 +246,9 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
           </>
         ) : (
           <p className={styles.explain}>
-            {show === 'set' ? `Only tasks that have a ${noDateName ?? ''}.` : `Only tasks with no ${noDateName ?? ''}.`}
+            {show === 'set'
+              ? t('ui.only_have', { name: noDateName == null ? '' : t(noDateName) })
+              : t('ui.only_have_none', { name: noDateName == null ? '' : t(noDateName) })}
           </p>
         )}
       </div>
@@ -255,7 +257,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
           {t('ui.clear')}{' '}{shortName}
         </button>
         <button type="button" className={styles.ghost} disabled={!hasDateFilters(dates)} onClick={clearAll}>
-          {sheet ? 'Clear all dates' : 'Clear all'}
+          {sheet ? tr('ui.clear_all_dates') : tr('ui.clear_all')}
         </button>
       </div>
     </div>

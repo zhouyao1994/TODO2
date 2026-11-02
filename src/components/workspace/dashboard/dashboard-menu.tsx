@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import { useSettingsStore } from '../../../stores/settings-store'
 import { wrapClipboardHtml, writeRichClipboard } from '../../../services/rich-clipboard'
 import { COPY_REFUSED_NOTICE } from '../../../services/task-copy'
@@ -23,17 +24,17 @@ export function useDashboardMenuActions({ onCustomize, summary }: {
 }): WidgetMenuAction[] {
   const hotRule = useSettingsStore((s) => s.hotRule)
   const actions: WidgetMenuAction[] = [
-    { label: 'Customize dashboard…', icon: <DashGlyph name="sliders" />, onSelect: onCustomize },
+    { label: t('ui.customize_dashboard_menu'), icon: <DashGlyph name="sliders" />, onSelect: onCustomize },
     {
-      label: 'Hot is',
+      label: t('ui.hot_is'),
       icon: <DashGlyph name="hot" />,
       note: hotRuleShort(hotRule),
-      panel: { label: 'Hot rule', width: HOT_FLYOUT_WIDTH_PX, render: () => <HotRuleEditor variant="flyout" /> },
+      panel: { label: t('ui.hot_rule'), width: HOT_FLYOUT_WIDTH_PX, render: () => <HotRuleEditor variant="flyout" /> },
     },
   ]
   if (summary) {
     actions.push({
-      label: 'Copy summary',
+      label: t('ui.copy_summary'),
       icon: <DashGlyph name="copy" />,
       onSelect: () => {
         void writeRichClipboard(wrapClipboardHtml(summary.html), summary.plain).then((ok) => {

@@ -69,7 +69,7 @@ import {
   isLanguagePreference,
   type LanguagePreference,
 } from '../models/language'
-import { setLanguagePreference as applyLanguagePreference } from '../i18n'
+import { setLanguagePreference as applyLanguagePreference, t } from '../i18n'
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -616,7 +616,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const before = { sort: get().newListSort, dir: get().newListSortDirection }
     if (before.sort === sort && before.dir === dir) return
     await recordSettingWrite(
-      `New lists sort by ${sortSummary(sort, dir)}`,
+      t('ui.new_lists_sort_undo', { sort: sortSummary(sort, dir) }),
       () => writeNewListSort(sort, dir),
       () => writeNewListSort(before.sort, before.dir),
       'Couldn’t save how new lists sort.',
@@ -628,7 +628,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const before = get().newListGroup
     if (before === group) return
     await recordSettingWrite(
-      group === 'none' ? 'New lists aren’t grouped' : `New lists group by ${GROUP_LABEL[group]}`,
+      group === 'none' ? t('ui.new_lists_ungrouped') : t('ui.new_lists_group_undo', { group: GROUP_LABEL[group] }),
       () => writeNewListGroup(group),
       () => writeNewListGroup(before),
       'Couldn’t save how new lists group.',

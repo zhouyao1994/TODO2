@@ -229,11 +229,13 @@ function FilterButton({ field, consumeEscape, valueWidth }: { field: FieldDef; c
 /** A filter button's (or Filters menu row's) name: `People filter`, `Dates filter: Due within 7 days; Created …`. */
 function filterName(field: FieldDef): string {
   const value = field.spokenValue ?? field.value
-  return value != null ? `${field.label} filter: ${value}` : `${field.label} filter`
+  return value != null
+    ? t('ui.field_filter_aria_value', { field: field.label, value })
+    : t('ui.field_filter_aria', { field: field.label })
 }
 
 function clearName(field: FieldDef): string {
-  return field.clearLabel ?? `Clear ${field.label.toLowerCase()} filter`
+  return field.clearLabel ?? t('ui.clear_field_filter', { label: field.label.toLowerCase() })
 }
 
 /** The portaled popover a field's picker sits in: the picker panel, or the field's own popover. */
@@ -316,7 +318,7 @@ function FiltersMenu({ fields, onClearAll, consumeEscape }: { fields: FieldDef[]
         type="button"
         className={`${styles.filterButton} ${styles.filterMain} ${styles.filtersTrigger} ${count > 0 ? styles.filterButtonActive : ''}`}
         aria-expanded={open}
-        aria-label={count > 0 ? `Filters, ${count} active` : 'Filters'}
+        aria-label={count > 0 ? t('ui.filters_aria_active', { n: count }) : t('ui.filters_aria')}
         onClick={() => (open ? closeAll() : setOpen(true))}
       >
         <span className={styles.filterLabel}>{t('ui.filters')}</span>
@@ -571,7 +573,7 @@ export function FilterChipBarDesktop({
     tooltip: dateTooltip,
     // Each type's line is the label; the last line (how they combine) is muted.
     tooltipLabelLines: dateTooltip ? dateTooltip.split('\n').length - 1 : undefined,
-    clearLabel: 'Clear date filters',
+    clearLabel: t('ui.clear_date_filters'),
     wide: true,
     onClear: () => clearField('dates'),
     panel: {

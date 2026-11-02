@@ -62,7 +62,7 @@ import { openEditList } from '../widget-hooks'
 import { countOpen, useEisenhowerSource, type ListSourceContext } from '../../../hooks/use-eisenhower-source'
 import { openEisenhowerSettings } from './eisenhower-settings-link'
 import { SELECTION_SCOPE_ATTR } from '../../../utils/dom-contract'
-import { t as tr } from '../../../i18n'
+import { t as tr, translateText } from '../../../i18n'
 
 /** Below this cell width the quadrants stack as collapsible sections. */
 export const EISENHOWER_STACK_BREAKPOINT_PX = 560
@@ -75,15 +75,17 @@ export interface EisenhowerResult {
 
 /** The default panes' empty lines (their `QUADRANT_FLAGS` in words). */
 const EMPTY_LINES: Record<EisenhowerQuadrant, [string, string]> = {
-  do: ['Nothing urgent and important', 'Drop a task here to mark it urgent and important.'],
-  schedule: ['Nothing to schedule', 'Drop a task here to mark it important.'],
-  delegate: ['Nothing to delegate', 'Drop a task here to mark it urgent.'],
-  drop: ['Nothing here', 'Tasks with neither flag land here.'],
+  do: ['ui.eis_empty_do_t', 'ui.eis_empty_do_h'],
+  schedule: ['ui.eis_empty_schedule_t', 'ui.eis_empty_schedule_h'],
+  delegate: ['ui.eis_empty_delegate_t', 'ui.eis_empty_delegate_h'],
+  drop: ['ui.eis_empty_drop_t', 'ui.eis_empty_drop_h'],
 }
 
 /** A custom pane's empty lines. */
 function emptyLines(pane: EisenhowerPane): [string, string] {
-  return pane.customFilter ? [`Nothing in ${pane.name}`, 'Tasks that match this pane show here.'] : EMPTY_LINES[pane.id]
+  return pane.customFilter
+    ? [tr('ui.eis_empty_custom_t', { name: translateText(pane.name) }), tr('ui.eis_empty_custom_h')]
+    : EMPTY_LINES[pane.id].map((key) => tr(key as 'ui.eis_empty_do_t')) as [string, string]
 }
 
 /** A task drag over the workspace, as this widget sees it. */
@@ -176,7 +178,7 @@ function PaneGlyphs({ pane }: { pane: EisenhowerPane }) {
 }
 
 function AddButton({ pane, hint, onAdd }: { pane: EisenhowerPane; hint: string; onAdd: () => void }) {
-  const label = `Add task to ${pane.name}`
+  const label = `${tr('ui.add_task_to')} ${translateText(pane.name)}`
   const { triggerProps, tooltip } = useTooltip(`${label}\n${hint}`)
   return (
     <button type="button" className={styles.add} aria-label={label} onClick={onAdd} {...triggerProps}>
@@ -290,7 +292,7 @@ function Quadrant({ pane, subtitle, addHint: hint, tasks, openCount, stacked, co
     <>
       {stacked && <span className={styles.chevron} aria-hidden="true"><ChevronDownIcon /></span>}
       <PaneGlyphs pane={pane} />
-      <span className={styles.name}>{pane.name}</span>
+      <span className={styles.name}>{translateText(pane.name)}</span>
       {pane.customFilter && <span className={styles.customDot} role="img" aria-label={tr('ui.custom_filter')} title={tr('ui.this_panes_filter_differs_from_its')} data-testid="eisenhower-pane-custom" />}
       <span className={styles.subtitle} data-testid="eisenhower-pane-subtitle">{subtitle}</span>
     </>
@@ -303,7 +305,7 @@ function Quadrant({ pane, subtitle, addHint: hint, tasks, openCount, stacked, co
       data-eis-quadrant={q}
       data-drop-state={state}
       data-collapsed={stacked && collapsed ? 'true' : undefined}
-      aria-label={`${pane.name}: ${subtitle}`}
+      aria-label={`${translateText(pane.name)}: ${subtitle}`}
     >
       <div
         className={styles.header}
@@ -486,7 +488,7 @@ function EisenhowerBody({ tab, onResult, shown, openTotal, list }: BodyProps) {
       ? predicateToFilterDefaults(narrowing.definition.membership.predicate)
       : getFilterDefaults(useFilterStore.getState().filters)
     const defaults = withPaneSeed(seed, paneWrites(pane.filter, names))
-    useUIStore.getState().openQuickAdd({ defaults, source: narrowing ? `${pane.name} · ${narrowing.title}` : pane.name })
+    useUIStore.getState().openQuickAdd({ defaults, source: narrowing ? `${translateText(pane.name)} · ${narrowing.title}` : translateText(pane.name) })
   }
 
   // What hides every task, if anything: the list's own filter (no open task
@@ -505,10 +507,10 @@ function EisenhowerBody({ tab, onResult, shown, openTotal, list }: BodyProps) {
   const menuPane = paneMenu ? panes.find((p) => p.id === paneMenu.q) : undefined
   // Phones: no pane menu (the panes are edited in Settings on a wider screen).
   const paneMenuEntries: MenuEntry[] = menuPane && !isMobile ? [
-    { kind: 'item', label: 'Edit pane…', onSelect: () => openEisenhowerSettings(menuPane.id) },
+    { kind: 'item', label: tr('ui.edit_pane'), onSelect: () => openEisenhowerSettings(menuPane.id) },
     ...(menuPane.customName || menuPane.customFilter ? [{
       kind: 'item' as const,
-      label: 'Reset pane',
+      label: tr('ui.reset_pane'),
       onSelect: () => resetPane(menuPane.id, menuPane.name),
     }] : []),
   ] : []
@@ -563,7 +565,7 @@ function EisenhowerBody({ tab, onResult, shown, openTotal, list }: BodyProps) {
             <span className={styles.noteHint}>
               {tr('ui.all')}{' '}{openTotal} {tr('ui.open_2')}{' '}{tasksAre(openTotal, list?.narrows ? ` in “${list.title}”` : '')} {tr('ui.hidden_by_the_screen_filter')}</span>
             <button type="button" className={styles.noteAction} onClick={() => useFilterStore.getState().clearAll()}>
-              {filterCount === 1 ? 'Clear screen filter' : 'Clear screen filters'}
+              {filterCount === 1 ? tr('ui.clear_screen_filter_one') : tr('ui.clear_screen_filters')}
             </button>
           </div>
         )}

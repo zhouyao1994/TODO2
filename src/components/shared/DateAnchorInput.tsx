@@ -123,7 +123,7 @@ export function DateAnchorInput({ value, onChange, className, ...aria }: DateAnc
         {value && value.kind === 'fixed' && <option value="">{tr('ui.custom')}</option>}
         <option value={NONE_SENTINEL}>{tr('ui.none')}</option>
         {RELATIVE_DATE_TOKENS.map(t => (
-          <option key={t} value={t}>{RELATIVE_TOKEN_LABELS[t]}</option>
+          <option key={t} value={t}>{tr(RELATIVE_TOKEN_LABELS[t])}</option>
         ))}
         <option value={OFFSET_SENTINEL}>{tr('ui.custom_offset')}</option>
       </select>

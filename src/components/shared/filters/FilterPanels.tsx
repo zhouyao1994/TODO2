@@ -93,7 +93,7 @@ export function SegmentedToggle<T>({ label, choices, value, onChange, touch = fa
             onClick={() => { if (!on && !disabled) onChange(c.value) }}
             onKeyDown={onKeyDown}
           >
-            {c.label}
+            {t(c.label as 'ui.choice_is' | 'ui.choice_is_not' | 'ui.choice_any' | 'ui.choice_yes' | 'ui.choice_no')}
           </button>
         )
       })}
@@ -102,8 +102,8 @@ export function SegmentedToggle<T>({ label, choices, value, onChange, touch = fa
 }
 
 const MODE_CHOICES: readonly SegmentChoice<boolean>[] = [
-  { value: false, label: 'Is' },
-  { value: true, label: 'Is not', accent: true },
+  { value: false, label: 'ui.choice_is' },
+  { value: true, label: 'ui.choice_is_not', accent: true },
 ]
 
 /**
@@ -118,9 +118,9 @@ export function FilterModeToggle({ field, negated, onChange, touch = false }: Fi
 type MarkerChoice = 'any' | 'yes' | 'no'
 
 const MARKER_CHOICES: readonly SegmentChoice<MarkerChoice>[] = [
-  { value: 'any', label: 'Any' },
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No', accent: true },
+  { value: 'any', label: 'ui.choice_any' },
+  { value: 'yes', label: 'ui.choice_yes' },
+  { value: 'no', label: 'ui.choice_no', accent: true },
 ]
 
 function choiceOf(condition: boolean | undefined): MarkerChoice {

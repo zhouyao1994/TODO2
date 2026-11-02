@@ -10,7 +10,7 @@ import { LayoutTabs } from './LayoutTabs'
 import { UnsavedPrompt } from './UnsavedPrompt'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CopyIcon, LayoutIcon, PencilIcon, PlusIcon, RevertIcon, SaveIcon, TrashIcon } from '../shared/icons'
 import styles from './LayoutControls.module.css'
-import { t } from '../../i18n'
+import { t, translateText } from '../../i18n'
 
 /** How the top bar shows the layouts: one tab each, or folded into the picker's drop-down. */
 export type LayoutControlsMode = 'tabs' | 'menu'
@@ -80,13 +80,13 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
 
   /** The open layout's actions (tab menu of the open tab, and the picker). */
   const openLayoutEntries: MenuEntry[] = [
-    { kind: 'item', label: 'Save changes', icon: <SaveIcon />, disabled: !isDirty, onSelect: saveOpen },
-    { kind: 'item', label: 'Save as new layout…', icon: <CopyIcon />, onSelect: () => setPending({ kind: 'save-as' }) },
-    { kind: 'item', label: 'Discard changes', icon: <RevertIcon />, disabled: !isDirty, onSelect: () => store().discard() },
+    { kind: 'item', label: t('ui.save_changes'), icon: <SaveIcon />, disabled: !isDirty, onSelect: saveOpen },
+    { kind: 'item', label: t('ui.save_as_new_layout_menu'), icon: <CopyIcon />, onSelect: () => setPending({ kind: 'save-as' }) },
+    { kind: 'item', label: t('ui.discard_changes'), icon: <RevertIcon />, disabled: !isDirty, onSelect: () => store().discard() },
   ]
 
   const pickerEntries: MenuEntry[] = [
-    { kind: 'label', text: 'Layouts' },
+    { kind: 'label', text: t('ui.layouts') },
     ...layouts.map((l): MenuEntry => ({
       kind: 'item',
       label: l.name,
@@ -98,15 +98,15 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       onSelect: () => switchTo(l.id, l.name),
     })),
     // A kept new layout, until it's saved.
-    ...(isNew ? [{ kind: 'item' as const, label: name, icon: <LayoutIcon />, radio: true, checked: true, note: 'New' }] : []),
+    ...(isNew ? [{ kind: 'item' as const, label: name, icon: <LayoutIcon />, radio: true, checked: true, note: t('ui.new_note') }] : []),
     { kind: 'separator' },
-    { kind: 'item', label: 'New layout…', icon: <PlusIcon />, onSelect: () => setPending({ kind: 'new-name' }) },
+    { kind: 'item', label: t('ui.new_layout') + '…', icon: <PlusIcon />, onSelect: () => setPending({ kind: 'new-name' }) },
     ...openLayoutEntries,
-    { kind: 'item', label: 'Rename…', icon: <PencilIcon />, onSelect: () => setPending({ kind: 'rename', id: isNew ? null : activeLayoutId, name }) },
+    { kind: 'item', label: t('ui.rename_menu'), icon: <PencilIcon />, onSelect: () => setPending({ kind: 'rename', id: isNew ? null : activeLayoutId, name }) },
     { kind: 'separator' },
     {
       kind: 'item',
-      label: 'Delete layout…',
+      label: t('ui.delete_layout_menu'),
       icon: <TrashIcon />,
       danger: true,
       disabled: !canDelete(isNew ? null : activeLayoutId),
@@ -119,17 +119,17 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
     const index = id == null ? -1 : indexOf(id)
     return [
       ...(open ? [...openLayoutEntries, { kind: 'separator' as const }] : []),
-      { kind: 'item', label: 'Rename…', icon: <PencilIcon />, onSelect: () => setPending({ kind: 'rename', id, name: nameOf(id) }) },
+      { kind: 'item', label: t('ui.rename_menu'), icon: <PencilIcon />, onSelect: () => setPending({ kind: 'rename', id, name: nameOf(id) }) },
       {
         kind: 'item',
-        label: 'Move left',
+        label: t('ui.move_left'),
         icon: <ChevronLeftIcon />,
         disabled: index <= 0,
         onSelect: () => { if (id != null) void store().moveLayout(id, index - 1) },
       },
       {
         kind: 'item',
-        label: 'Move right',
+        label: t('ui.move_right'),
         icon: <ChevronRightIcon />,
         disabled: index < 0 || index >= layouts.length - 1,
         onSelect: () => { if (id != null) void store().moveLayout(id, index + 1) },
@@ -137,7 +137,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       { kind: 'separator' },
       {
         kind: 'item',
-        label: 'Delete layout…',
+        label: t('ui.delete_layout_menu'),
         icon: <TrashIcon />,
         danger: true,
         disabled: !canDelete(id),
@@ -166,20 +166,20 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
           className={`${styles.picker} ${menuOpen ? styles.pickerOpen : ''}`}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
-          aria-label={`Layout: ${name}`}
+          aria-label={t('ui.layout_aria', { name })}
           onClick={() => setMenuOpen((o) => !o)}
           data-testid="layout-picker"
         >
           <span className={styles.glyph}><LayoutIcon /></span>
-          <span className={styles.name}>{name}</span>
+          <span className={styles.name}>{translateText(name)}</span>
           <ChevronDownIcon />
         </button>
       )}
       <button
         type="button"
         className={`${styles.save} ${isDirty ? styles.saveDirty : ''}`}
-        aria-label={isDirty ? 'Save layout (unsaved changes)' : 'Layout saved'}
-        title={isDirty ? 'Save layout · unsaved changes' : 'Layout saved'}
+        aria-label={isDirty ? t('ui.save_layout_aria') : t('ui.layout_saved')}
+        title={isDirty ? t('ui.save_layout_dirty') : t('ui.layout_saved')}
         aria-disabled={!isDirty}
         data-testid="layout-save"
         onClick={saveOpen}
@@ -201,7 +201,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
         <MenuPopover
           point={{ x: tabMenu.x, y: tabMenu.y }}
           width={220}
-          label={`Layout ${nameOf(tabMenu.id)}`}
+          label={t('ui.layout_menu_aria', { name: nameOf(tabMenu.id) })}
           entries={tabMenuEntries(tabMenu.id)}
           restoreFocus
           closeOnScroll
@@ -210,8 +210,8 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       )}
       {pending?.kind === 'switch' && (
         <UnsavedPrompt
-          lead={`You’re switching to layout “${pending.name}”.`}
-          layoutLead={`You’re switching to “${pending.name}”.`}
+          lead={t('ui.switching_layout', { name: pending.name })}
+          layoutLead={t('ui.switching_to', { name: pending.name })}
           layout={isDirty}
           listIds={unsavedLists}
           onDone={() => { close(); void store().load(pending.id) }}
@@ -221,7 +221,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       {pending?.kind === 'new-name' && (
         <LayoutNameDialog
           title={t('ui.new_layout')}
-          confirmLabel="Create layout"
+          confirmLabel={t('ui.create_layout')}
           initialName=""
           placeholder={t('ui.layout_name')}
           onConfirm={(n) => {
@@ -233,7 +233,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       )}
       {pending?.kind === 'new-confirm' && (
         <UnsavedPrompt
-          lead={`You’re starting a new layout “${pending.name}”.`}
+          lead={t('ui.starting_new_layout', { name: pending.name })}
           layout={isDirty}
           listIds={unsavedLists}
           onDone={() => { close(); create(pending.name) }}
@@ -243,7 +243,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       {pending?.kind === 'save-as' && (
         <LayoutNameDialog
           title={t('ui.save_as_new_layout')}
-          confirmLabel="Save layout"
+          confirmLabel={t('ui.save_layout')}
           initialName={`${name} copy`}
           onConfirm={(n) => { close(); void store().saveAs(n) }}
           onCancel={close}
@@ -252,7 +252,7 @@ export function LayoutControls({ mode }: { mode: LayoutControlsMode }) {
       {pending?.kind === 'save-new' && (
         <LayoutNameDialog
           title={t('ui.save_layout')}
-          confirmLabel="Save layout"
+          confirmLabel={t('ui.save_layout')}
           initialName={name}
           onConfirm={(n) => { close(); void store().saveAs(n) }}
           onCancel={close}

@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../i18n'
 import { useState, useRef, useCallback, useMemo, forwardRef, useLayoutEffect } from 'react'
 import { useLocation } from 'react-router'
 import { ROUTE_WORKSPACE } from '../../routes'
@@ -31,7 +32,6 @@ import { FILTER_ROW_ATTR, SEARCH_INPUT_ATTR } from '../../utils/dom-contract'
 import { FilteredTasksPanel } from '../overlays/FilteredTasksPanel'
 import { tabAcross } from '../../utils/focusables'
 import { trayExpansion, type TrayExpansion } from './tray-expansion'
-import { t as tr } from '../../i18n'
 
 const SEARCH_FIELD_ORDER: TextMatchField[] = ['title', 'notes', 'person', 'status', 'tag']
 const SEARCH_FIELD_LABELS: Record<TextMatchField, string> = {
@@ -66,7 +66,7 @@ function layoutTabsKey(s: ReturnType<typeof useWorkspaceStore.getState>): string
  * on; a click clears them all. Disabled while none is on.
  */
 function ClearFiltersButton({ active }: { active: boolean }) {
-  const { triggerProps, tooltip } = useTooltip(active ? 'Clear all filters\nFilters apply to every widget on screen' : null)
+  const { triggerProps, tooltip } = useTooltip(active ? t('ui.clear_filters_tooltip') : null)
   return (
     <button
       type="button"
@@ -441,7 +441,7 @@ export function TopBar() {
           className={styles.newTask}
           onClick={() => useUIStore.getState().openQuickAdd()}
           aria-label={tr('ui.new_task')}
-          title={`New task (${quickAddKeys})`}
+          title={t('ui.new_task_title', { keys: quickAddKeys })}
         >
           <PlusIcon size={14} strokeWidth={2} />
         </button>
@@ -562,7 +562,7 @@ export function TopBar() {
             className={`${styles.gear} ${settingsOpen ? styles.gearOpen : ''}`}
             onClick={() => useUIStore.getState().openSettings()}
             aria-label={tr('ui.settings')}
-            title={`Settings (${settingsKeys})`}
+            title={tr('ui.settings_title', { keys: settingsKeys })}
           >
             <GearIcon />
           </button>

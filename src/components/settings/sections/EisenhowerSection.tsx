@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../../i18n'
 import { useId, useMemo, useState, type CSSProperties } from 'react'
 import type { TodoPredicate } from '../../../models'
 import type { EisenhowerQuadrant } from '../../../models/workspace-layout'
@@ -27,7 +28,6 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import sectionStyles from './sections.module.css'
 import styles from './EisenhowerSection.module.css'
-import { t as tr } from '../../../i18n'
 
 /** Saves pane `q`'s settings patched (`null` = reset), from the panes as they are now (two quick edits mustn't drop one another). */
 function patchPane(q: EisenhowerQuadrant, patch: Parameters<typeof withPaneConfig>[2], description: string, mergeKey?: string): void {
@@ -98,10 +98,10 @@ export function EisenhowerSection() {
         <p className={styles.noPane} data-testid="customize-panes-no-pane">
           {noneOpen === 0
             ? tr('ui.every_open_task_is_in_a_pane')
-            : `${noneOpen} open ${noneOpen === 1 ? 'task is' : 'tasks are'} in no pane — hidden from the matrix, counted under it.`}
+            : t('ui.no_pane_some', { n: noneOpen, noun: noneOpen === 1 ? t('ui.task_is') : t('ui.tasks_are') })}
           {screenFilters > 0 && (
             <span data-testid="eisenhower-settings-filter-note">
-              {` The counts leave out what the screen filter hides (${screenFilters} ${screenFilters === 1 ? 'filter' : 'filters'} on).`}
+              {t('ui.filter_note', { n: `${screenFilters} ${screenFilters === 1 ? t('ui.filter_one') : t('ui.filters_many')}` })}
             </span>
           )}
         </p>
@@ -116,11 +116,11 @@ export function EisenhowerSection() {
       <ConfirmDialog
         open={confirmReset}
         title={tr('ui.reset_all_panes_2')}
-        message="Every pane goes back to its default name and filter (Do, Schedule, Delegate, Drop), in every Eisenhower and on the dashboard."
-        confirmLabel="Reset all panes"
+        message={t('ui.reset_panes_msg')}
+        confirmLabel={t('ui.reset_all_panes_confirm')}
         onConfirm={() => {
           setConfirmReset(false)
-          void useSettingsStore.getState().setEisenhowerPanes(undefined, 'Reset the Eisenhower panes')
+          void useSettingsStore.getState().setEisenhowerPanes(undefined, t('ui.reset_panes_undo'))
         }}
         onCancel={() => setConfirmReset(false)}
       />
@@ -176,7 +176,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
           className={styles.count}
           data-testid="customize-pane-count"
           role="img"
-          aria-label={`${count} open ${count === 1 ? 'task' : 'tasks'} now`}
+          aria-label={t('ui.pane_open_now_aria', { n: count, noun: count === 1 ? t('ui.task_word') : t('ui.tasks_word') })}
         >
           {count} {tr('ui.now')}</span>
       </div>
@@ -184,7 +184,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
         <PredicateChips
           predicate={pane.filter}
           onChange={onFilter}
-          addLabel="Add a filter to this pane"
+          addLabel={t('ui.add_filter_to_pane')}
           inDialog
           before={hasChips ? undefined : <span className={styles.noFilter}>{tr('ui.no_filter_every_task')}</span>}
         />

@@ -1,3 +1,4 @@
+import { t } from '../i18n'
 import { create } from 'zustand'
 import {
   fileStorageService,
@@ -130,28 +131,28 @@ export const useFileStorageStore = create<FileStorageState>((set, get) => {
 
     dismissError: () => set((s) => ({ dismissedError: s.error })),
 
-    initialize: () => withLoading(() => fileStorageService.initialize(), 'Failed to initialize file storage'),
+    initialize: () => withLoading(() => fileStorageService.initialize(), t('ui.err_init_failed')),
 
     openFile: async () => {
       set({ error: null })
-      await withLoading(() => fileStorageService.openFile(), 'Failed to open file')
+      await withLoading(() => fileStorageService.openFile(), t('ui.err_open_failed'))
     },
 
     createFile: async () => {
       set({ error: null })
-      await withLoading(() => fileStorageService.createFile(), 'Failed to create file')
+      await withLoading(() => fileStorageService.createFile(), t('ui.err_create_failed'))
     },
 
     disconnect: async () => {
       await fileStorageService.disconnect()
     },
 
-    reconnect: () => withLoading(() => fileStorageService.reconnect(), 'Failed to reconnect to file'),
+    reconnect: () => withLoading(() => fileStorageService.reconnect(), t('ui.err_reconnect_failed')),
 
-    retry: () => withLoading(() => fileStorageService.retry(), 'Failed to read file'),
+    retry: () => withLoading(() => fileStorageService.retry(), t('ui.err_read_failed')),
 
     overwriteFileWithBrowser: () =>
-      withLoading(() => fileStorageService.overwriteFileWithBrowser(), 'Failed to save to file'),
+      withLoading(() => fileStorageService.overwriteFileWithBrowser(), t('ui.err_save_failed')),
 
     resolveConflict: (choice) => {
       conflictResolve?.(choice)
@@ -174,7 +175,7 @@ export const useFileStorageStore = create<FileStorageState>((set, get) => {
       const current = () => launchPermissionResolve === answer
       void withLoading(
         () => fileStorageService.reconnect({ onGranted: () => { if (current()) set({ pendingLaunchPermission: null }) } }),
-        'Failed to reconnect to file',
+        t('ui.err_reconnect_failed'),
       ).then(() => {
         if (!current()) return
         if (get().needsPermission) {

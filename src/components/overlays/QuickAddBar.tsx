@@ -324,10 +324,10 @@ function hasPreset(preset: QuickAddPreset | undefined): boolean {
 function problemLine(p: CommandProblem): { label: string; explain: string; error?: boolean } {
   const first = p.command ? `the first /${p.command} counts` : ''
   switch (p.kind) {
-    case 'unknown': return { label: 'Unknown command:', explain: '— stays in the title' }
+    case 'unknown': return { label: tr('ui.unknown_command'), explain: tr('ui.stays_in_title') }
     case 'duplicate': return { label: 'Repeated:', explain: `— stays in the title; ${first}` }
     case 'ignored': return { label: 'Ignored:', explain: '— repeating needs a /due date' }
-    case 'unmatched': return { label: 'Unknown status:', explain: '— stays in the title', error: true }
+    case 'unmatched': return { label: tr('ui.unknown_status'), explain: tr('ui.stays_in_title'), error: true }
     case 'unreadable':
       if (p.command === 'due' || p.command === 'followup') {
         return { label: "Can't read date:", explain: `— try ${DATE_ARGUMENT_HINT[p.command]}`, error: true }

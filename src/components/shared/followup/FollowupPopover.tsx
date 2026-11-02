@@ -139,8 +139,8 @@ export function FollowupPopover({
 
   const { triggerProps: followedUpTipProps, tooltip: followedUpTip } = useTooltip(
     fieldDate === null
-      ? 'Record a follow-up today and clear the next follow-up'
-      : 'Record a follow-up today and set the next follow-up to the date above',
+      ? t('ui.record_followup_clear')
+      : t('ui.record_followup_set'),
   )
   // Only highlight "Mark followed up" when it would record something new.
   const doneToday = followedUpToday ?? isFollowedUpToday(todo, today)
@@ -223,7 +223,7 @@ export function FollowupPopover({
             {t('ui.last_followed_up')}{' '}<strong>{formatFollowupDate(todo.lastFollowupAt, today)}</strong>
             {' · '}{relativeDayPhrase(todo.lastFollowupAt, today)}
           </>
-        ) : 'Never followed up'}
+        ) : t('ui.never_followed_up')}
       </div>
       <button
         ref={followedUpRef}

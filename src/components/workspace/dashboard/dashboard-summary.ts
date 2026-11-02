@@ -2,9 +2,10 @@ import type { DashboardSectionConfig, DashboardTileId } from '../../../models/da
 import type { DashboardData } from '../../../hooks/use-dashboard-data'
 import type { ListTileCount } from '../../../services/stats/list-tiles'
 import type { TileStats } from '../../../services/stats/tiles'
+import { t } from '../../../i18n'
 import { escapeHtml } from '../../../utils/html'
 import { countOf } from './dashboard-copy'
-import { TILES } from './dashboard-tiles'
+import { tileLabel } from './dashboard-tiles'
 
 /** A dashboard's counts as text, for "Copy summary". */
 export interface DashboardSummary {
@@ -38,16 +39,16 @@ export function sectionSummaryLines(sections: readonly DashboardSectionConfig[],
         const totalOpen = new Map(total.rows.map((r) => [r.tag.id, r.ids.length]))
         const parts = shown.rows.map((r) => ({ label: `#${r.tag.name}`, count: countOf(r.ids.length, totalOpen.get(r.tag.id) ?? r.ids.length) }))
         if (s.options?.showUntagged !== false && shown.untagged.ids.length > 0) {
-          parts.push({ label: 'No tag', count: countOf(shown.untagged.ids.length, total.untagged.ids.length) })
+          parts.push({ label: t('ui.no_tag'), count: countOf(shown.untagged.ids.length, total.untagged.ids.length) })
         }
         if (parts.length > 0) lines.push(parts)
         break
       }
       case 'stale':
-        lines.push([{ label: 'Stale tasks', count: countOf(data.stale.shown.ids.length, data.stale.total.ids.length) }])
+        lines.push([{ label: t('ui.sec_stale'), count: countOf(data.stale.shown.ids.length, data.stale.total.ids.length) }])
         break
       case 'recent':
-        lines.push([{ label: 'Recently completed', count: countOf(data.recent.shown.ids.length, data.recent.total.ids.length) }])
+        lines.push([{ label: t('ui.sec_recent'), count: countOf(data.recent.shown.ids.length, data.recent.total.ids.length) }])
         break
       case 'eisenhower':
         lines.push(data.eisenhowerSetup.panes.map((p) => ({
@@ -78,7 +79,7 @@ export function buildDashboardSummary(
 ): DashboardSummary {
   const ids = tileIds.length > 0 || listTiles.length > 0 || sectionLines.length > 0 ? tileIds : (['open'] as const)
   const tileParts = ids.map((id) => ({
-    label: TILES[id].label,
+    label: tileLabel(id),
     count: countOf(tiles.shown[id].ids.length, tiles.total[id].ids.length),
   }))
   const listParts = listTiles.map((t) => ({ label: t.name, count: countOf(t.shown, t.total) }))

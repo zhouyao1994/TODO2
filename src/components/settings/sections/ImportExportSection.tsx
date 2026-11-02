@@ -9,7 +9,7 @@ import { getOpenFilePicker } from '../../../utils/file-picker'
 import { downloadedMessage, getPickerStartIn, saveTextFile } from '../../../services/save-file'
 import { findAppendDuplicatesInDb, runAppendImport, type AppendCandidate, type AppendChoice } from '../../../services/append-import'
 import { AppendImportDialog } from '../../overlays/AppendImportDialog'
-import { NO_BACKUP_NOTE } from '../../../stores/safety-snapshot'
+import { noBackupNote } from '../../../stores/safety-snapshot'
 import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import { plural } from './plural'
@@ -111,7 +111,7 @@ export function ImportExportSection() {
       showMessage('Import cancelled — nothing changed.', 4000)
       return
     }
-    const notes = [...(result.noBackup ? [NO_BACKUP_NOTE] : []), ...warnings]
+    const notes = [...(result.noBackup ? [noBackupNote()] : []), ...warnings]
     showMessage(
       notes.length > 0 ? `Imported successfully. ${notes.join(' ')}` : 'Imported successfully!',
       notes.length > 0 ? 8000 : 4000,
@@ -177,7 +177,7 @@ export function ImportExportSection() {
       const { warnings } = pendingAppend
       setPendingAppend(null)
       const skipped = result.skipped > 0 ? ` Skipped ${plural(result.skipped, 'duplicate')}.` : ''
-      const notes = [...(result.noBackup ? [NO_BACKUP_NOTE] : []), ...warnings]
+      const notes = [...(result.noBackup ? [noBackupNote()] : []), ...warnings]
       showMessage(`Imported ${plural(result.imported, 'task')}.${skipped}${notes.length > 0 ? ` ${notes.join(' ')}` : ''}`, notes.length > 0 ? 8000 : 6000)
     } catch (err) {
       setAppendError(`Import failed — ${err instanceof Error ? err.message : String(err)}`)

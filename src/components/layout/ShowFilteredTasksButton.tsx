@@ -1,3 +1,4 @@
+import { t } from '../../i18n'
 import { useScreenTaskCount } from '../../hooks/use-screen-task-count'
 import { showTasksLabel } from '../../services/task-dialog'
 import { useUIStore } from '../../stores/ui-store'
@@ -14,7 +15,7 @@ import styles from './TopBar.module.css'
  */
 export function ShowFilteredTasksButton({ open }: { open: boolean }) {
   const count = useScreenTaskCount()
-  const { triggerProps, tooltip } = useTooltip(open ? null : 'Show the tasks matching the filter')
+  const { triggerProps, tooltip } = useTooltip(open ? null : t('ui.show_filtered_tooltip'))
   return (
     <>
       <span className={styles.showTasksSeparator} aria-hidden="true" />

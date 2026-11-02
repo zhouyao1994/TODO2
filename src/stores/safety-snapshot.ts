@@ -1,3 +1,4 @@
+import { t } from '../i18n'
 import { backupRepository } from '../data/backup-repository'
 import { useUIStore } from './ui-store'
 import { backupScheduler } from '../data/backup-scheduler'
@@ -10,7 +11,9 @@ import { backupScheduler } from '../data/backup-scheduler'
 export type SafetySnapshotResult = 'taken' | 'without-backup' | 'cancelled'
 
 /** Appended to an operation's result message when it ran without a backup. */
-export const NO_BACKUP_NOTE = 'No backup was taken.'
+export function noBackupNote(): string {
+  return t('ui.no_backup_note')
+}
 
 /**
  * The one gate in front of every destructive operation that promises a
@@ -33,15 +36,13 @@ export async function takeSafetySnapshot(operation: string): Promise<SafetySnaps
     console.warn(`[backup] snapshot before ${operation} failed`, err)
   }
   const proceed = await useUIStore.getState().askConfirmation({
-    title: 'Continue without a backup?',
-    message: `A backup could not be saved before ${operation}, so nothing has changed yet. `
-      + 'Browser storage may be full. '
-      + 'Continue without a backup, or cancel?',
-    confirmLabel: 'Continue',
+    title: t('ui.continue_without_backup'),
+    message: t('ui.continue_without_backup_msg', { op: operation }),
+    confirmLabel: t('ui.continue_btn'),
     danger: true,
     cancelIsDefault: true,
   })
   if (!proceed) return 'cancelled'
-  backupRepository.reportSnapshotWarning(`No backup was taken before ${operation} — the backup could not be saved.`)
+  backupRepository.reportSnapshotWarning(t('ui.no_backup_taken_before', { op: operation }))
   return 'without-backup'
 }

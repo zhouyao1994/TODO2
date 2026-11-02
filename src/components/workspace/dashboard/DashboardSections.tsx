@@ -32,11 +32,11 @@ import {
 import { tileDrill } from './dashboard-tiles'
 import { DashGlyph } from '../../shared/DashGlyph'
 import type { DashGlyphName } from '../../../utils/dash-glyphs'
-import { SECTION_META, type DashboardSectionMeta } from './section-meta'
+import { SECTION_META, sectionTitle, type DashboardSectionMeta } from './section-meta'
 import type { DashboardData } from '../../../hooks/use-dashboard-data'
 import type { DashboardRowKit, OnDashboardDrill } from './types'
 import styles from './DashboardWidget.module.css'
-import { t as tr } from '../../../i18n'
+import { t as tr, translateText } from '../../../i18n'
 
 /** What every section is rendered with. */
 export interface DashboardSectionProps {
@@ -63,13 +63,13 @@ function Panel({ def, count, onCount, sub, extras, style, className, children }:
   children: ReactNode
 }) {
   return (
-    <section className={`${styles.panel} ${styles.surface}${className ? ` ${className}` : ''}`} style={style} aria-label={def.title} data-dash-section={def.id}>
+    <section className={`${styles.panel} ${styles.surface}${className ? ` ${className}` : ''}`} style={style} aria-label={sectionTitle(def.id)} data-dash-section={def.id}>
       <div className={styles.panelHeader}>
         <DashGlyph name={def.glyph} color={def.glyphColor} />
-        <span className={styles.panelTitle}>{def.title}</span>
+        <span className={styles.panelTitle}>{sectionTitle(def.id)}</span>
         {count != null && (onCount
           ? (
-            <button type="button" className={`${styles.panelCount} ${styles.panelCountBtn}`} data-testid="dash-section-count" aria-label={`${def.title}: ${count}. Show tasks`} onClick={onCount}>
+            <button type="button" className={`${styles.panelCount} ${styles.panelCountBtn}`} data-testid="dash-section-count" aria-label={`${sectionTitle(def.id)}: ${count}. ${tr('ui.show_tasks')}`} onClick={onCount}>
               {count}
             </button>
           )
@@ -202,7 +202,7 @@ export function HotSection({ data, rows, onDrill, style }: DashboardSectionProps
     >
       <div className={styles.panelBody}>
         {ids.length === 0
-          ? <Empty title={tr('ui.nothing_hot')} hint="Tasks matching the Hot setting show here." />
+          ? <Empty title={tr('ui.nothing_hot')} hint={tr('ui.empty_hot_hint')} />
           : <RowsGrid kit={rows}><TaskRows sectionKey="hot" ids={ids} data={data} kit={rows} /></RowsGrid>}
       </div>
     </Panel>
@@ -216,9 +216,9 @@ export function FollowupSection({ data, options, rows, onDrill, style }: Dashboa
   const lookAhead = options.lookAhead ?? DEFAULT_DASHBOARD_LOOK_AHEAD
   const { shown, total } = data.followup
   const groups = [
-    { key: 'fu-late', name: 'Late', dot: 'var(--color-followup)', ids: shown.late },
-    { key: 'fu-today', name: 'Today', dot: 'var(--color-followup)', ids: shown.today },
-    { key: 'fu-next', name: `Next ${lookAhead} days`, dot: 'var(--color-text-muted)', ids: shown.upcoming },
+    { key: 'fu-late', name: tr('ui.late_col'), dot: 'var(--color-followup)', ids: shown.late },
+    { key: 'fu-today', name: tr('ui.today_col'), dot: 'var(--color-followup)', ids: shown.today },
+    { key: 'fu-next', name: tr('ui.next_n_days', { n: lookAhead }), dot: 'var(--color-text-muted)', ids: shown.upcoming },
   ].filter((g) => g.ids.length > 0)
   const shownCount = shown.late.length + shown.today.length + shown.upcoming.length
   const totalCount = total.late.length + total.today.length + total.upcoming.length
@@ -228,18 +228,18 @@ export function FollowupSection({ data, options, rows, onDrill, style }: Dashboa
       style={style}
       count={countOf(shownCount, totalCount)}
       onCount={onDrill ? () => onDrill({
-        title: 'Needs follow-up',
+        title: tr('ui.sec_followup'),
         glyph: 'followup',
-        description: `Open tasks whose next follow-up is late, today or in the next ${lookAhead} days.`,
+        description: tr('ui.followup_drill_desc', { n: lookAhead }),
         source: { kind: 'groups', groups: groups.map((g) => ({ key: g.key, label: g.name, color: g.dot, todoIds: g.ids })) },
       }) : undefined}
-      sub={`Late, today and the next ${lookAhead} days`}
+      sub={tr('ui.followup_sub', { n: lookAhead })}
     >
       <div className={styles.panelBody}>
         {groups.length === 0 ? (
           <Empty
             title={tr('ui.nothing_needs_follow_up')}
-            hint={`No follow-ups are late, due today or due in the next ${lookAhead} days.`}
+            hint={tr('ui.followup_empty_hint', { n: lookAhead })}
           />
         ) : (
           <RowsGrid kit={rows}>
@@ -294,15 +294,15 @@ export function NextDaysSection({ data, onDrill, style }: DashboardSectionProps)
               data-late={i === 0 ? 'true' : undefined}
               data-today={i === 1 ? 'true' : undefined}
               data-testid="dash-day"
-              label={`${name} ${num}: ${d} due, ${f} follow-up. Show tasks`}
+              label={tr('ui.bucket_aria', { label: `${name} ${num}`, c: d, k: f })}
               onClick={onDrill ? () => onDrill({
                 ...words,
                 glyph: 'calendar',
                 source: {
                   kind: 'groups',
                   groups: [
-                    { key: 'due', label: 'Due', color: 'var(--color-overdue)', todoIds: c.dueIds },
-                    { key: 'followup', label: 'Follow-up', color: 'var(--color-followup)', todoIds: c.followupIds },
+                    { key: 'due', label: tr('ui.due'), color: 'var(--color-overdue)', todoIds: c.dueIds },
+                    { key: 'followup', label: tr('ui.followup'), color: 'var(--color-followup)', todoIds: c.followupIds },
                   ],
                 },
               }) : undefined}
@@ -357,11 +357,11 @@ export function TrendSection({ data, onDrill, style }: DashboardSectionProps) {
             as="span"
             className={styles.trendStat}
             data-testid="dash-trend-completed"
-            label={`${trend?.completed ?? 0} completed in ${rangeWords}. Show tasks`}
+            label={tr('ui.completed_aria', { n: trend?.completed ?? 0, range: rangeWords })}
             onClick={onDrill && trend ? () => onDrill({
-              title: 'Completed',
+              title: tr('ui.drill_completed'),
               glyph: 'chart',
-              description: `Tasks completed in ${rangeWords}.`,
+              description: tr('ui.completed_in_desc', { range: rangeWords }),
               source: { kind: 'todos', todoIds: buckets.flatMap((b) => b.completedIds) },
             }) : undefined}
           >
@@ -370,11 +370,11 @@ export function TrendSection({ data, onDrill, style }: DashboardSectionProps) {
             as="span"
             className={styles.trendStat}
             data-testid="dash-trend-created"
-            label={`${trend?.created ?? 0} created in ${rangeWords}. Show tasks`}
+            label={tr('ui.created_aria', { n: trend?.created ?? 0, range: rangeWords })}
             onClick={onDrill && trend ? () => onDrill({
-              title: 'Created',
+              title: tr('ui.drill_created'),
               glyph: 'chart',
-              description: `Tasks created in ${rangeWords}.`,
+              description: tr('ui.created_in_desc', { range: rangeWords }),
               source: { kind: 'todos', todoIds: buckets.flatMap((b) => b.createdIds) },
             }) : undefined}
           >
@@ -392,15 +392,15 @@ export function TrendSection({ data, onDrill, style }: DashboardSectionProps) {
                 key={i}
                 as="div"
                 className={styles.trendGroup}
-                label={`${label}: ${c} created, ${k} completed. Show tasks`}
+                label={tr('ui.bucket_aria', { label, c, k })}
                 onClick={onDrill && c + k > 0 ? () => onDrill({
                   ...words,
                   glyph: 'chart',
                   source: {
                     kind: 'groups',
                     groups: [
-                      { key: 'completed', label: 'Completed', color: 'var(--color-accent)', todoIds: b.completedIds },
-                      { key: 'created', label: 'Created', color: 'var(--color-chart-created)', todoIds: b.createdIds },
+                      { key: 'completed', label: tr('ui.drill_completed'), color: 'var(--color-accent)', todoIds: b.completedIds },
+                      { key: 'created', label: tr('ui.drill_created'), color: 'var(--color-chart-created)', todoIds: b.createdIds },
                     ],
                   },
                 }) : undefined}
@@ -432,11 +432,11 @@ export function StatusSection({ data, onDrill, style }: DashboardSectionProps) {
     <Panel
       def={SECTION_META.status}
       style={style}
-      count={`${countOf(open, openTotal)} open`}
+      count={tr('ui.n_open', { n: countOf(open, openTotal) })}
       onCount={onDrill ? () => onDrill({
-        title: 'Open tasks',
+        title: tr('ui.tile_open_title'),
         glyph: 'status',
-        description: 'Open tasks by status.',
+        description: tr('ui.status_drill_desc'),
         source: {
           kind: 'groups',
           groups: entries.filter((e) => e.count > 0).map((e) => ({
@@ -449,10 +449,10 @@ export function StatusSection({ data, onDrill, style }: DashboardSectionProps) {
       }) : undefined}
     >
       {openTotal === 0 ? (
-        <Empty title={tr('ui.no_open_tasks')} hint="Open tasks show here by status." />
+        <Empty title={tr('ui.no_open_tasks')} hint={tr('ui.status_empty_hint')} />
       ) : (
         <>
-          <div className={styles.statusBar} role="img" aria-label={`${open} open tasks by status`}>
+          <div className={styles.statusBar} role="img" aria-label={tr('ui.status_bar_aria', { n: open })}>
             {entries.filter((e) => e.count > 0).map((e) => (
               <span key={e.id ?? 'none'} style={{ flex: `${e.count} 1 0`, background: e.color }} />
             ))}
@@ -465,12 +465,12 @@ export function StatusSection({ data, onDrill, style }: DashboardSectionProps) {
                 className={styles.statusRow}
                 data-zero={e.count === 0 ? 'true' : undefined}
                 data-status-key={String(e.id ?? 'unset')}
-                label={`${e.label}: ${e.count}. Show tasks`}
+                label={tr('ui.row_aria', { label: e.label, count: e.count })}
                 onClick={onDrill && e.count > 0
                   ? () => onDrill({
                     title: e.label,
                     glyph: 'status',
-                    description: e.id == null ? 'Open tasks with no status.' : `Status: ${e.label}.`,
+                    description: e.id == null ? tr('ui.no_status_desc') : tr('ui.status_desc', { name: e.label }),
                     source: { kind: 'todos', todoIds: openIds(data.shown, (t) => (t.statusId ?? null) === e.id) },
                   })
                   : undefined}
@@ -504,9 +504,9 @@ export function PeopleSection({ data, options, onDrill, style }: DashboardSectio
     ...(showUnassigned ? [{ key: 'none', person: null, stats: unassigned }] : []),
   ], [rows, unassigned, showUnassigned])
   return (
-    <Panel def={SECTION_META.people} style={style} sub="Open tasks by person">
+    <Panel def={SECTION_META.people} style={style} sub={tr('ui.people_sub')}>
       {all.length === 0 ? (
-        <Empty title={tr('ui.no_open_tasks')} hint="Open tasks show here by person." />
+        <Empty title={tr('ui.no_open_tasks')} hint={tr('ui.people_empty_hint')} />
       ) : (
         <>
           <div className={`${styles.peopleGrid} ${styles.peopleHead}`}>
@@ -514,14 +514,14 @@ export function PeopleSection({ data, options, onDrill, style }: DashboardSectio
           </div>
           <div className={styles.panelBody}>
             {all.map(({ key, person, stats }) => {
-              const name = person ? person.name : 'Unassigned'
+              const name = person ? person.name : tr('ui.unassigned')
               const open = stats.ids.length
               // In each task's own order, as the person chip lists them.
               const onClick = onDrill
                 ? () => onDrill({
                   title: name,
                   glyph: 'people',
-                  description: person ? `Open tasks assigned to ${person.name}.` : 'Open tasks with nobody assigned.',
+                  description: person ? tr('ui.person_drill_desc', { name: person.name }) : tr('ui.nobody_desc'),
                   source: { kind: 'todos', todoIds: inSortOrder(stats.ids, data) },
                   ...(person?.id != null ? { personId: person.id } : {}),
                 })
@@ -547,7 +547,7 @@ export function PeopleSection({ data, options, onDrill, style }: DashboardSectio
                   type="button"
                   className={cls}
                   data-person-row={key}
-                  aria-label={`${name}: ${open} open, ${stats.hotIds.length} hot, ${stats.followupDueIds.length} follow-up due`}
+                  aria-label={tr('ui.person_row_aria', { name, open, hot: stats.hotIds.length, fu: stats.followupDueIds.length })}
                   onClick={onClick}
                 >
                   {content}
@@ -582,13 +582,13 @@ export function TagsSection({ data, options, onDrill, style }: DashboardSectionP
       def={SECTION_META.tags}
       style={style}
       className={styles.tagsPanel}
-      count={`${countOf(shown.taggedIds.length, total.taggedIds.length)} tagged`}
+      count={tr('ui.tagged_count', { count: countOf(shown.taggedIds.length, total.taggedIds.length) })}
       // Each tag's tasks in their own order, as a person's are.
       onCount={onDrill ? () => onDrill(tagsSectionDialog(shown.rows.map((r) => ({ tag: r.tag, todoIds: inSortOrder(r.ids, data) })))) : undefined}
-      sub="Open tasks by tag"
+      sub={tr('ui.tags_sub')}
     >
       {all.length === 0 ? (
-        <Empty title={tr('ui.no_tagged_tasks')} hint="Open tasks show here by tag." />
+        <Empty title={tr('ui.no_tagged_tasks')} hint={tr('ui.tags_empty_hint')} />
       ) : (
         <>
           <div className={`${styles.tagsGrid} ${styles.peopleHead}`}>
@@ -596,7 +596,7 @@ export function TagsSection({ data, options, onDrill, style }: DashboardSectionP
           </div>
           <div className={styles.panelBody}>
             {all.map(({ key, tag, stats, totalOpen }) => {
-              const name = tag ? `#${tag.name}` : 'No tag'
+              const name = tag ? `#${tag.name}` : tr('ui.no_tag')
               const open = stats.ids.length
               const openLabel = countOf(open, totalOpen)
               const content = (
@@ -618,7 +618,7 @@ export function TagsSection({ data, options, onDrill, style }: DashboardSectionP
                   type="button"
                   className={cls}
                   data-tag-row={key}
-                  aria-label={`${name}: ${openLabel} open, ${stats.hotIds.length} hot, ${stats.followupDueIds.length} follow-up due`}
+                  aria-label={tr('ui.person_row_aria', { name, open: openLabel, hot: stats.hotIds.length, fu: stats.followupDueIds.length })}
                   onClick={() => onDrill(tagSectionDialog(tag, inSortOrder(stats.ids, data)))}
                 >
                   {content}
@@ -651,7 +651,7 @@ export function StaleSection({ data, rows, onDrill, style }: DashboardSectionPro
     >
       <div className={styles.panelBody}>
         {ids.length === 0
-          ? <Empty title={tr('ui.nothing_stale')} hint={`Every open task changed in the last ${days} days.`} />
+          ? <Empty title={tr('ui.nothing_stale')} hint={tr('ui.stale_empty_hint', { n: days })} />
           : <RowsGrid kit={rows}><TaskRows sectionKey="stale" ids={ids} data={data} kit={rows} /></RowsGrid>}
       </div>
     </Panel>
@@ -671,11 +671,11 @@ export function RecentSection({ data, rows, onDrill, style }: DashboardSectionPr
       style={style}
       count={countOf(ids.length, total.ids.length)}
       onCount={onDrill ? () => onDrill(recentlyCompletedDialog(ids, days)) : undefined}
-      sub={`Last ${days} days`}
+      sub={tr('ui.recent_sub', { n: days })}
     >
       <div className={styles.panelBody}>
         {ids.length === 0
-          ? <Empty title={tr('ui.nothing_completed')} hint={`Tasks completed in the last ${days} days show here.`} />
+          ? <Empty title={tr('ui.nothing_completed')} hint={tr('ui.recent_empty_hint', { n: days })} />
           : <RowsGrid kit={rows}><TaskRows sectionKey="recent" ids={ids} data={data} kit={rows} /></RowsGrid>}
       </div>
     </Panel>
@@ -693,7 +693,7 @@ export function EisenhowerSection({ data, onDrill, style }: DashboardSectionProp
   const source = { urgentRange: data.ctx.urgentRange, listName }
   const sum = (s: typeof shown) => EISENHOWER_QUADRANTS.reduce((n, q) => n + s[q].ids.length, 0)
   const custom = panes.some((p) => p.customFilter)
-  const sub = [listName != null ? `“${listName}”` : null, custom ? 'Custom panes' : 'Urgent × important'].filter((x) => x != null).join(' · ')
+  const sub = [listName != null ? `“${listName}”` : null, custom ? tr('ui.custom_panes') : tr('ui.urgent_x_important')].filter((x) => x != null).join(' · ')
   return (
     <Panel
       def={SECTION_META.eisenhower}
@@ -717,7 +717,7 @@ export function EisenhowerSection({ data, onDrill, style }: DashboardSectionProp
               as="div"
               className={styles.quadrant}
               data-eis-cell={q}
-              label={`${pane.name}, ${subtitle.toLowerCase()}: ${countOf(n, t)}. Show tasks`}
+              label={tr('ui.eisenhower_quad_aria', { name: translateText(pane.name), subtitle: subtitle.toLowerCase(), count: countOf(n, t) })}
               onClick={onDrill && n > 0 ? () => onDrill(eisenhowerQuadrantDialog(pane, subtitle, shown[q].ids, source)) : undefined}
             >
               <span className={styles.quadrantName} style={{ color: QUADRANT_COLOR[q] }}>{pane.name}</span>

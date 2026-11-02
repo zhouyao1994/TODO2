@@ -100,9 +100,9 @@ function useTaskDrag(): TaskDragInfo | null {
 
 /** The hovered day's label: what a drop there does. */
 function dropLabel(drag: TaskDragInfo | null, types: CalendarDateTypes): string {
-  if (drag?.entryMove) return 'Move here'
-  if (types.due && types.followup) return 'Set date'
-  return types.due ? 'Set due' : 'Set follow-up'
+  if (drag?.entryMove) return tr('ui.move_here')
+  if (types.due && types.followup) return tr('ui.set_date')
+  return types.due ? tr('ui.set_due') : tr('ui.set_followup')
 }
 
 /** A day as a drop target: dropping a task sets (or moves) one of its dates to the day. */
@@ -395,7 +395,7 @@ function CompactDay({ day, month, entries, selected, ctx, onSelect }: {
         washClass(entries, day, ctx.today),
       ])}
       aria-pressed={selected}
-      aria-label={`${dayLabel(day)}, ${count} ${count === 1 ? 'task' : 'tasks'}`}
+      aria-label={`${dayLabel(day)}, ${count === 1 ? tr('ui.days_count_one') : tr('ui.days_count_many', { n: count })}`}
       data-day={dayKey(day)}
       data-today={isToday ? 'true' : undefined}
       data-outside={outside ? 'true' : undefined}
@@ -436,7 +436,7 @@ function TypeToggle({ type, types, iconOnly, onToggle }: {
 }) {
   const on = types[type]
   const label = type === 'due' ? 'Due' : 'Follow-up'
-  const tip = type === 'due' ? 'Show due dates' : 'Show next follow-ups'
+  const tip = type === 'due' ? tr('ui.show_due_dates') : tr('ui.show_followups')
   return (
     <button
       type="button"
@@ -715,15 +715,15 @@ export function CalendarWidget({ tab }: { tab: CalendarTab }) {
                 <div className={styles.emptyLine2}>
                   {hiddenCount} {hiddenCount === 1 ? 'task' : 'tasks'} {view === 'week' && rangeName === 'this week' ? rangeName : `in ${rangeName}`} {hiddenCount === 1 ? 'is' : 'are'} {tr('ui.hidden_by_the_screen_filter')}</div>
                 <button type="button" className={styles.emptyAction} onClick={() => useFilterStore.getState().clearAll()}>
-                  {filterCount === 1 ? 'Clear screen filter' : 'Clear screen filters'}
+                  {filterCount === 1 ? tr('ui.clear_screen_filter_one') : tr('ui.clear_screen_filters')}
                 </button>
               </div>
             ) : (
               <div className={styles.emptyNote} data-testid="calendar-empty" data-empty="nothing">
                 <div className={styles.emptyLine1}>
                   {dateTypes.due && dateTypes.followup
-                    ? 'Nothing due or to follow up'
-                    : dateTypes.due ? 'Nothing due' : 'Nothing to follow up'}
+                    ? tr('ui.nothing_due_or_followup')
+                    : dateTypes.due ? tr('ui.nothing_due') : tr('ui.nothing_followup')}
                   {' '}{view === 'week' && rangeName === 'this week' ? rangeName : `in ${rangeName}`}
                 </div>
                 <div className={styles.emptyLine2}>{tr('ui.drag_a_task_from_a_list')}</div>

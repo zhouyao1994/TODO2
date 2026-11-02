@@ -6,7 +6,7 @@ import { DRAG_ACTIVATION_DISTANCE_PX } from '../../constants'
 import type { PersistedWorkspaceLayout } from '../../models/workspace-layout'
 import { LayoutIcon, PlusIcon } from '../shared/icons'
 import styles from './LayoutControls.module.css'
-import { t } from '../../i18n'
+import { t, translateText } from '../../i18n'
 
 type Layout = PersistedWorkspaceLayout
 
@@ -170,7 +170,7 @@ function LayoutTabView({ layout, active, dirty, focusable, onActivate, onOpenMen
         active ? styles.tabActive : '',
         sortable?.dragging ? styles.tabDragging : '',
       ].join(' ')}
-      title={layout.name}
+      title={translateText(layout.name)}
       onClick={() => { if (!active) onActivate() }}
       onContextMenu={(e) => {
         e.preventDefault()
@@ -193,7 +193,7 @@ function LayoutTabView({ layout, active, dirty, focusable, onActivate, onOpenMen
       }}
     >
       <span className={styles.tabIcon}><LayoutIcon size={12} /></span>
-      <span className={styles.tabName}>{layout.name}</span>
+      <span className={styles.tabName}>{translateText(layout.name)}</span>
       {dirty && <span className={styles.unsavedDot} role="img" aria-label={t('ui.unsaved_changes')} />}
     </div>
   )

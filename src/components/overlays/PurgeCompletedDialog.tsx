@@ -1,14 +1,14 @@
+import { t as tr, t } from '../../i18n'
 import { useState } from 'react'
 import type { PersistedTodoItem } from '../../models'
 import { useTodoStore } from '../../stores/todo-store'
 import { useUndoStore } from '../../stores/undo-store'
-import { NO_BACKUP_NOTE } from '../../stores/safety-snapshot'
+import { noBackupNote } from '../../stores/safety-snapshot'
 import { doneMessage, exportAndPurgeCompleted, keptMessage } from '../../services/purge-completed'
 import { Dialog, DialogActions, DialogBody } from '../shared/Dialog'
 import buttons from './FileSyncDialogs.module.css'
 import styles from './TaskArchiveDialogs.module.css'
 import { formatDateWith } from '../../utils/date'
-import { t as tr } from '../../i18n'
 
 interface PurgeCompletedDialogProps {
   /** The expired completed tasks, as currently in the store. */
@@ -56,7 +56,7 @@ export function PurgeCompletedDialog({ tasks, retentionDays, onDone, onDismiss }
         return
       }
       if (result.noBackup) {
-        useUndoStore.getState().notify(`${doneMessage(result)} ${NO_BACKUP_NOTE}`)
+        useUndoStore.getState().notify(`${doneMessage(result)} ${noBackupNote()}`)
       }
       onDone()
     } catch (err) {
@@ -72,11 +72,11 @@ export function PurgeCompletedDialog({ tasks, retentionDays, onDone, onDismiss }
     try {
       const outcome = await useTodoStore.getState().purgeCompleted(ids)
       if (outcome.status === 'cancelled') {
-        setError('Nothing was deleted — the backup could not be saved.')
+        setError(t('ui.nothing_deleted'))
         return
       }
       if (outcome.noBackup) {
-        useUndoStore.getState().notify(`Deleted ${plural(outcome.deleted, 'completed task')}. ${NO_BACKUP_NOTE}`)
+        useUndoStore.getState().notify(`Deleted ${plural(outcome.deleted, 'completed task')}. ${noBackupNote()}`)
       }
       onDone()
     } catch (err) {

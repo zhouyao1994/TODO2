@@ -51,14 +51,14 @@ import {
   withSectionOption,
   type CustomizeState,
 } from './dashboard-customize'
-import { TILES } from './dashboard-tiles'
+import {TILES, tileLabel } from './dashboard-tiles'
+import { promptedListTileNote } from './dashboard-prompts'
 import { DashGlyph } from '../../shared/DashGlyph'
-import { SECTION_META } from './section-meta'
+import { SECTION_META, sectionTitle } from './section-meta'
 import { useListTileHints } from './use-list-tile-hints'
 import styles from './CustomizeDashboardDialog.module.css'
 import { t } from '../../../i18n'
 
-export const PROMPTED_LIST_TILE_NOTE = 'Lists that ask for a value can’t be tiles'
 
 /** The dashboard tab `tabId` of the working layout, if it's still there. */
 function dashboardTabOf(layout: WorkspaceLayout | null, tabId: string): DashboardTab | null {
@@ -141,7 +141,7 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
 
   const offered = listedLists(defs, layoutId)
   const addListEntries: MenuEntry[] = offered.length === 0
-    ? [{ kind: 'item', label: 'No lists in this layout yet', disabled: true }]
+    ? [{ kind: 'item', label: t('ui.no_lists_yet'), disabled: true }]
     : offered.map((d) => {
       const added = listTiles.includes(d.id)
       const eligible = isListTileEligible(d)
@@ -150,8 +150,8 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
         label: d.name,
         icon: <DashGlyph name="list" />,
         disabled: added || !eligible,
-        note: added ? 'Added' : !eligible ? 'Asks for a value' : undefined,
-        title: !eligible ? PROMPTED_LIST_TILE_NOTE : undefined,
+        note: added ? t('ui.added_note') : !eligible ? t('ui.asks_value') : undefined,
+        title: !eligible ? promptedListTileNote() : undefined,
         onSelect: () => patch({ listTiles: [...listTiles, d.id] }),
       }
     })
@@ -179,7 +179,7 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
             group="tile"
             label={t('ui.tiles')}
             items={state.tileOrder}
-            nameOf={(id) => TILES[id].label}
+            nameOf={(id) => tileLabel(id)}
             onDraggingChange={setDragging}
             onMove={(from, to) => {
               const next = { ...state, tileOrder: moveItem(state.tileOrder, from, to) }
@@ -194,7 +194,7 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
                     onChange={() => patch({ tiles: tilesFor(state, toggled(shownTiles, id)) })}
                   />
                   <DashGlyph name={TILES[id].glyph} color={TILES[id].color} />
-                  <span className={styles.name}>{TILES[id].label}</span>
+                  <span className={styles.name}>{tileLabel(id)}</span>
                 </label>
                 <span className={styles.hint}>{tileCatalogHint(id, { today, urgentRange })}</span>
               </>
@@ -219,8 +219,8 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
                     <DashGlyph name="list" className={styles.listGlyph} />
                     <span className={styles.name}>{def?.name ?? 'List'}</span>
                   </span>
-                  <span className={styles.hint} title={eligible ? undefined : PROMPTED_LIST_TILE_NOTE}>
-                    {eligible ? hints.get(id) ?? '' : 'Asks for a value, so it isn’t shown'}
+                  <span className={styles.hint} title={eligible ? undefined : promptedListTileNote()}>
+                    {eligible ? hints.get(id) ?? '' : t('ui.asks_value_hidden')}
                   </span>
                   <button
                     type="button"
@@ -264,7 +264,7 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
             group="section"
             label={t('ui.sections')}
             items={state.sectionOrder}
-            nameOf={(id) => SECTION_META[id].title}
+            nameOf={(id) => sectionTitle(id)}
             onDraggingChange={setDragging}
             onMove={(from, to) => {
               const next = { ...state, sectionOrder: moveItem(state.sectionOrder, from, to) }
@@ -283,7 +283,7 @@ function CustomizePanel({ tab, onClose }: { tab: DashboardTab; onClose: () => vo
                       onChange={() => patch({ sections: sectionsFor(state, toggled(shownSections, id)) })}
                     />
                     <DashGlyph name={meta.glyph} color={meta.glyphColor} />
-                    <span className={styles.name}>{meta.title}</span>
+                    <span className={styles.name}>{sectionTitle(meta.id)}</span>
                   </label>
                   {meta.options.includes('lookAhead') && (
                     <OptionSelect

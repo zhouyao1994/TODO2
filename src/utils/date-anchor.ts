@@ -1,3 +1,4 @@
+import type { MessageKey } from '../i18n'
 import type { DateAnchor, RelativeDateToken } from '../models/filter-predicate'
 import { RELATIVE_DATE_TOKENS } from '../models/filter-predicate'
 
@@ -30,17 +31,17 @@ export function readDateAnchor(v: unknown): DateAnchor | null {
 }
 
 /** Labels of the relative date tokens, as the date inputs show them. */
-export const RELATIVE_TOKEN_LABELS: Record<RelativeDateToken, string> = {
-  'yesterday': 'Yesterday',
-  'today': 'Today',
-  'tomorrow': 'Tomorrow',
-  'start-of-week': 'Start of week',
-  'end-of-week': 'End of week',
-  'start-of-next-week': 'Start of next week',
-  'end-of-next-week': 'End of next week',
-  'start-of-month': 'Start of month',
-  'end-of-month': 'End of month',
-  'start-of-next-month': 'Start of next month',
-  'end-of-next-month': 'End of next month',
-  'end-of-month-plus-3': 'End of (month + 3)',
+export const RELATIVE_TOKEN_LABELS: Record<RelativeDateToken, MessageKey> = {
+  'yesterday': 'ui.anch_yesterday',
+  'today': 'ui.today',
+  'tomorrow': 'ui.rel_tomorrow',
+  'start-of-week': 'ui.anch_start_of_week',
+  'end-of-week': 'ui.anch_end_of_week',
+  'start-of-next-week': 'ui.anch_start_of_next_week',
+  'end-of-next-week': 'ui.anch_end_of_next_week',
+  'start-of-month': 'ui.anch_start_of_month',
+  'end-of-month': 'ui.anch_end_of_month',
+  'start-of-next-month': 'ui.anch_start_of_next_month',
+  'end-of-next-month': 'ui.anch_end_of_next_month',
+  'end-of-month-plus-3': 'ui.anch_end_of_month_plus_3',
 }

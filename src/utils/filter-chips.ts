@@ -110,7 +110,7 @@ export function describeAnchor(anchor: DateAnchor): string {
     case 'fixed':
       return new Date(anchor.iso).toLocaleDateString(locale(), { month: 'short', day: 'numeric' })
     case 'relative':
-      return RELATIVE_TOKEN_LABELS[anchor.token].toLowerCase()
+      return t(RELATIVE_TOKEN_LABELS[anchor.token]).toLowerCase()
     case 'offset':
       if (anchor.days === 0) return t('ui.rel_today')
       return anchor.days > 0 ? t('ui.in_amount', { amount: dayLabel(anchor.days) }) : t('ui.ago_amount', { amount: dayLabel(-anchor.days) })

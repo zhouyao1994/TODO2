@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import type { ReactNode } from 'react'
 import { useTooltip } from '../../shared/use-tooltip'
 import { EnvelopeIcon } from '../../shared/icons'
@@ -42,7 +43,7 @@ export function ListGroupHeader({ person, showAction, onOpenMenu, children }: {
 }
 
 function CheckinButton({ person }: { person: GroupPerson }) {
-  const { triggerProps, tooltip } = useTooltip('Email check-in')
+  const { triggerProps, tooltip } = useTooltip(t('ui.email_checkin_tip'))
   return (
     <>
       <button

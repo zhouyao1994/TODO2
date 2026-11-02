@@ -1,8 +1,11 @@
+import { t } from '../../../i18n'
 import type { EisenhowerQuadrant } from '../../../models/workspace-layout'
 import { eisenhowerPaneFocus, useUIStore } from '../../../stores/ui-store'
 
 /** The menu item (tab menu, cell menu) that opens the Eisenhower settings. */
-export const CUSTOMIZE_PANES_LABEL = 'Customize panes…'
+export function customizePanesLabel(): string {
+  return t('ui.customize_panes')
+}
 
 /**
  * Opens Settings › Tasks › Eisenhower — where its list's filter and the

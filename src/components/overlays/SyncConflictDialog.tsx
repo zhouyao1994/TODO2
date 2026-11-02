@@ -10,13 +10,13 @@ interface SyncConflictDialogProps {
 }
 
 function formatTime(iso: string | null): string {
-  if (!iso) return 'unknown'
+  if (!iso) return t('ui.unknown_time')
   const d = new Date(iso)
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString()
 }
 
 function tasks(n: number): string {
-  return `${n} task${n === 1 ? '' : 's'}`
+  return n === 1 ? t('ui.n_tasks_one', { n }) : t('ui.n_tasks', { n })
 }
 
 type Side = Exclude<SyncConflictChoice, 'cancel'>
@@ -38,9 +38,9 @@ export function SyncConflictDialog({ info, onChoose }: SyncConflictDialogProps) 
       file.changedSinceLastSync ? ', and the file was also changed elsewhere since the last sync' : ''
     }.`
     : `This browser has no record of syncing with ${info.fileName}, and the two hold different data.`
-  const confirmLabel = picked === 'browser' ? 'Keep browser data'
+  const confirmLabel = picked === 'browser' ? t('ui.keep_browser_data_btn')
     : picked === 'file' ? `Keep ${info.fileName}`
-      : 'Pick a version'
+      : t('ui.pick_version_btn')
 
   const card = (side: Side, title: string, lines: ReactNode) => (
     <label className={`${styles.side} ${styles.sideCard} ${picked === side ? styles.sidePicked : ''}`}>
@@ -68,13 +68,13 @@ export function SyncConflictDialog({ info, onChoose }: SyncConflictDialogProps) 
     >
       <DialogBody>
         {intro} {t('ui.choose_which_version_to_keep_the')}<div className={styles.sides} data-testid="sync-conflict-sides" role="radiogroup" aria-label={t('ui.version_to_keep')}>
-          {card('browser', 'This browser', (
+          {card('browser', t('ui.this_browser_card'), (
             <>
               <span className={styles.sideLine}>{tasks(browser.taskCount)}</span>
               <span className={styles.sideLine}>
                 {browser.unsyncedSince
-                  ? `Unsaved changes since ${formatTime(browser.unsyncedSince)}`
-                  : 'No unsaved changes recorded'}
+                  ? t('ui.unsaved_since', { time: formatTime(browser.unsyncedSince) })
+                  : t('ui.no_unsaved_recorded')}
               </span>
               <span className={styles.sideLine}>{t('ui.schema_v')}{browser.schemaVersion}</span>
             </>

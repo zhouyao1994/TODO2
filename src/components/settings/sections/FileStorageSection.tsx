@@ -1,10 +1,10 @@
+import { t, locale } from '../../../i18n'
 import { useShallow } from 'zustand/react/shallow'
 import { useFileStorageStore } from '../../../services/file-storage-store'
 import { useIsMobile } from '../../../hooks/use-is-mobile'
 import { FileSyncPausedControls } from '../../layout/FileSyncPausedControls'
 import { SettingRow } from './SettingRow'
 import styles from './sections.module.css'
-import { t } from '../../../i18n'
 
 /**
  * The sync file: attach / create one, or — once attached — its state
@@ -72,7 +72,7 @@ export function FileStorageSection() {
     body = (
       <SettingRow
         label={t('ui.sync_file')}
-        help={fileStorage.lastSavedAt ? `Last saved ${fileStorage.lastSavedAt.toLocaleTimeString()}` : 'Every change is written to the file a moment after you make it.'}
+        help={fileStorage.lastSavedAt ? t('ui.last_saved_at', { time: fileStorage.lastSavedAt.toLocaleTimeString(locale()) }) : t('ui.autosave_note')}
         column
       >
         <span className={styles.fileName}>{fileStorage.fileName}</span>

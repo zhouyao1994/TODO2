@@ -1,3 +1,4 @@
+import { t } from '../i18n'
 import { create } from 'zustand'
 import type { NewTodoItem, PersistedListOrder, PersistedTodoItem, TodoChanges, TodoEvent } from '../models'
 import { todoRepository } from '../data'
@@ -188,7 +189,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
             }
           : t)),
       }),
-      'Failed to update task',
+      t('ui.fail_update_task'),
       {
         description,
         redo: () => patchTodo(id, effective, description),
@@ -289,11 +290,11 @@ export const useTodoStore = create<TodoState>((set, get) => {
         personIds: [],
         tagIds: [],
       }])
-      if (!todo) throw new Error('The new task was not stored')
+      if (!todo) throw new Error(t('ui.fail_new_task'))
       set({ todos: [...get().todos, todo], todosVersion: get().todosVersion + 1 })
       registerCreated(`Add "${title}"`, todo, NO_ASSIGNMENTS)
       return todo.id
-    }, 'Failed to add task')
+    }, t('ui.fail_add_task'))
   },
 
   async addMany(items, { description, snackbar = false }) {
@@ -344,7 +345,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
         snackbar,
       )
       return ids
-    }, 'Failed to add tasks')
+    }, t('ui.fail_add_tasks'))
   },
 
   async update(id: number, changes: TodoChanges) {
@@ -395,7 +396,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
               t.id === id ? { ...t, ...prevChanges, ...(t.modifiedAt === now ? { modifiedAt: todo.modifiedAt } : {}) } : t
             ),
           }),
-          'Failed to advance recurring task',
+          t('ui.fail_advance_recurring'),
           {
             description: `Advance recurring "${todo.title}"`,
             redo: () => write(nextChanges),
@@ -425,7 +426,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
             : t
         ),
       }),
-      'Failed to toggle task completion',
+      t('ui.fail_toggle_complete'),
       {
         description: `${label} "${todo.title}"`,
         // Both write the completion this toggle went from / to — never a
@@ -458,7 +459,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
         },
         true,
       )
-    }, 'Failed to delete task')
+    }, t('ui.fail_delete_task'))
   },
 
   async bulkSetCompleted(ids: number[], completed: boolean) {
@@ -668,7 +669,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
         return c ? [{ todoId: t.id, changes: patch(c) }] : []
       }), now),
       () => { void restore(false) },
-      'Failed to update the priority flags',
+      t('ui.fail_priority_flags'),
       {
         description,
         redo: () => get().setMarkerFlags(changes, description),
@@ -680,7 +681,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
 
   async bulkClearDueDate(ids: number[]) {
     if (ids.length === 0) return
-    const label = ids.length === 1 ? 'Removed the due date' : `Removed ${ids.length} due dates`
+    const label = ids.length === 1 ? t('ui.removed_due_one') : t('ui.removed_due_many', { n: ids.length })
     await bulkUpdateField(ids, 'dueDate', undefined, label, get, set, { showSnackbar: true })
   },
 
@@ -697,7 +698,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
       modifiedAt: t.modifiedAt,
     }]))
     const targetIds = targets.map((t) => t.id)
-    const name = description ?? (next ? `Followed up · next follow-up ${formatFollowupDate(next, now)}` : 'Followed up · no next follow-up')
+    const name = description ?? (next ? t('ui.followed_up_next', { date: formatFollowupDate(next, now) }) : t('ui.followed_up_none'))
     return optimistic(
       () => set({
         todos: get().todos.map((t) => (prev.has(t.id) ? { ...t, ...changes, modifiedAt: now } : t)),
@@ -718,7 +719,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
           }
         }),
       }),
-      'Failed to mark tasks followed up',
+      t('ui.fail_mark_followed_up'),
       {
         description: name,
         detail,
@@ -779,7 +780,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
         },
         true,
       )
-    }, 'Failed to delete tasks')
+    }, t('ui.fail_delete_tasks'))
   },
 
   async duplicate(id: number) {
@@ -807,7 +808,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
         personIds: assignments.personIds,
         tagIds: assignments.tagIds,
       }])
-      if (!newTodo) throw new Error('The copy was not stored')
+      if (!newTodo) throw new Error(t('ui.fail_copy_stored'))
       set({ todos: [...get().todos, newTodo], todosVersion: get().todosVersion + 1 })
       // Best effort: the copy exists; a failed cache reload only leaves its
       // chips missing until the next load.
@@ -818,7 +819,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
       }
       registerCreated(`Duplicate "${todo.title}"`, newTodo, assignments)
       return newTodo.id
-    }, 'Failed to duplicate task')
+    }, t('ui.fail_duplicate_task'))
   },
 
   _restore(todo: PersistedTodoItem, { personIds, tagIds }: CapturedAssignments, events: readonly TodoEvent[] = []) {

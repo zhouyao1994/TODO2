@@ -1,3 +1,4 @@
+import { locale, t } from '../../i18n'
 import { useMemo } from 'react'
 import { useFileStorageStore } from '../../services/file-storage-store'
 import { useFileOpsStore } from '../../stores/file-ops-store'
@@ -60,11 +61,11 @@ export function syncWarnings(s: StoragePillInput): SyncWarning[] {
   return out
 }
 
-const WARNING_TEXT: Record<SyncWarning['kind'], string> = {
-  permission: 'Permission needed',
-  paused: 'Sync paused',
-  error: 'Sync error',
-  backup: 'Backup warning',
+const WARNING_TEXT: Record<SyncWarning['kind'], 'ui.warn_permission' | 'ui.warn_paused' | 'ui.warn_error' | 'ui.warn_backup'> = {
+  permission: 'ui.warn_permission',
+  paused: 'ui.warn_paused',
+  error: 'ui.warn_error',
+  backup: 'ui.warn_backup',
 }
 
 /**
@@ -74,14 +75,14 @@ const WARNING_TEXT: Record<SyncWarning['kind'], string> = {
 export function storagePillState(s: StoragePillInput): StoragePillState {
   const warnings = syncWarnings(s)
   const first = warnings.at(0)
-  if (first) return { kind: first.kind, text: WARNING_TEXT[first.kind], warningCount: warnings.length }
-  if (s.isConnected) return { kind: 'syncing', text: 'Synced', warningCount: 0 }
-  return { kind: 'local', text: 'Local only', warningCount: 0 }
+  if (first) return { kind: first.kind, text: t(WARNING_TEXT[first.kind]), warningCount: warnings.length }
+  if (s.isConnected) return { kind: 'syncing', text: t('ui.synced'), warningCount: 0 }
+  return { kind: 'local', text: t('ui.local_only'), warningCount: 0 }
 }
 
 /** The pill's accessible name: `Storage: <text>`, plus the count when several warnings are active. */
 export function storagePillLabel(state: StoragePillState): string {
-  return state.warningCount > 1 ? `Storage: ${state.text}, ${state.warningCount} warnings` : `Storage: ${state.text}`
+  return state.warningCount > 1 ? t('ui.storage_warnings', { text: state.text, count: state.warningCount }) : t('ui.storage_label', { text: state.text })
 }
 
 /** Red for a failure; amber for waiting on the user; none for Local only / Syncing. */
@@ -115,12 +116,12 @@ function pausedWhy(message: string, fileName: string | null): string {
 function pausedBody(reason: SyncPauseReason | null): string | null {
   // After a failed write-back the browser already holds the file's data.
   if (reason === 'write-failed') return null
-  const untouched = 'Nothing has been written to either side.'
+  const untouched = t('ui.pause_untouched')
   if (reason === 'conflict-cancelled') {
-    return `${untouched} Retry shows the choice again; Keep browser data… overwrites the file after a backup of it.`
+    return `${untouched} ${t('ui.pause_body_conflict')}`
   }
-  if (reason === 'too-new') return `${untouched} Update TODO2 to keep what that version saved, or keep this browser’s data.`
-  if (reason === 'too-old') return `${untouched} Open the file in an older TODO2 build to keep what it holds, or keep this browser’s data.`
+  if (reason === 'too-new') return `${untouched} ${t('ui.pause_body_too_new')}`
+  if (reason === 'too-old') return `${untouched} ${t('ui.pause_body_too_old')}`
   return untouched
 }
 
@@ -129,33 +130,75 @@ export function isUnrestorableBackupWarning(message: string): boolean {
   return message.startsWith('Backup snapshot (')
 }
 
+
+/**
+ * A stored file-sync pause message, rebuilt in the UI language from its
+ * reason (the stored text stays English for matching); unknown reasons fall
+ * back to the stored sentence.
+ */
+function pausedWhyLocalized(w: Extract<SyncWarning, { kind: 'paused' }>): string {
+  // English keeps the stored sentence byte-for-byte; Chinese rebuilds it.
+  if (locale() !== 'zh-CN') return pausedWhy(w.message, w.fileName)
+  const file = w.fileName ?? ''
+  switch (w.reason) {
+    case 'write-failed': return t('ui.pause_write_failed', { file })
+    case 'conflict-cancelled': return t('ui.pause_conflict_cancelled', { file })
+    case 'too-large': return t('ui.pause_too_large')
+    case 'read-error': return t('ui.pause_read_error')
+    case 'invalid-json': return t('ui.pause_invalid_json')
+    case 'backup-failed': return t('ui.pause_backup_failed', { file: file || '' })
+    case 'upgrade-cancelled': return t('ui.pause_upgrade_cancelled', { file: file || '' })
+    case 'too-new': return t('ui.pause_too_new')
+    case 'too-old': return t('ui.pause_too_old')
+    case 'upgrade-failed': return t('ui.pause_upgrade_failed')
+    default: return pausedWhy(w.message, w.fileName)
+  }
+}
+
+/** A stored error/snapshot text in the UI language; unknown texts pass through. */
+export function fileErrorCopy(message: string): string {
+  const known: ReadonlyArray<[string, () => string]> = [
+    ['Permission denied', () => t('ui.err_permission_denied')],
+    ['Could not get file access', () => t('ui.err_no_file_access')],
+    ['Failed to open file', () => t('ui.err_open_failed')],
+    ['Failed to create file', () => t('ui.err_create_failed')],
+    ['File not found — it may have been moved or deleted', () => t('ui.err_file_missing')],
+    ['Failed to save to file', () => t('ui.err_save_failed')],
+    ['Failed to initialize file storage', () => t('ui.err_init_failed')],
+    ['Failed to reconnect to file', () => t('ui.err_reconnect_failed')],
+    ['Failed to read file', () => t('ui.err_read_failed')],
+  ]
+  for (const [en, say] of known) if (message === en) return say()
+  return message
+}
+
 /** One warning's words — shared by the pill's popover and the phone's status sheet. */
 export function syncWarningCopy(w: SyncWarning): SyncWarningCopy {
   switch (w.kind) {
     case 'permission':
       return {
-        title: WARNING_TEXT.permission,
-        why: `Sync to ${w.fileName} is paused until your browser lets TODO2 open the file.`,
-        flag: w.refused ? 'Your browser refused access last time.' : null,
-        body: 'You’re working on this browser’s data. Nothing is written to the file meanwhile.',
+        title: t(WARNING_TEXT.permission),
+        why: t('ui.pause_permission_why', { file: w.fileName }),
+        flag: w.refused ? t('ui.pause_refused_flag') : null,
+        body: t('ui.pause_permission_body'),
       }
     case 'paused':
-      return { title: WARNING_TEXT.paused, why: pausedWhy(w.message, w.fileName), flag: null, body: pausedBody(w.reason) }
+      return { title: t(WARNING_TEXT.paused), why: pausedWhyLocalized(w), flag: null, body: pausedBody(w.reason) }
     case 'error':
       return {
-        title: WARNING_TEXT.error,
-        why: w.message,
+        title: t(WARNING_TEXT.error),
+        why: fileErrorCopy(w.message),
         flag: null,
-        body: 'Your changes are still kept in this browser. Dismiss hides this until a different error happens.',
+        body: t('ui.pause_error_body'),
       }
     case 'backup':
       return {
-        title: WARNING_TEXT.backup,
-        why: w.message,
+        title: t(WARNING_TEXT.backup),
+        why: fileErrorCopy(w.message),
         flag: null,
         body: isUnrestorableBackupWarning(w.message)
-          ? 'It was saved anyway — a partly restorable backup beats none. Check it in Settings › Database › Backups.'
-          : 'Free up browser storage so the next one works, or delete old backups.',
+          ? t('ui.pause_backup_check')
+          : t('ui.pause_backup_free'),
       }
   }
 }

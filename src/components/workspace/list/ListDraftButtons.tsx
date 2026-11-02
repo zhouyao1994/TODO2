@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import { useListDefinitionStore } from '../../../stores/list-definition-store'
 import { useListDraftStore } from '../../../stores/list-draft-store'
 import { useListWidgetCount } from '../../../hooks/use-list-widget-count'
@@ -5,7 +6,6 @@ import { useTooltip } from '../../shared/use-tooltip'
 import { RevertIcon, SaveIcon } from '../../shared/icons'
 import { EDIT_LIST_KEEP_ATTR } from './edit-list-keep'
 import styles from './ListFilterRow.module.css'
-import { t } from '../../../i18n'
 
 /**
  * The filter line's Revert · Save for a list with unsaved edits. The edits
@@ -16,9 +16,9 @@ export function ListDraftButtons({ listDefinitionId }: { listDefinitionId: numbe
   const name = useListDefinitionStore((s) => s.listDefinitions.find((d) => d.id === listDefinitionId)?.name ?? 'List')
   const nameEmpty = useListDraftStore((s) => s.drafts[listDefinitionId]?.name.trim() === '')
   const widgets = useListWidgetCount(listDefinitionId)
-  const revertTip = useTooltip('Revert to the saved list\nDrops the unsaved changes · Undo in the snackbar')
+  const revertTip = useTooltip(t('ui.revert_list_tooltip'))
   const saveTip = useTooltip(nameEmpty
-    ? 'Name the list to save it'
+    ? t('ui.name_list_to_save')
     : widgets > 1 ? `Save list “${name}”\nShared · shown in ${widgets} widgets` : `Save list “${name}”`)
   return (
     <>

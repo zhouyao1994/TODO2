@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import { calendarEntryState, type CalendarEntry } from '../../../services/calendar-entries'
 import { dayLabel, shortDayLabel } from '../../../utils/calendar-grid'
 import { startOfDay } from '../../../utils/date'
@@ -17,7 +18,7 @@ export function calendarEntryTitle(entry: CalendarEntry, today: Date): string {
     ].join('\n')
   }
   const state = calendarEntryState(entry, today)
-  const type = entry.kind === 'due' ? 'Due' : 'Next follow-up'
+  const type = entry.kind === 'due' ? t('ui.entry_due') : t('ui.entry_followup')
   const overdue = state === 'due-overdue' || state === 'followup-overdue'
-  return `${todo.title} · ${type}${overdue ? ' · overdue' : ''}`
+  return `${todo.title} · ${type}${overdue ? ` · ${t('ui.entry_overdue')}` : ''}`
 }

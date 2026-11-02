@@ -1,3 +1,4 @@
+import { t } from '../../i18n'
 import { useMemo } from 'react'
 import { ownerLayoutId } from '../../models/list-definition'
 import { getActiveTab, tabListId, widgetKindLabel, type LayoutTab, type WidgetKind } from '../../models/workspace-layout'
@@ -85,7 +86,9 @@ function freshListName(base: string, layoutId: number): string {
 }
 
 /** Why a list widget can't be added to (or a tab switched to List in) a layout that isn't stored yet. */
-export const NO_LIST_LAYOUT_REASON = 'Save the layout first to add lists.'
+export function noListLayoutReason(): string {
+  return t('ui.save_layout_first')
+}
 
 /** The new list widget being made, while its list is being saved (`createListThenEdit`). */
 let creatingList: Promise<void> | null = null
@@ -101,7 +104,7 @@ registerModuleReset(() => { creatingList = null })
  */
 export function createListThenEdit(show: (listDefinitionId: number) => string | null, layoutId: number): Promise<void> {
   if (creatingList) return creatingList
-  const run = useListDefinitionStore.getState().add({ name: freshListName('New list', layoutId), owner: { layoutId } }).then((id) => {
+  const run = useListDefinitionStore.getState().add({ name: freshListName(t('ui.new_list_base'), layoutId), owner: { layoutId } }).then((id) => {
     const tabId = show(id)
     if (tabId != null) openEditList(tabId, id)
   })
