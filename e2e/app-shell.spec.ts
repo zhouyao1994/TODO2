@@ -33,7 +33,7 @@ test('the gear opens Settings over the workspace; Esc closes it', async ({ page 
   const settings = page.getByRole('dialog', { name: 'Settings' })
   await expect(settings).toBeVisible()
   await expect(settings.getByRole('heading', { level: 2 })).toHaveText('Appearance')
-  await expect(settings.getByRole('radiogroup', { name: 'Theme' })).toBeVisible()
+  await expect(settings.getByRole('radiogroup', { name: 'Theme', exact: true })).toBeVisible()
   await expect(page).toHaveURL(/#\/$/)
 
   await settings.getByRole('button', { name: 'Database', exact: true }).click()

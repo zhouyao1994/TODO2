@@ -454,6 +454,533 @@
 }
 
 /* ═══════════════════════════════════════════
+   Color Theme Palettes
+   ═══════════════════════════════════════════
+   A palette (`data-palette` on <html>, set by the settings store — Settings
+   › Appearance › Color theme) re-colours the app for both modes on top of
+   the base dark / light blocks above, which always apply: a palette block
+   only overrides the tokens its look changes. The seeds the settings store
+   shows for the nine editable colours are mirrored in `models/ui-themes.ts`
+   (a drift fails `src/test/models/ui-themes.test.ts`); every palette mode
+   keeps the WCAG AA ratios of `src/test/styles/contrast.test.ts`. */
+
+/* Nord — dark */
+[data-palette="nord"][data-theme="dark"] {
+  --color-app-bg: #2e3440;
+  --color-surface: #3b4252;
+  --color-surface-high: #3f4859;
+  --color-surface-bright: #4c566a;
+  --color-surface-glass: rgba(59, 66, 82, 0.85);
+  --color-popover-ring: rgba(76, 86, 106, 0.5);
+  --color-border: #4c566a;
+  --color-header-bg: #384153;
+
+  --color-accent: #8fc5d4;
+  --color-accent-dim: #709aa5;
+
+  --color-danger: #eba4ab;
+  --color-danger-bg: rgba(235, 164, 171, 0.12);
+  --color-warning: #e6b19f;
+  --color-warning-text: var(--color-warning);
+  --color-followup: #ebcb8b;
+  --color-followup-bg: rgba(235, 203, 139, 0.12);
+  --color-followup-bg-strong: rgba(235, 203, 139, 0.24);
+  --color-followup-glow: rgba(235, 203, 139, 0.3);
+
+  --color-overdue: #c9a6c2;
+  --color-overdue-bg: rgba(201, 166, 194, 0.12);
+  --color-overdue-bg-strong: rgba(201, 166, 194, 0.22);
+
+  --cal-overdue-solid: #c9a6c2;
+  --cal-on-overdue: #2e3440;
+  --cal-followup-solid: #ebcb8b;
+  --cal-on-followup: #2e3440;
+  --cal-overdue-day: rgba(201, 166, 194, 0.1);
+  --cal-followup-day: rgba(235, 203, 139, 0.08);
+
+  --color-deadline: #c9a6c2;
+
+  --color-text-primary: #eceff4;
+  --color-text-secondary: #c8d0dc;
+  --color-text-muted: #b0bbce;
+  --color-text-completed: #525c6e;
+  --color-text-on-accent: #2e3440;
+
+  --color-accent-bg-subtle: rgba(143, 197, 212, 0.05);
+  --color-accent-bg-light: rgba(143, 197, 212, 0.08);
+  --color-accent-bg-medium: rgba(143, 197, 212, 0.12);
+  --color-accent-bg: rgba(143, 197, 212, 0.18);
+  --color-accent-glow: rgba(143, 197, 212, 0.3);
+  --color-accent-focus: rgba(143, 197, 212, 0.4);
+  --color-accent-shadow: rgba(143, 197, 212, 0.2);
+  --color-accent-shadow-subtle: rgba(143, 197, 212, 0.15);
+
+  --color-tooltip-bg: #4c566a;
+  --color-tooltip-text: #eceff4;
+  --color-tooltip-muted: #c3ccd8;
+
+  --eis-do-bg: rgba(235, 164, 171, 0.075);
+  --eis-schedule-bg: rgba(235, 203, 139, 0.06);
+
+  --color-seg-selected: #4c566a;
+  --color-scrim: rgba(46, 52, 64, 0.74);
+
+  --color-card-glass-from: rgba(63, 72, 89, 0.97);
+  --color-card-glass-to: rgba(59, 66, 82, 0.95);
+}
+
+/* Nord — light */
+[data-palette="nord"][data-theme="light"] {
+  --color-app-bg: #e7ebf1;
+  --color-surface: #fbfcfd;
+  --color-surface-high: #eaedf3;
+  --color-surface-bright: #dde2eb;
+  --color-popover-ring: rgba(0, 0, 0, 0.06);
+  --color-border: #d3dae3;
+  --color-header-bg: #e9f2f6;
+
+  --color-accent: #3f7e9c;
+  --color-accent-dim: #31627a;
+
+  --color-danger: #a94a52;
+  --color-danger-bg: rgba(169, 74, 82, 0.1);
+  --color-warning: #9a5727;
+  --color-warning-text: #5f3618;
+  --color-followup: #7c5f10;
+  --color-followup-bg: rgba(235, 203, 139, 0.24);
+  --color-followup-bg-strong: rgba(235, 203, 139, 0.4);
+  --color-followup-glow: rgba(120, 104, 71, 0.3);
+
+  --color-overdue: #8d5387;
+  --color-overdue-bg: rgba(141, 83, 135, 0.08);
+  --color-overdue-bg-strong: rgba(141, 83, 135, 0.16);
+
+  --cal-overdue-solid: #8d5387;
+  --cal-on-overdue: #ffffff;
+  --cal-followup-solid: #ebcb8b;
+  --cal-on-followup: #2e3440;
+  --cal-overdue-day: rgba(141, 83, 135, 0.07);
+  --cal-followup-day: rgba(235, 203, 139, 0.14);
+
+  --color-deadline: #8d5387;
+
+  --color-text-primary: #2e3440;
+  --color-text-secondary: #4a5768;
+  --color-text-muted: #5d6b7e;
+  --color-text-completed: #c5ccd6;
+  --color-text-on-accent: #ffffff;
+
+  --color-accent-bg-subtle: rgba(63, 126, 156, 0.04);
+  --color-accent-bg-light: rgba(63, 126, 156, 0.06);
+  --color-accent-bg-medium: rgba(63, 126, 156, 0.1);
+  --color-accent-bg: rgba(63, 126, 156, 0.18);
+  --color-accent-glow: rgba(63, 126, 156, 0.2);
+  --color-accent-focus: rgba(63, 126, 156, 0.3);
+  --color-accent-shadow: rgba(63, 126, 156, 0.15);
+  --color-accent-shadow-subtle: rgba(63, 126, 156, 0.1);
+
+  --color-tooltip-bg: #2e3440;
+  --color-tooltip-text: #f2f4f7;
+  --color-tooltip-muted: #a3adbb;
+
+  --eis-do-bg: rgba(169, 74, 82, 0.06);
+  --eis-schedule-bg: rgba(235, 203, 139, 0.1);
+
+  --color-seg-selected: #fbfcfd;
+  --color-scrim: rgba(231, 235, 241, 0.78);
+
+  --color-card-glass-from: rgba(255, 255, 255, 0.98);
+  --color-card-glass-to: rgba(231, 235, 241, 0.96);
+}
+
+/* Solarized — dark */
+[data-palette="solarized"][data-theme="dark"] {
+  --color-app-bg: #002b36;
+  --color-surface: #073642;
+  --color-surface-high: #0e4552;
+  --color-surface-bright: #16505e;
+  --color-surface-glass: rgba(7, 54, 66, 0.85);
+  --color-popover-ring: rgba(26, 79, 92, 0.5);
+  --color-border: #1a4f5c;
+  --color-header-bg: #0a4150;
+
+  --color-accent: #55beb4;
+  --color-accent-dim: #42948c;
+
+  --color-danger: #ec8177;
+  --color-danger-bg: rgba(236, 129, 119, 0.12);
+  --color-warning: #cfa42e;
+  --color-warning-text: var(--color-warning);
+  --color-followup: #e0c05e;
+  --color-followup-bg: rgba(224, 192, 94, 0.12);
+  --color-followup-bg-strong: rgba(224, 192, 94, 0.24);
+  --color-followup-glow: rgba(224, 192, 94, 0.3);
+
+  --color-overdue: #e57fb0;
+  --color-overdue-bg: rgba(229, 127, 176, 0.12);
+  --color-overdue-bg-strong: rgba(229, 127, 176, 0.22);
+
+  --cal-overdue-solid: #e57fb0;
+  --cal-on-overdue: #002b36;
+  --cal-followup-solid: #e0c05e;
+  --cal-on-followup: #002b36;
+  --cal-overdue-day: rgba(229, 127, 176, 0.1);
+  --cal-followup-day: rgba(224, 192, 94, 0.08);
+
+  --color-deadline: #e57fb0;
+
+  --color-text-primary: #eee8d5;
+  --color-text-secondary: #a9b7b6;
+  --color-text-muted: #9db5b5;
+  --color-text-completed: #164854;
+  --color-text-on-accent: #002b36;
+
+  --color-accent-bg-subtle: rgba(85, 190, 180, 0.05);
+  --color-accent-bg-light: rgba(85, 190, 180, 0.08);
+  --color-accent-bg-medium: rgba(85, 190, 180, 0.12);
+  --color-accent-bg: rgba(85, 190, 180, 0.18);
+  --color-accent-glow: rgba(85, 190, 180, 0.3);
+  --color-accent-focus: rgba(85, 190, 180, 0.4);
+  --color-accent-shadow: rgba(85, 190, 180, 0.2);
+  --color-accent-shadow-subtle: rgba(85, 190, 180, 0.15);
+
+  --color-tooltip-bg: #16505e;
+  --color-tooltip-text: #eee8d5;
+  --color-tooltip-muted: #aec3c1;
+
+  --eis-do-bg: rgba(236, 129, 119, 0.075);
+  --eis-schedule-bg: rgba(224, 192, 94, 0.06);
+
+  --color-seg-selected: #16505e;
+  --color-scrim: rgba(0, 43, 54, 0.74);
+
+  --color-card-glass-from: rgba(14, 69, 82, 0.97);
+  --color-card-glass-to: rgba(7, 54, 66, 0.95);
+}
+
+/* Solarized — light */
+[data-palette="solarized"][data-theme="light"] {
+  --color-app-bg: #eee8d5;
+  --color-surface: #fdf6e3;
+  --color-surface-high: #f3ecd9;
+  --color-surface-bright: #e7dfc9;
+  --color-popover-ring: rgba(0, 0, 0, 0.06);
+  --color-border: #ddd3b8;
+  --color-header-bg: #f5efdd;
+
+  --color-accent: #1f8b83;
+  --color-accent-dim: #186c66;
+
+  --color-danger: #b33832;
+  --color-danger-bg: rgba(179, 56, 50, 0.1);
+  --color-warning: #b05a12;
+  --color-warning-text: #6d380b;
+  --color-followup: #7d6210;
+  --color-followup-bg: rgba(224, 192, 94, 0.24);
+  --color-followup-bg-strong: rgba(224, 192, 94, 0.4);
+  --color-followup-glow: rgba(114, 98, 48, 0.3);
+
+  --color-overdue: #a12f77;
+  --color-overdue-bg: rgba(161, 47, 119, 0.08);
+  --color-overdue-bg-strong: rgba(161, 47, 119, 0.16);
+
+  --cal-overdue-solid: #a12f77;
+  --cal-on-overdue: #ffffff;
+  --cal-followup-solid: #e0c05e;
+  --cal-on-followup: #0d3d48;
+  --cal-overdue-day: rgba(161, 47, 119, 0.07);
+  --cal-followup-day: rgba(224, 192, 94, 0.14);
+
+  --color-deadline: #a12f77;
+
+  --color-text-primary: #0d3d48;
+  --color-text-secondary: #4f6368;
+  --color-text-muted: #536871;
+  --color-text-completed: #d8d0b8;
+  --color-text-on-accent: #ffffff;
+
+  --color-accent-bg-subtle: rgba(31, 139, 131, 0.04);
+  --color-accent-bg-light: rgba(31, 139, 131, 0.06);
+  --color-accent-bg-medium: rgba(31, 139, 131, 0.1);
+  --color-accent-bg: rgba(31, 139, 131, 0.18);
+  --color-accent-glow: rgba(31, 139, 131, 0.2);
+  --color-accent-focus: rgba(31, 139, 131, 0.3);
+  --color-accent-shadow: rgba(31, 139, 131, 0.15);
+  --color-accent-shadow-subtle: rgba(31, 139, 131, 0.1);
+
+  --color-tooltip-bg: #073642;
+  --color-tooltip-text: #f2ecda;
+  --color-tooltip-muted: #aec3c1;
+
+  --eis-do-bg: rgba(179, 56, 50, 0.06);
+  --eis-schedule-bg: rgba(224, 192, 94, 0.1);
+
+  --color-seg-selected: #fdf6e3;
+  --color-scrim: rgba(238, 232, 213, 0.78);
+
+  --color-card-glass-from: rgba(255, 255, 255, 0.98);
+  --color-card-glass-to: rgba(238, 232, 213, 0.96);
+}
+
+/* Rosé Pine — dark */
+[data-palette="rose-pine"][data-theme="dark"] {
+  --color-app-bg: #191724;
+  --color-surface: #1f1d2e;
+  --color-surface-high: #26233a;
+  --color-surface-bright: #302c46;
+  --color-surface-glass: rgba(31, 29, 46, 0.85);
+  --color-popover-ring: rgba(59, 53, 84, 0.5);
+  --color-border: #3b3554;
+  --color-header-bg: #252239;
+
+  --color-accent: #9ccfd8;
+  --color-accent-dim: #7aa1a8;
+
+  --color-danger: #eb6f92;
+  --color-danger-bg: rgba(235, 111, 146, 0.12);
+  --color-warning: #ea9a97;
+  --color-warning-text: var(--color-warning);
+  --color-followup: #f6c177;
+  --color-followup-bg: rgba(246, 193, 119, 0.12);
+  --color-followup-bg-strong: rgba(246, 193, 119, 0.24);
+  --color-followup-glow: rgba(246, 193, 119, 0.3);
+
+  --color-overdue: #c4a7e7;
+  --color-overdue-bg: rgba(196, 167, 231, 0.12);
+  --color-overdue-bg-strong: rgba(196, 167, 231, 0.22);
+
+  --cal-overdue-solid: #c4a7e7;
+  --cal-on-overdue: #191724;
+  --cal-followup-solid: #f6c177;
+  --cal-on-followup: #191724;
+  --cal-overdue-day: rgba(196, 167, 231, 0.1);
+  --cal-followup-day: rgba(246, 193, 119, 0.08);
+
+  --color-deadline: #c4a7e7;
+
+  --color-text-primary: #e0def4;
+  --color-text-secondary: #b4b0c8;
+  --color-text-muted: #948eb0;
+  --color-text-completed: #3b3658;
+  --color-text-on-accent: #191724;
+
+  --color-accent-bg-subtle: rgba(156, 207, 216, 0.05);
+  --color-accent-bg-light: rgba(156, 207, 216, 0.08);
+  --color-accent-bg-medium: rgba(156, 207, 216, 0.12);
+  --color-accent-bg: rgba(156, 207, 216, 0.18);
+  --color-accent-glow: rgba(156, 207, 216, 0.3);
+  --color-accent-focus: rgba(156, 207, 216, 0.4);
+  --color-accent-shadow: rgba(156, 207, 216, 0.2);
+  --color-accent-shadow-subtle: rgba(156, 207, 216, 0.15);
+
+  --color-tooltip-bg: #302c46;
+  --color-tooltip-text: #e0def4;
+  --color-tooltip-muted: #a29dbd;
+
+  --eis-do-bg: rgba(235, 111, 146, 0.075);
+  --eis-schedule-bg: rgba(246, 193, 119, 0.06);
+
+  --color-seg-selected: #302c46;
+  --color-scrim: rgba(25, 23, 36, 0.74);
+
+  --color-card-glass-from: rgba(38, 35, 58, 0.97);
+  --color-card-glass-to: rgba(31, 29, 46, 0.95);
+}
+
+/* Rosé Pine — light */
+[data-palette="rose-pine"][data-theme="light"] {
+  --color-app-bg: #f3ebe2;
+  --color-surface: #fdfaf4;
+  --color-surface-high: #f1e8de;
+  --color-surface-bright: #e6dbcd;
+  --color-popover-ring: rgba(0, 0, 0, 0.06);
+  --color-border: #e2d7ca;
+  --color-header-bg: #ebf0ec;
+
+  --color-accent: #3e7e89;
+  --color-accent-dim: #30626b;
+
+  --color-danger: #a34f66;
+  --color-danger-bg: rgba(163, 79, 102, 0.1);
+  --color-warning: #ab4f20;
+  --color-warning-text: #6a3114;
+  --color-followup: #7a5c1c;
+  --color-followup-bg: rgba(246, 193, 119, 0.24);
+  --color-followup-bg-strong: rgba(246, 193, 119, 0.4);
+  --color-followup-glow: rgba(125, 98, 61, 0.3);
+
+  --color-overdue: #7a5f96;
+  --color-overdue-bg: rgba(122, 95, 150, 0.08);
+  --color-overdue-bg-strong: rgba(122, 95, 150, 0.16);
+
+  --cal-overdue-solid: #7a5f96;
+  --cal-on-overdue: #ffffff;
+  --cal-followup-solid: #f6c177;
+  --cal-on-followup: #514a6e;
+  --cal-overdue-day: rgba(122, 95, 150, 0.07);
+  --cal-followup-day: rgba(246, 193, 119, 0.14);
+
+  --color-deadline: #7a5f96;
+
+  --color-text-primary: #514a6e;
+  --color-text-secondary: #655e85;
+  --color-text-muted: #6a6488;
+  --color-text-completed: #ddd2c6;
+  --color-text-on-accent: #ffffff;
+
+  --color-accent-bg-subtle: rgba(62, 126, 137, 0.04);
+  --color-accent-bg-light: rgba(62, 126, 137, 0.06);
+  --color-accent-bg-medium: rgba(62, 126, 137, 0.1);
+  --color-accent-bg: rgba(62, 126, 137, 0.18);
+  --color-accent-glow: rgba(62, 126, 137, 0.2);
+  --color-accent-focus: rgba(62, 126, 137, 0.3);
+  --color-accent-shadow: rgba(62, 126, 137, 0.15);
+  --color-accent-shadow-subtle: rgba(62, 126, 137, 0.1);
+
+  --color-tooltip-bg: #2f2a44;
+  --color-tooltip-text: #f5f0e8;
+  --color-tooltip-muted: #b0a9c0;
+
+  --eis-do-bg: rgba(163, 79, 102, 0.06);
+  --eis-schedule-bg: rgba(246, 193, 119, 0.1);
+
+  --color-seg-selected: #fdfaf4;
+  --color-scrim: rgba(243, 235, 226, 0.78);
+
+  --color-card-glass-from: rgba(255, 255, 255, 0.98);
+  --color-card-glass-to: rgba(243, 235, 226, 0.96);
+}
+
+/* Everforest — dark */
+[data-palette="everforest"][data-theme="dark"] {
+  --color-app-bg: #2d353b;
+  --color-surface: #343f44;
+  --color-surface-high: #3d4852;
+  --color-surface-bright: #475258;
+  --color-surface-glass: rgba(52, 63, 68, 0.85);
+  --color-popover-ring: rgba(71, 82, 88, 0.5);
+  --color-border: #475258;
+  --color-header-bg: #394642;
+
+  --color-accent: #8ec79c;
+  --color-accent-dim: #6f9b7a;
+
+  --color-danger: #ec9290;
+  --color-danger-bg: rgba(236, 146, 144, 0.12);
+  --color-warning: #edab92;
+  --color-warning-text: var(--color-warning);
+  --color-followup: #dbbc7f;
+  --color-followup-bg: rgba(219, 188, 127, 0.12);
+  --color-followup-bg-strong: rgba(219, 188, 127, 0.24);
+  --color-followup-glow: rgba(219, 188, 127, 0.3);
+
+  --color-overdue: #d699b6;
+  --color-overdue-bg: rgba(214, 153, 182, 0.12);
+  --color-overdue-bg-strong: rgba(214, 153, 182, 0.22);
+
+  --cal-overdue-solid: #d699b6;
+  --cal-on-overdue: #2d353b;
+  --cal-followup-solid: #dbbc7f;
+  --cal-on-followup: #2d353b;
+  --cal-overdue-day: rgba(214, 153, 182, 0.1);
+  --cal-followup-day: rgba(219, 188, 127, 0.08);
+
+  --color-deadline: #d699b6;
+
+  --color-text-primary: #e8e3c8;
+  --color-text-secondary: #c0c7ae;
+  --color-text-muted: #b3bfb3;
+  --color-text-completed: #4a544e;
+  --color-text-on-accent: #2d353b;
+
+  --color-accent-bg-subtle: rgba(142, 199, 156, 0.05);
+  --color-accent-bg-light: rgba(142, 199, 156, 0.08);
+  --color-accent-bg-medium: rgba(142, 199, 156, 0.12);
+  --color-accent-bg: rgba(142, 199, 156, 0.18);
+  --color-accent-glow: rgba(142, 199, 156, 0.3);
+  --color-accent-focus: rgba(142, 199, 156, 0.4);
+  --color-accent-shadow: rgba(142, 199, 156, 0.2);
+  --color-accent-shadow-subtle: rgba(142, 199, 156, 0.15);
+
+  --color-tooltip-bg: #475258;
+  --color-tooltip-text: #e8e3c8;
+  --color-tooltip-muted: #bec9bc;
+
+  --eis-do-bg: rgba(236, 146, 144, 0.075);
+  --eis-schedule-bg: rgba(219, 188, 127, 0.06);
+
+  --color-seg-selected: #475258;
+  --color-scrim: rgba(45, 53, 59, 0.74);
+
+  --color-card-glass-from: rgba(61, 72, 82, 0.97);
+  --color-card-glass-to: rgba(52, 63, 68, 0.95);
+}
+
+/* Everforest — light */
+[data-palette="everforest"][data-theme="light"] {
+  --color-app-bg: #f2ecdb;
+  --color-surface: #faf5e6;
+  --color-surface-high: #ebe5d1;
+  --color-surface-bright: #ded6bd;
+  --color-popover-ring: rgba(0, 0, 0, 0.06);
+  --color-border: #ddd4bc;
+  --color-header-bg: #ebf1e4;
+
+  --color-accent: #3a7d6a;
+  --color-accent-dim: #2d6253;
+
+  --color-danger: #b54c45;
+  --color-danger-bg: rgba(181, 76, 69, 0.1);
+  --color-warning: #a05a1d;
+  --color-warning-text: #633812;
+  --color-followup: #7d6210;
+  --color-followup-bg: rgba(219, 188, 127, 0.24);
+  --color-followup-bg-strong: rgba(219, 188, 127, 0.4);
+  --color-followup-glow: rgba(112, 96, 65, 0.3);
+
+  --color-overdue: #a24a83;
+  --color-overdue-bg: rgba(162, 74, 131, 0.08);
+  --color-overdue-bg-strong: rgba(162, 74, 131, 0.16);
+
+  --cal-overdue-solid: #a24a83;
+  --cal-on-overdue: #ffffff;
+  --cal-followup-solid: #dbbc7f;
+  --cal-on-followup: #4d5a5e;
+  --cal-overdue-day: rgba(162, 74, 131, 0.07);
+  --cal-followup-day: rgba(219, 188, 127, 0.14);
+
+  --color-deadline: #a24a83;
+
+  --color-text-primary: #4d5a5e;
+  --color-text-secondary: #5f6f70;
+  --color-text-muted: #57655f;
+  --color-text-completed: #d5cdb6;
+  --color-text-on-accent: #ffffff;
+
+  --color-accent-bg-subtle: rgba(58, 125, 106, 0.04);
+  --color-accent-bg-light: rgba(58, 125, 106, 0.06);
+  --color-accent-bg-medium: rgba(58, 125, 106, 0.1);
+  --color-accent-bg: rgba(58, 125, 106, 0.18);
+  --color-accent-glow: rgba(58, 125, 106, 0.2);
+  --color-accent-focus: rgba(58, 125, 106, 0.3);
+  --color-accent-shadow: rgba(58, 125, 106, 0.15);
+  --color-accent-shadow-subtle: rgba(58, 125, 106, 0.1);
+
+  --color-tooltip-bg: #3f4a4c;
+  --color-tooltip-text: #f4efe0;
+  --color-tooltip-muted: #b6c1bb;
+
+  --eis-do-bg: rgba(181, 76, 69, 0.06);
+  --eis-schedule-bg: rgba(219, 188, 127, 0.1);
+
+  --color-seg-selected: #faf5e6;
+  --color-scrim: rgba(242, 236, 219, 0.78);
+
+  --color-card-glass-from: rgba(255, 255, 255, 0.98);
+  --color-card-glass-to: rgba(242, 236, 219, 0.96);
+}
+
+/* ═══════════════════════════════════════════
    Global Reset & Base Styles
    ═══════════════════════════════════════════ */
 

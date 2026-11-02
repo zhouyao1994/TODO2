@@ -4,6 +4,7 @@ import { useSettingsStore } from '../../stores/settings-store'
 import { emptyPredicate } from '../../models/filter-predicate'
 import { settingsRepository } from '../../data'
 import { DEFAULT_THEMED_COLORS } from '../../models/theme-colors'
+import { themePaletteSeeds } from '../../models/ui-themes'
 import type { HotRule } from '../../utils/hot'
 import { useUndoStore } from '../../stores/undo-store'
 
@@ -108,6 +109,58 @@ describe('useSettingsStore', () => {
     expect(document.documentElement.style.getPropertyValue('--color-app-bg')).toBe('#aabbcc')
     await useSettingsStore.getState().setThemeMode('light')
     expect(document.documentElement.style.getPropertyValue('--color-app-bg')).toBe('#ddeeff')
+  })
+
+  it('setThemePalette persists, seeds the colors, and puts the palette on the page', async () => {
+    await useSettingsStore.getState().setThemePalette('nord')
+    expect((await db.settings.get('themePalette'))!.value).toBe('nord')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('nord')
+    const { colors, themePalette } = useSettingsStore.getState()
+    expect(themePalette).toBe('nord')
+    expect(colors.dark.accent).toBe(themePaletteSeeds('nord').dark.accent)
+    expect(colors.light.surface).toBe(themePaletteSeeds('nord').light.surface)
+
+    await useSettingsStore.getState().setThemePalette('default')
+    expect((await db.settings.get('themePalette'))!.value).toBe('default')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('default')
+    expect(useSettingsStore.getState().colors.dark.accent).toBe(DEFAULT_THEMED_COLORS.dark.accent)
+  })
+
+  it('setThemePalette keeps the user-customized colors across palettes', async () => {
+    await useSettingsStore.getState().setColor('dark', 'accent', '#123456')
+    await useSettingsStore.getState().setThemePalette('everforest')
+    expect(useSettingsStore.getState().colors.dark.accent).toBe('#123456')
+    // A key without an override takes the palette's seed.
+    expect(useSettingsStore.getState().colors.dark.surface).toBe(themePaletteSeeds('everforest').dark.surface)
+    // The inline accent override still wins on the page (dark is the mode).
+    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe('#123456')
+  })
+
+  it('resetColors resets to the active palette', async () => {
+    await useSettingsStore.getState().setThemePalette('rose-pine')
+    await useSettingsStore.getState().setColor('dark', 'appBg', '#010203')
+    await useSettingsStore.getState().resetColors()
+    expect(useSettingsStore.getState().colors.dark.appBg).toBe(themePaletteSeeds('rose-pine').dark.appBg)
+  })
+
+  it('load reads a stored themePalette, seeds the colors from it, and ignores junk', async () => {
+    await db.settings.put({ key: 'themePalette', value: 'solarized' })
+    await useSettingsStore.getState().load()
+    expect(useSettingsStore.getState().themePalette).toBe('solarized')
+    expect(useSettingsStore.getState().colors.dark.appBg).toBe(themePaletteSeeds('solarized').dark.appBg)
+    expect(document.documentElement.getAttribute('data-palette')).toBe('solarized')
+
+    await db.settings.put({ key: 'themePalette', value: 'dracula' })
+    await useSettingsStore.getState().load()
+    expect(useSettingsStore.getState().themePalette).toBe('default')
+    expect(useSettingsStore.getState().colors.dark.appBg).toBe(DEFAULT_THEMED_COLORS.dark.appBg)
+  })
+
+  it('load lets a color row override the palette seed', async () => {
+    await db.settings.put({ key: 'themePalette', value: 'nord' })
+    await db.settings.put({ key: 'color.dark.accent', value: '#112233' })
+    await useSettingsStore.getState().load()
+    expect(useSettingsStore.getState().colors.dark.accent).toBe('#112233')
   })
 
   it('setCompletedRetentionDays validates range', async () => {

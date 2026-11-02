@@ -18,7 +18,7 @@ Layers, lowest first — a module imports only from its own layer or lower, and 
 main.tsx                  → mounts App
 ├── App.tsx               → hash data router (`/` workspace, `/settings` the phone Settings page — a deep link to the Settings modal on desktop; old page routes redirect to `/`); the shell: top bar, launch (`services/app-startup`), the Settings modal, the command palette (`AppCommandPalette`), keyboard shortcuts, global dialogs
 ├── i18n/                 → the UI language: `t` (catalog lookup, `{name}` parameters), `translateText` (message by its English text, for labels defined as plain data), `locale` (Intl formats), the en / zh-CN catalogs under messages/, and the preference mirrored for the first synchronous read
-├── styles/tokens.css     → design tokens (dark / light via `[data-theme]` — the only place a rule forks per theme) + global base rules, incl. the one reduced-motion rule
+├── styles/tokens.css     → design tokens (dark / light via `[data-theme]`, recolored by the color themes via `[data-palette]` — the only place a rule forks per theme or palette) + global base rules, incl. the one reduced-motion rule
 ├── views/                → WorkspacePage (`/`: opens the workspace store, loads the tasks and entities, owns the workspace DndContext, guards unsaved changes) · SettingsPage (phone)
 ├── components/
 │   ├── layout/           → TopBar (New task, layout tabs, screen filters, search, Show N tasks — the filtered-tasks panel's toggle —, StoragePill, gear; the measured fold), StoragePill + sync-status (every sync / backup warning), the phone's SyncStatusButton and BottomTabBar

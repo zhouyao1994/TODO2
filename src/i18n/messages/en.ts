@@ -955,6 +955,13 @@ export const en = {
   'ui.nlp_else_title': 'Everything else is the title',
   'ui.nlp_plain_words_desc': 'Plain words are never read as dates or repeats — use /due, /repeat',
   'ui.nlp_slash_desc': 'A / inside a word or path is not a command',
+  'ui.color_theme': "Color theme",
+  'ui.color_theme_help': "The palette the app is drawn with, in both modes.",
+  'ui.palette_default': "Default",
+  'ui.palette_nord': "Nord",
+  'ui.palette_solarized': "Solarized",
+  'ui.palette_rose_pine': "Rosé Pine",
+  'ui.palette_everforest': "Everforest",
 } as const
 
 export type MessageKey = keyof typeof en

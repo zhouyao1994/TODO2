@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useSettingsStore, type ThemeMode } from '../../../stores/settings-store'
 import { LANGUAGE_PREFERENCES, isLanguage, type LanguagePreference } from '../../../models/language'
-import { languageName, t } from '../../../i18n'
+import { languageName, t, type MessageKey } from '../../../i18n'
+import { THEME_PALETTES, type ThemePaletteId } from '../../../models/ui-themes'
 import { useIsMobile } from '../../../hooks/use-is-mobile'
 import { ThemeColorsEditor } from '../ThemeColorsEditor'
 import { NlpSyntaxModal } from '../NlpSyntaxModal'
@@ -15,10 +16,21 @@ const THEME_OPTIONS: ReadonlyArray<{ mode: ThemeMode }> = [
   { mode: 'dark' },
 ]
 
-/** Theme (the only place it is set), language, and theme colors. */
+/** Each palette's label message, by id. */
+const PALETTE_LABEL_KEYS: Record<ThemePaletteId, MessageKey> = {
+  default: 'ui.palette_default',
+  nord: 'ui.palette_nord',
+  solarized: 'ui.palette_solarized',
+  'rose-pine': 'ui.palette_rose_pine',
+  everforest: 'ui.palette_everforest',
+}
+
+/** Theme (the only place it is set), color theme, language, and theme colors. */
 export function AppearanceSection() {
   const themeMode = useSettingsStore((s) => s.themeMode)
   const setThemeMode = useSettingsStore((s) => s.setThemeMode)
+  const themePalette = useSettingsStore((s) => s.themePalette)
+  const setThemePalette = useSettingsStore((s) => s.setThemePalette)
   const language = useSettingsStore((s) => s.language)
   const setLanguage = useSettingsStore((s) => s.setLanguage)
   const isMobile = useIsMobile()
@@ -46,6 +58,27 @@ export function AppearanceSection() {
               onClick={() => setThemeMode(mode)}
             >
               {t(mode === 'system' ? 'ui.theme_system' : mode === 'light' ? 'ui.theme_light' : 'ui.theme_dark')}
+            </button>
+          ))}
+        </div>
+      </SettingRow>
+      <SettingRow label={t('ui.color_theme')} help={t('ui.color_theme_help')}>
+        <div className={styles.paletteGroup} role="radiogroup" aria-label={t('ui.color_theme')}>
+          {THEME_PALETTES.map((palette) => (
+            <button
+              key={palette.id}
+              type="button"
+              role="radio"
+              aria-checked={themePalette === palette.id}
+              className={`${styles.paletteOption} ${themePalette === palette.id ? styles.paletteOptionActive : ''}`}
+              onClick={() => setThemePalette(palette.id)}
+            >
+              <span
+                aria-hidden="true"
+                className={styles.paletteSwatch}
+                style={{ background: `linear-gradient(135deg, ${palette.colors.dark.accent} 50%, ${palette.colors.light.accent} 50%)` }}
+              />
+              {t(PALETTE_LABEL_KEYS[palette.id])}
             </button>
           ))}
         </div>

@@ -310,9 +310,21 @@ describe('validateImportData', () => {
 
   it('accepts valid setting keys', () => {
     const result = validateImportData(validData({
-      settings: [{ key: 'themeMode', value: 'dark' }],
+      settings: [
+        { key: 'themeMode', value: 'dark' },
+        { key: 'themePalette', value: 'nord' },
+      ],
     }))
     expect(result.ok).toBe(true)
+  })
+
+  it('rejects a themePalette naming a color theme this build does not know', () => {
+    const result = validateImportData(validData({
+      settings: [{ key: 'themePalette', value: 'dracula' }],
+    }))
+    expect(result.ok).toBe(false)
+    if (result.ok) return
+    expect(result.error).toContain('themePalette must be a known color theme')
   })
 
   // The canvas / project settings are gone; validation treats them like any

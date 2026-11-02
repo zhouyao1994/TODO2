@@ -149,6 +149,51 @@
   color: var(--color-text-primary);
 }
 
+/* ═══ Color theme (palette) picker ═══ */
+
+.paletteGroup {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.paletteOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--radius-chip);
+  background: var(--color-inset);
+  box-shadow: inset 0 0 0 1px var(--color-border-muted);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.paletteOption:hover {
+  color: var(--color-text-primary);
+}
+
+.paletteOptionActive,
+.paletteOptionActive:hover {
+  background: var(--color-accent-bg-light);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  color: var(--color-text-primary);
+}
+
+/* Half the palette's dark accent, half its light one. */
+.paletteSwatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--color-border-muted);
+}
+
 /* ═══ Select / text input ═══ */
 
 .select {
@@ -468,6 +513,14 @@
 
   .segment {
     flex: 1;
+  }
+
+  .paletteGroup {
+    justify-content: flex-start;
+  }
+
+  .paletteOption {
+    min-height: var(--touch-target-min);
   }
 
   .select {

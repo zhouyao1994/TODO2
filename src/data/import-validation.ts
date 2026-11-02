@@ -34,6 +34,7 @@ import type { SettingRow } from './database'
 import { DATA_TABLE_NAMES, type DataTableArrays, type DataTableName, type DataTableRows } from './tables'
 import { isValidCssColor } from '../utils/css'
 import { parseColorSettingKey } from '../models/theme-colors'
+import { isThemePaletteId } from '../models/ui-themes'
 import { isRecord } from '../utils/is-record'
 
 // --- Field helpers ---
@@ -406,6 +407,9 @@ function checkSetting(v: unknown): CheckResult {
     return parseEisenhowerSource(v.value as string) !== undefined
       ? true
       : 'value (eisenhowerSource must be all or list:<id>)'
+  }
+  if (v.key === SETTING_KEYS.themePalette) {
+    return isThemePaletteId(v.value) ? true : 'value (themePalette must be a known color theme)'
   }
   return true
 }

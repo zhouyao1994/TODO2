@@ -6,6 +6,8 @@ import type { WeekStart } from '../utils/effective-date'
 import type { FilterSettings } from '../utils/filter-match'
 import { DEFAULT_THEMED_COLORS, THEME_COLOR_VARS, parseColorSettingKey } from '../models/theme-colors'
 import type { ThemeColors, ThemedColors, ThemeName } from '../models/theme-colors'
+import { DEFAULT_PALETTE_ID, isThemePaletteId, themePaletteSeeds } from '../models/ui-themes'
+import type { ThemePaletteId } from '../models/ui-themes'
 import {
   DEFAULT_FOLLOWUP_INTERVAL,
   addFollowupInterval,
@@ -74,6 +76,7 @@ import { setLanguagePreference as applyLanguagePreference } from '../i18n'
 export type ThemeMode = 'light' | 'dark' | 'system'
 
 export type { ThemeColors, ThemedColors, ThemeName } from '../models/theme-colors'
+export type { ThemePaletteId } from '../models/ui-themes'
 export { DEFAULT_THEMED_COLORS } from '../models/theme-colors'
 
 interface SettingsState {
@@ -81,6 +84,8 @@ interface SettingsState {
   themeMode: ThemeMode
   /** UI language; `system` follows the browser. Changing it reloads the app. */
   language: LanguagePreference
+  /** The color theme (Settings › Appearance › Color theme) the app is drawn with. */
+  themePalette: ThemePaletteId
   defaultStatusId: number | null
   quickStatusId: number | null
   seededAssignedStatusId: number | null
@@ -141,6 +146,13 @@ interface SettingsState {
   setThemeMode: (mode: ThemeMode) => Promise<void>
   /** Saves the choice and applies it; the caller reloads so every render picks it up. */
   setLanguage: (preference: LanguagePreference) => Promise<void>
+  /**
+   * Shows the color theme at once and saves it. The nine editable colours
+   * without a user override take the new palette's seeds (the customized
+   * ones keep their values — overrides are palette-independent), so the
+   * color editor reads and resets to the palette in effect.
+   */
+  setThemePalette: (id: ThemePaletteId) => Promise<void>
   setDefaultStatusId: (id: number | null) => Promise<void>
   setCompletedRetentionDays: (days: number | null) => Promise<void>
   setWeekStartsOn: (day: WeekStart) => Promise<void>
@@ -259,6 +271,29 @@ function applyThemeMode(mode: ThemeMode) {
   document.documentElement.setAttribute('data-theme', resolved)
 }
 
+/** Puts the color theme on the page; the mode above keeps driving `data-theme`. */
+function applyThemePalette(id: ThemePaletteId) {
+  document.documentElement.setAttribute('data-palette', id)
+}
+
+/**
+ * The two color bags with `palette`'s seeds under the keys without a user
+ * override — a customized key keeps the value shown (overrides are
+ * palette-independent). The seeds are what the color editor shows and
+ * resets to while `palette` is active.
+ */
+function colorsForPalette(palette: ThemePaletteId, current: ThemedColors, customized: CustomizedColorKeys): ThemedColors {
+  const seeds = themePaletteSeeds(palette)
+  const bag = (theme: ThemeName): ThemeColors => {
+    const out = { ...seeds[theme] }
+    for (const key of Object.keys(out) as Array<keyof ThemeColors>) {
+      if (customized[theme].has(key)) out[key] = current[theme][key]
+    }
+    return out
+  }
+  return { dark: bag('dark'), light: bag('light') }
+}
+
 let mediaQueryCleanup: (() => void) | null = null
 
 function setupMediaQueryListener(mode: ThemeMode) {
@@ -319,6 +354,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   },
   themeMode: 'dark' as ThemeMode,
   language: DEFAULT_LANGUAGE_PREFERENCE,
+  themePalette: DEFAULT_PALETTE_ID,
   defaultStatusId: null,
   quickStatusId: null,
   seededAssignedStatusId: null,
@@ -342,10 +378,14 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   async load() {
     try {
       const rows = await readFresh(() => settingsRepository.getAll())
-      const colors: ThemedColors = {
-        dark: { ...DEFAULT_THEMED_COLORS.dark },
-        light: { ...DEFAULT_THEMED_COLORS.light },
+      // The color rows overlay the active palette's seeds, so the palette is
+      // resolved before the loop builds `colors`.
+      let paletteId: ThemePaletteId = DEFAULT_PALETTE_ID
+      for (const row of rows) {
+        if (row.key === SETTING_KEYS.themePalette && isThemePaletteId(row.value)) paletteId = row.value
       }
+      const seeds = themePaletteSeeds(paletteId)
+      const colors: ThemedColors = { dark: { ...seeds.dark }, light: { ...seeds.light } }
       const customKeys: CustomizedColorKeys = { dark: new Set(), light: new Set() }
       let defaultStatusId: number | null = null
       let quickStatusId: number | null = null
@@ -427,7 +467,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       // A direction only for a sort that has one.
       if (!sortHasDirection(newListSort)) newListSortDirection = 'asc'
       set({
-        colors, defaultStatusId, quickStatusId, seededAssignedStatusId, completedRetentionDays, themeMode, language, weekStartsOn,
+        colors, defaultStatusId, quickStatusId, seededAssignedStatusId, completedRetentionDays, themeMode, language, themePalette: paletteId, weekStartsOn,
         followupDefaultInterval, autoFollowup, urgentDueWithinDays, hotRule, checkinOpenMethod, checkinTaskFilter,
         newListSort, newListSortDirection, newListGroup, purgePromptIntervalDays, purgePromptLastAt,
         shortcutOverrides, eisenhowerPanes, eisenhowerListId,
@@ -436,6 +476,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       // settings first), so every message already reads the saved choice.
       applyLanguagePreference(language)
       applyThemeMode(themeMode)
+      applyThemePalette(paletteId)
       setupMediaQueryListener(themeMode)
       applyThemeOverrides(customizedColorKeys, colors, resolveTheme(themeMode))
     } catch (e) {
@@ -465,15 +506,18 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   resetColors(theme?: ThemeName) {
     return trackWrite(async () => {
+      // The active palette's seeds: what the color editor shows as the
+      // palette's colours (the default palette's are DEFAULT_THEMED_COLORS).
+      const seeds = themePaletteSeeds(get().themePalette)
       const targets: ReadonlyArray<ThemeName> = theme == null ? ['dark', 'light'] : [theme]
       for (const t of targets) {
-        const keys = Object.keys(DEFAULT_THEMED_COLORS[t]).map((k) => `color.${t}.${k}`)
+        const keys = Object.keys(seeds[t]).map((k) => `color.${t}.${k}`)
         await settingsRepository.bulkDelete(keys)
         customizedColorKeys[t] = new Set()
       }
       const current = get().colors
       const colors: ThemedColors = { ...current }
-      for (const t of targets) colors[t] = { ...DEFAULT_THEMED_COLORS[t] }
+      for (const t of targets) colors[t] = { ...seeds[t] }
       set({ colors })
       applyThemeOverrides(customizedColorKeys, colors, resolveTheme(get().themeMode))
     })
@@ -499,6 +543,19 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       else await settingsRepository.put(SETTING_KEYS.language, preference)
       set({ language: preference })
       applyLanguagePreference(preference)
+    })
+  },
+
+  setThemePalette(id: ThemePaletteId) {
+    return trackWrite(async () => {
+      if (!isThemePaletteId(id)) return
+      await settingsRepository.put(SETTING_KEYS.themePalette, id)
+      // The customized keys keep their values; the rest take the palette's
+      // seeds, so the color editor reads (and resets to) the palette in use.
+      const colors = colorsForPalette(id, get().colors, customizedColorKeys)
+      set({ themePalette: id, colors })
+      applyThemePalette(id)
+      applyThemeOverrides(customizedColorKeys, colors, resolveTheme(get().themeMode))
     })
   },
 
