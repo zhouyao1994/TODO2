@@ -12,7 +12,7 @@ A spatial todo app with an infinite canvas, multiple views, and local-first stor
 - **Command palette** — quick access to actions and navigation
 - **Local-first** — all data in IndexedDB, works fully offline
 - **File sync** — optional save/load to a JSON file on disk via the File System Access API
-- **Dark and light themes** with customizable accent colors
+- **Dark and light themes** with selectable color themes (Nord, Solarized, Rosé Pine, Everforest) and customizable accent colors
 - **Two build targets** — an online build for hosting (CDN fonts) and a single-file offline build you can run from anywhere
 
 ## Use it

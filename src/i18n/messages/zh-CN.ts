@@ -954,4 +954,11 @@ export const zhCN: Record<MessageKey, string> = {
   'ui.nlp_else_title': '其余内容都是标题',
   'ui.nlp_plain_words_desc': '普通词语不会被当作日期或重复规则 — 请使用 /due、/repeat',
   'ui.nlp_slash_desc': '词语或路径中的 / 不是命令',
+  'ui.color_theme': '界面主题',
+  'ui.color_theme_help': '应用整体绘制所用的配色，同时作用于深色与浅色模式。',
+  'ui.palette_default': '默认',
+  'ui.palette_nord': 'Nord',
+  'ui.palette_solarized': 'Solarized',
+  'ui.palette_rose_pine': 'Rosé Pine',
+  'ui.palette_everforest': 'Everforest',
 }

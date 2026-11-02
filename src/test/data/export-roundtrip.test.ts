@@ -91,6 +91,7 @@ function buildSeed(): Seed {
       { key: 'purgePromptLastAt', value: '2026-09-14T08:30:00.000Z' },
       { key: 'themeMode', value: 'dark' },
       { key: 'language', value: 'zh-CN' },
+      { key: 'themePalette', value: 'everforest' },
       { key: 'defaultStatusId', value: '2' },
       { key: 'quickStatusId', value: '1' },
       { key: 'completedRetentionDays', value: '30' },

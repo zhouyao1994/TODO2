@@ -14,6 +14,11 @@ export const SETTING_KEYS = {
   themeMode: 'themeMode',
   /** UI language: `en`, `zh-CN`, or `system` (follow the browser); absent = `system`. */
   language: 'language',
+  /**
+   * The UI theme palette (Settings › Appearance › Color theme — a
+   * `ThemePaletteId` from `models/ui-themes`). Absent = the default look.
+   */
+  themePalette: 'themePalette',
   defaultStatusId: 'defaultStatusId',
   quickStatusId: 'quickStatusId',
   seededAssignedStatusId: 'seededAssignedStatusId',

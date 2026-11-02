@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { sourceFiles, themeTokens } from './css-source'
 
-/** A selector that forks a rule per theme (`[data-theme="light"] .x`, `:global([data-theme='light']) .x`). */
-const THEME_FORK = /\[data-theme\s*=/
+/** A selector that forks a rule per theme or palette (`[data-theme="light"] .x`, `:global([data-theme='light']) .x`, `[data-palette="nord"] …`). */
+const THEME_FORK = /\[data-(theme|palette)\s*=/
 
 describe('theming lives in tokens.css', () => {
-  it('no component stylesheet forks a rule per theme', () => {
+  it('no component stylesheet forks a rule per theme or palette', () => {
     const forks = sourceFiles(/\.css$/)
       .filter(([path]) => path !== 'styles/tokens.css')
       .flatMap(([path, css]) => css

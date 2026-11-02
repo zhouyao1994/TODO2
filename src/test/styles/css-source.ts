@@ -37,11 +37,22 @@ export function declarations(css: string, selector: string): Map<string, string>
 
 export type ThemeName = 'dark' | 'light'
 
+/** The color themes the stylesheet carries blocks for (not `default` — it is the base blocks). */
+export type PaletteName = 'nord' | 'solarized' | 'rose-pine' | 'everforest'
+
 const THEME_SELECTORS: Record<ThemeName, string> = { dark: '[data-theme="dark"],', light: '[data-theme="light"] {' }
 
 /** A theme's custom properties: the theme-independent base, then the theme's own block. */
 export function themeTokens(theme: ThemeName): Map<string, string> {
   return new Map([...declarations(TOKENS_CSS, ':root {'), ...declarations(TOKENS_CSS, THEME_SELECTORS[theme])])
+}
+
+/** A palette mode's custom properties: the theme's tokens, then the palette's overrides. */
+export function paletteTokens(palette: PaletteName, theme: ThemeName): Map<string, string> {
+  return new Map([
+    ...themeTokens(theme),
+    ...declarations(TOKENS_CSS, `[data-palette="${palette}"][data-theme="${theme}"] {`),
+  ])
 }
 
 type Rgb = [number, number, number]
