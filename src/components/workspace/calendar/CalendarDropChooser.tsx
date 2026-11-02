@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import { useMemo } from 'react'
 import type { PersistedTodoItem } from '../../../models'
 import type { CalendarDateType } from '../../../models/workspace-layout'
@@ -5,7 +6,6 @@ import { dayLabel, shortDayLabel } from '../../../utils/calendar-grid'
 import { MenuPopover, type MenuEntry } from '../../shared/MenuPopover'
 import { FlagIcon, WidgetKindIcon } from '../../shared/icons'
 import styles from './CalendarWidget.module.css'
-import { t } from '../../../i18n'
 
 interface CalendarDropChooserProps {
   todo: PersistedTodoItem
@@ -35,7 +35,7 @@ export function CalendarDropChooser({ todo, date, at, onDone }: CalendarDropChoo
     { kind: 'label', text: `Set “${todo.title}” for ${dayLabel(date)}` },
     {
       kind: 'item',
-      label: 'Due date',
+      label: t('ui.due_date_lbl'),
       icon: <span className={styles.chooserDue}><WidgetKindIcon kind="calendar" size={14} /></span>,
       note: currentValue(todo.dueDate, date),
       shortcut: 'D',
@@ -43,7 +43,7 @@ export function CalendarDropChooser({ todo, date, at, onDone }: CalendarDropChoo
     },
     {
       kind: 'item',
-      label: 'Follow-up',
+      label: t('ui.followup_lbl'),
       icon: <span className={styles.chooserFollowup}><FlagIcon size={14} /></span>,
       note: currentValue(todo.nextFollowupAt, date),
       shortcut: 'F',

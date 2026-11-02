@@ -15,7 +15,7 @@ import { createValueStore } from '../../../utils/value-store'
 import { ListBulkBar } from '../list/ListBulkBar'
 import { useElementSize } from '../../../hooks/use-element-size'
 import { countOf, tileSubLine, withScreenNote } from './dashboard-copy'
-import { TILES, tileDrill } from './dashboard-tiles'
+import { TILES, tileDrill, tileLabel } from './dashboard-tiles'
 import { DASHBOARD_WIDE_MIN_PX, packSections, sectionRowTracks, TILES_PER_ROW } from './dashboard-layout'
 import { DASHBOARD_SECTIONS } from './dashboard-sections'
 import { buildDashboardSummary, sectionSummaryLines, type DashboardSummary } from './dashboard-summary'
@@ -64,7 +64,7 @@ function Tile({ id, data, onDrill }: { id: DashboardTileId; data: DashboardData;
   const numberColor = shown === 0 ? 'var(--color-text-muted)' : id === 'open' ? 'var(--color-text-primary)' : def.color
   const content = (
     <>
-      <span className={styles.tileLabel}><DashGlyph name={def.glyph} size={12} color={def.color} />{def.label}</span>
+      <span className={styles.tileLabel}><DashGlyph name={def.glyph} size={12} color={def.color} />{tileLabel(id)}</span>
       <span className={styles.tileCount} style={{ color: numberColor }} data-testid="dash-tile-count">
         {shown}
         {shown !== total && <span className={styles.of}>{tr('ui.of')}{' '}{total}</span>}
@@ -74,13 +74,13 @@ function Tile({ id, data, onDrill }: { id: DashboardTileId; data: DashboardData;
     </>
   )
   const cls = `${styles.tile} ${styles.surface}`
-  if (!onDrill) return <div className={cls} data-dash-tile={id} aria-label={`${def.label}: ${countOf(shown, total)}`} role="group">{content}</div>
+  if (!onDrill) return <div className={cls} data-dash-tile={id} aria-label={`${tileLabel(id)}: ${countOf(shown, total)}`} role="group">{content}</div>
   return (
     <button
       type="button"
       className={cls}
       data-dash-tile={id}
-      aria-label={`${def.label}: ${countOf(shown, total)}. ${sub ? `${sub}. ` : ''}Show tasks`}
+      aria-label={`${tileLabel(id)}: ${countOf(shown, total)}. ${sub ? `${sub}. ` : ''}${tr('ui.show_tasks')}`}
       onClick={() => onDrill(tileDrill(id, data))}
     >
       {content}
@@ -123,7 +123,7 @@ function ListTiles({ data, onDrill, style }: {
             onClick={() => onDrill({
               title: t.name,
               glyph: 'list',
-              description: `List · ${hints.get(t.id) ?? 'All tasks'}`,
+              description: tr('ui.list_tile_hint', { hint: hints.get(t.id) ?? tr('ui.all_tasks') }),
               source: { kind: 'list', listDefinitionId: t.id },
             })}
           >
@@ -146,7 +146,7 @@ const GEAR_SLOT_PX = 32
 
 /** The dashboard's corner gear (shown on hover / focus): opens Customize dashboard. */
 function CustomizeGear({ onClick }: { onClick: () => void }) {
-  const { triggerProps, tooltip } = useTooltip('Customize dashboard')
+  const { triggerProps, tooltip } = useTooltip(tr('ui.customize_dashboard_tip'))
   return (
     <button
       type="button"

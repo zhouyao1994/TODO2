@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../../i18n'
 import { useId, useMemo, useState, type CSSProperties } from 'react'
 import type { TodoPredicate } from '../../../models'
 import type { EisenhowerQuadrant } from '../../../models/workspace-layout'
@@ -27,7 +28,6 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import sectionStyles from './sections.module.css'
 import styles from './EisenhowerSection.module.css'
-import { t as tr } from '../../../i18n'
 
 /** Saves pane `q`'s settings patched (`null` = reset), from the panes as they are now (two quick edits mustn't drop one another). */
 function patchPane(q: EisenhowerQuadrant, patch: Parameters<typeof withPaneConfig>[2], description: string, mergeKey?: string): void {
@@ -116,11 +116,11 @@ export function EisenhowerSection() {
       <ConfirmDialog
         open={confirmReset}
         title={tr('ui.reset_all_panes_2')}
-        message="Every pane goes back to its default name and filter (Do, Schedule, Delegate, Drop), in every Eisenhower and on the dashboard."
-        confirmLabel="Reset all panes"
+        message={t('ui.reset_panes_msg')}
+        confirmLabel={t('ui.reset_all_panes_confirm')}
         onConfirm={() => {
           setConfirmReset(false)
-          void useSettingsStore.getState().setEisenhowerPanes(undefined, 'Reset the Eisenhower panes')
+          void useSettingsStore.getState().setEisenhowerPanes(undefined, t('ui.reset_panes_undo'))
         }}
         onCancel={() => setConfirmReset(false)}
       />
@@ -184,7 +184,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
         <PredicateChips
           predicate={pane.filter}
           onChange={onFilter}
-          addLabel="Add a filter to this pane"
+          addLabel={t('ui.add_filter_to_pane')}
           inDialog
           before={hasChips ? undefined : <span className={styles.noFilter}>{tr('ui.no_filter_every_task')}</span>}
         />

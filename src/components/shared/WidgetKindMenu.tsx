@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from 'react'
 import { WIDGET_KINDS, widgetKindLabel, type WidgetKind } from '../../models/workspace-layout'
-import { translateText } from '../../i18n'
+import { t, translateText } from '../../i18n'
 import { useListDefinitionStore } from '../../stores/list-definition-store'
 import { listChoiceEntries } from './list-choice-entries'
 import { WidgetKindIcon } from './icons'
@@ -110,7 +110,7 @@ export function WidgetKindMenu({
   pickListForLens,
   onEditList,
   onClose,
-  heading = 'Change widget',
+  heading,
   widgetActions,
   currentListName,
   widgetSetting,
@@ -129,7 +129,7 @@ export function WidgetKindMenu({
   const entries: MenuEntry[] = []
   const changeList: MenuItemEntry = {
     kind: 'item',
-    label: listFirst ? 'Change list' : 'Change list…',
+    label: listFirst ? t('ui.change_list') : t('ui.change_list_menu'),
     note: listFirst ? currentListName : undefined,
     children: listChoices,
     childrenWidth: CHANGE_LIST_WIDTH_PX,
@@ -151,14 +151,14 @@ export function WidgetKindMenu({
   }))
 
   if (listFirst) {
-    entries.push({ kind: 'item', label: 'Edit list…', onSelect: () => onEditList?.() })
+    entries.push({ kind: 'item', label: t('ui.edit_list_menu'), onSelect: () => onEditList?.() })
     if (showChangeList) entries.push(changeList)
     entries.push({ kind: 'separator' })
     if (actions.length > 0) entries.push(...actions, { kind: 'separator' })
-    entries.push({ kind: 'label', text: heading }, ...kinds)
+    entries.push({ kind: 'label', text: heading ?? t('ui.change_widget') }, ...kinds)
   } else {
     if (onEditList || (sourceActions?.length ?? 0) > 0) {
-      if (onEditList) entries.push({ kind: 'item', label: 'Edit list…', onSelect: () => onEditList() })
+      if (onEditList) entries.push({ kind: 'item', label: t('ui.edit_list_menu'), onSelect: () => onEditList() })
       for (const a of sourceActions ?? []) entries.push({ kind: 'item', label: a.label, icon: a.icon, onSelect: a.onSelect })
       if (!widgetSetting) entries.push({ kind: 'separator' })
     }
@@ -184,9 +184,9 @@ export function WidgetKindMenu({
       }, { kind: 'separator' })
     }
     if (actions.length > 0) entries.push(...actions, { kind: 'separator' })
-    entries.push({ kind: 'label', text: heading }, ...kinds)
+    entries.push({ kind: 'label', text: heading ?? t('ui.change_widget') }, ...kinds)
     if (showChangeList) entries.push({ kind: 'separator' }, changeList)
   }
 
-  return <MenuPopover point={anchor} entries={entries} label={heading} onClose={onClose} />
+  return <MenuPopover point={anchor} entries={entries} label={heading ?? t('ui.change_widget')} onClose={onClose} />
 }

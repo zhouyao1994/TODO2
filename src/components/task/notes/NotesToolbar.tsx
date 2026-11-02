@@ -4,7 +4,7 @@ import type { EditorView } from '@codemirror/view'
 import { formatShortcut } from '../../../utils/platform'
 import { useTooltip } from '../../shared/use-tooltip'
 import styles from './NotesToolbar.module.css'
-import { t } from '../../../i18n'
+import { t as tr, t } from '../../../i18n'
 
 /** The toolbar's Convert button: the bullet lines in scope and what to do with them. */
 export interface NotesConvertControl {
@@ -35,12 +35,12 @@ function plural(n: number, one: string, many: string): string {
 function convertButtonText({ count, selection, shortcutLabel }: Pick<NotesConvertControl, 'count' | 'selection' | 'shortcutLabel'>): { label: string; hint: string } {
   if (count === 0) {
     return {
-      label: selection ? 'No bullet lines in the selection' : 'No bullet lines to convert',
-      hint: 'Start lines with -, *, • or [ ]',
+      label: selection ? tr('ui.note_no_bullet_selection') : tr('ui.note_no_bullet'),
+      hint: tr('ui.note_bullet_hint'),
     }
   }
   if (selection) {
-    return { label: `Convert ${plural(count, 'selected line', 'selected lines')} to tasks`, hint: 'Bullet lines in the selection only' }
+    return { label: count === 1 ? tr('ui.note_convert_one') : tr('ui.note_convert_many', { n: count }), hint: tr('ui.note_convert_selection_hint') }
   }
   return {
     label: `Convert ${plural(count, 'bullet line', 'bullet lines')} to tasks`,

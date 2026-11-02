@@ -18,7 +18,7 @@ interface UnsavedChangesDialogProps {
 export function UnsavedChangesDialog({ layoutName, lead, onSave, onDiscard, onCancel }: UnsavedChangesDialogProps) {
   const saveRef = useRef<HTMLButtonElement>(null)
   return (
-    <Dialog open onClose={onCancel} title={`Save changes to layout “${layoutName}”?`} initialFocusRef={saveRef} nested>
+    <Dialog open onClose={onCancel} title={t('ui.save_changes_to_layout', { name: layoutName })} initialFocusRef={saveRef} nested>
       <DialogBody>
         {lead} {t('ui.if_you_dont_save_your_changes')}{layoutName}{t('ui.will_be_lost')}</DialogBody>
       <DialogActions className={styles.actions}>
@@ -86,7 +86,7 @@ interface DeleteLayoutDialogProps {
 export function DeleteLayoutDialog({ layoutName, ownedLists = 0, onConfirm, onCancel }: DeleteLayoutDialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null)
   return (
-    <Dialog open onClose={onCancel} title={`Delete layout “${layoutName}”?`} initialFocusRef={cancelRef} nested>
+    <Dialog open onClose={onCancel} title={t('ui.delete_layout_title', { name: layoutName })} initialFocusRef={cancelRef} nested>
       <DialogBody>{deleteLayoutMessage(ownedLists)}</DialogBody>
       <DialogActions>
         <button ref={cancelRef} type="button" className={styles.ghost} onClick={onCancel}>{t('ui.cancel')}</button>

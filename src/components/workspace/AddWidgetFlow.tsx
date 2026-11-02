@@ -3,7 +3,7 @@ import { translateText } from '../../i18n'
 import type { LayoutDropTarget } from '../../utils/workspace-layout-ops'
 import { WidgetKindMenu } from '../shared/WidgetKindMenu'
 import { WidgetKindIcon } from '../shared/icons'
-import { createListThenEdit, NO_LIST_LAYOUT_REASON, useAddWidget, useListOwnerLayoutId } from './widget-hooks'
+import { createListThenEdit, noListLayoutReason, useAddWidget, useListOwnerLayoutId } from './widget-hooks'
 
 /**
  * Adds a widget of `kind` at `target`. A list widget gets a new blank list
@@ -28,7 +28,7 @@ function useAddKind(target: LayoutDropTarget): (kind: WidgetKind) => void {
 function useUnavailableKinds(): Partial<Record<WidgetKind, string>> | undefined {
   const layoutId = useListOwnerLayoutId()
   if (layoutId != null) return undefined
-  return Object.fromEntries(WIDGET_KINDS.filter((k) => WIDGET_KIND_SPECS[k].showsList).map((k) => [k, NO_LIST_LAYOUT_REASON]))
+  return Object.fromEntries(WIDGET_KINDS.filter((k) => WIDGET_KIND_SPECS[k].showsList).map((k) => [k, noListLayoutReason()]))
 }
 
 interface AddWidgetFlowProps {

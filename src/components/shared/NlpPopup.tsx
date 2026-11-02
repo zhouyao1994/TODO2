@@ -8,7 +8,7 @@ import styles from './NlpPopup.module.css'
 import { useLatestRef } from '../../hooks/use-latest-ref'
 import { PickerEntityMenu } from './EntityMenu'
 import { registerModuleReset } from '../../utils/module-reset'
-import { t } from '../../i18n'
+import { t, translateText } from '../../i18n'
 
 /** A person / tag row's menu (Show tasks · Edit… · Delete…) on the popup's rows. */
 export interface NlpEntityMenuOptions {
@@ -191,7 +191,7 @@ export function NlpPopup({ view, selectedIndex, onPick, onHighlight, className, 
           <button key={rowKey(row, i)} type="button" role="option" aria-selected={active} className={cls} {...common} onMouseDown={pick(row)}>
             <span className={styles.icon} data-command={row.command.name}><CommandIcon command={row.command.name} /></span>
             <span className={styles.name}><Marked text={`/${row.command.name}`} length={row.matchLength ? row.matchLength + 1 : 0} /></span>
-            <span className={styles.detail}>{row.command.description}</span>
+            <span className={styles.detail}>{translateText(row.command.description)}</span>
           </button>
         )
       case 'value':

@@ -64,10 +64,10 @@ export function AuditIssueDetailDialog({ issue, onClose }: AuditIssueDetailDialo
 
 function describeFix(issue: AuditIssue): string {
   if (issue.fix === 'drop-store') {
-    return 'Cleanup will drop every row in this unrecognised IDB store.'
+    return t('ui.cleanup_drop_store')
   }
   if (issue.fix === 'delete') {
-    return 'Cleanup will delete these rows.'
+    return t('ui.cleanup_delete_rows')
   }
   if (issue.fix === 'sanitize') {
     return 'Cleanup will drop the malformed parts of these rows, as an import would.'
@@ -80,7 +80,7 @@ function describeFix(issue: AuditIssue): string {
       return `Cleanup will null out the "${issue.field}" field on these rows.`
     }
   }
-  return 'Cleanup will repair these rows.'
+  return t('ui.cleanup_repair_rows')
 }
 
 function SampleCard({ sample }: { sample: AuditSample }) {

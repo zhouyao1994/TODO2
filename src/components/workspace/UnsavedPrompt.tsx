@@ -75,10 +75,10 @@ function UnsavedListDialog({ listId, onDone, onCancel }: {
   const name = listName(listId)
   const n = widgetCount(listId)
   const body = n <= 1
-    ? 'Your changes will be lost if you don’t save.'
-    : `This list is shown in ${n} widgets. Saving updates ${n === 2 ? 'both' : 'all of them'}.`
+    ? t('ui.unsaved_prompt_body')
+    : n === 2 ? t('ui.unsaved_list_widgets_both', { n }) : t('ui.unsaved_list_widgets_many', { n })
   return (
-    <Dialog open onClose={onCancel} title={`Save changes to list “${name}”?`} initialFocusRef={saveRef} nested>
+    <Dialog open onClose={onCancel} title={t('ui.save_changes_to_list', { name })} initialFocusRef={saveRef} nested>
       <DialogBody>{body}</DialogBody>
       <DialogActions className={styles.actions}>
         <button

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { act, render, cleanup, fireEvent, within, screen } from '@testing-library/react'
-import { CustomizeDashboardDialog, PROMPTED_LIST_TILE_NOTE } from '../../../components/workspace/dashboard/CustomizeDashboardDialog'
+import { CustomizeDashboardDialog } from '../../../components/workspace/dashboard/CustomizeDashboardDialog'
+import { PROMPTED_LIST_TILE_NOTE } from '../../../components/workspace/dashboard/dashboard-prompts'
 import { defaultDashboardConfig, type DashboardTabConfig } from '../../../models/dashboard-config'
 import type { DashboardTab, PersistedWorkspaceLayout } from '../../../models/workspace-layout'
 import { useListDefinitionStore } from '../../../stores/list-definition-store'

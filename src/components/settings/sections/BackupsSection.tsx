@@ -1,12 +1,12 @@
+import { t } from '../../../i18n'
 import { useEffect, useState } from 'react'
 import { useFlashMessage } from '../../../hooks/use-flash-message'
 import { useFileOpsStore } from '../../../stores/file-ops-store'
 import { BYTES_PER_KB } from '../../../constants'
 import type { BackupTrigger } from '../../../models'
-import { NO_BACKUP_NOTE } from '../../../stores/safety-snapshot'
+import { noBackupNote } from '../../../stores/safety-snapshot'
 import styles from './sections.module.css'
 import { restoreBackup } from '../../../services/replace-data'
-import { t } from '../../../i18n'
 
 const TRIGGER_LABEL: Record<BackupTrigger, string> = {
   auto: 'auto',
@@ -37,9 +37,9 @@ export function BackupsSection() {
     // restore's import pipeline: its error says why, and nothing changes.
     const result = await restoreBackup(id)
     if (result.status === 'error') showMessage(`Restore failed: ${result.error}`, 10000, true)
-    else if (result.status === 'cancelled') showMessage('Restore cancelled — nothing changed.', 4000)
-    else if (result.noBackup) showMessage(`Restored. ${NO_BACKUP_NOTE}`, 8000)
-    else showMessage('Restored successfully! The data it replaced was backed up first.', 5000)
+    else if (result.status === 'cancelled') showMessage(t('ui.restore_cancelled'), 4000)
+    else if (result.noBackup) showMessage(`Restored. ${noBackupNote()}`, 8000)
+    else showMessage(t('ui.restored_ok'), 5000)
   }
 
   return (
@@ -86,10 +86,10 @@ export function BackupsSection() {
           onClick={async () => {
             try {
               await createBackup()
-              showMessage('Backup created!', 2000)
+              showMessage(t('ui.backup_created'), 2000)
             } catch (err) {
               console.warn('[backup] manual backup failed', err)
-              showMessage('The backup could not be saved — browser storage may be full.', 8000, true)
+              showMessage(t('ui.backup_failed'), 8000, true)
             }
           }}
         >

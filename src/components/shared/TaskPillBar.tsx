@@ -291,7 +291,7 @@ export const TaskPillStatus = memo(function TaskPillStatus({
       className={styles.statusReadOnly}
       style={status ? { color: status.color } : undefined}
       title={status?.name}
-      aria-label={status ? `Status: ${status.name}` : 'No status'}
+      aria-label={status ? t('ui.status_aria', { name: status.name }) : t('ui.no_status_aria')}
     >
       {status
         ? <StatusIcon icon={status.icon || DEFAULT_STATUS_ICON} filled />

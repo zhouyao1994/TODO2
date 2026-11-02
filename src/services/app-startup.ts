@@ -7,6 +7,7 @@ import { backupScheduler } from '../data/backup-scheduler'
 import { db, findDatabaseTooNew, findDatabaseTooOld } from '../data/database'
 import { useFileStorageStore } from './file-storage-store'
 import { expiredCompletedUids } from './purge-completed'
+import { migrateDefaultListNames } from './default-name-migration'
 
 export interface AppStartupResult {
   /** uids of the completed tasks past retention once the data is settled (the purge prompt's list), or null (none, or not asked again yet). */
@@ -57,6 +58,9 @@ export async function runAppStartup({ onPurgeCheck }: AppStartupOptions = {}): P
       console.warn('[startup] the Eisenhower list could not be made', err)
     }),
   ])
+  await migrateDefaultListNames().catch((err: unknown) => {
+    console.warn('[startup] the default list names could not be localized', err)
+  })
   onPurgeCheck?.()
   const expiredUids = await expiredCompletedUids()
   backupScheduler.start()

@@ -48,8 +48,8 @@ const hasEmail = (p: PersistedPerson) => isValidEmail(p.email ?? '')
 const addressLine = (p: PersistedPerson) => {
   if (hasEmail(p)) return p.email
   return p.email
-    ? 'Invalid email address — sent without a recipient'
-    : 'No email address — add the recipient in your mail app'
+    ? t('ui.checkin_invalid_email')
+    : t('ui.checkin_no_email')
 }
 
 /**
@@ -246,7 +246,7 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
                 <span className={styles.count} data-checkin-count="">{tasksLabel(count)}</span>
                 {!email && (
                   <button type="button" className={styles.outlineBtn} aria-label={`${p.email ? 'Fix' : 'Add'} email for ${p.name}`} onClick={() => addEmail(p.id)}>
-                    {p.email ? 'Fix email' : 'Add email'}
+                    {p.email ? t('ui.fix_email') : t('ui.add_email')}
                   </button>
                 )}
                 {checked && (sentAs
@@ -258,7 +258,7 @@ function CheckinDialogPanel({ openedFor, notice }: { openedFor: number[]; notice
                       aria-label={`${sendLabel} for ${p.name}`}
                       data-checkin-send={p.id}
                       disabled={count === 0}
-                      title={count === 0 ? 'No open tasks match Which tasks' : undefined}
+                      title={count === 0 ? t('ui.no_open_tasks_match') : undefined}
                       onClick={() => { void send(p) }}
                     >
                       {sendLabel}

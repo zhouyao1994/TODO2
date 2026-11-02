@@ -8,7 +8,7 @@ import {
   relativeDayPhrase,
   type FollowupInterval,
 } from '../utils/followup'
-import { locale } from '../i18n'
+import { locale, t } from '../i18n'
 import { BARE_MENTION_NAME, BARE_TAG_NAME, mentionToken, parseInput, tagToken } from './natural-language-parser'
 import { TYPED_NAME_MAX_RANK, rankByName } from './nlp-resolver'
 import {
@@ -192,11 +192,11 @@ export function isVisible(view: AutocompleteView | null): view is AutocompleteVi
 const MAX_ENTITY_ROWS = 8
 const MAX_ARGUMENT_WORDS = 4
 
-const ARGUMENT_HEADER: Record<'due' | 'followup' | 'repeat' | 'status', string> = {
-  due: 'Due date',
-  followup: 'Next follow-up',
-  repeat: 'Repeat',
-  status: 'Status',
+const ARGUMENT_HEADER: Record<'due' | 'followup' | 'repeat' | 'status', 'ui.arg_due' | 'ui.arg_followup' | 'ui.arg_repeat' | 'ui.arg_status'> = {
+  due: 'ui.arg_due',
+  followup: 'ui.arg_followup',
+  repeat: 'ui.arg_repeat',
+  status: 'ui.arg_status',
 }
 
 // ─── Context ────────────────────────────────────────────────────────
@@ -329,7 +329,7 @@ function entityView(
   return {
     trigger,
     mode: 'entity',
-    header: trigger === '#' ? 'Tags' : 'People',
+    header: trigger === '#' ? t('ui.tags_header') : t('ui.people_header'),
     footer: false,
     rows,
     anchor: index,
@@ -349,7 +349,7 @@ function commandView(index: number, cursor: number, query: string): Autocomplete
   return {
     trigger: '/',
     mode: 'command',
-    header: 'Commands',
+    header: t('ui.commands_header'),
     footer: q.length === 0,
     rows,
     anchor: index,
@@ -425,7 +425,7 @@ function argumentView(
     trigger: '/' as const,
     mode: 'argument' as const,
     command: name,
-    header: ARGUMENT_HEADER[name],
+    header: t(ARGUMENT_HEADER[name]),
     footer: false,
     anchor: ctx.slash,
     from: ctx.argStart,

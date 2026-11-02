@@ -7,7 +7,7 @@ import type { PrepareImportFailure } from '../data/import-pipeline'
 import { restoreFromImportData } from '../data/restore'
 import { buildExportData, selfCheckExportJson } from '../data/export-data'
 import { backupScheduler } from '../data/backup-scheduler'
-import { NO_BACKUP_NOTE } from '../stores/safety-snapshot'
+import { noBackupNote } from '../stores/safety-snapshot'
 import { replaceData, withDataReplaceHold } from './replace-data'
 import { useUndoStore } from '../stores/undo-store'
 import { SCHEMA_VERSION_KEY } from '../data/file-version'
@@ -882,7 +882,7 @@ class FileStorageService {
       return false
     }
     // After the stores reload (which clears the snackbar): the result toast.
-    if (outcome.noBackup) useUndoStore.getState().notify(`Loaded ${name}. ${NO_BACKUP_NOTE}`)
+    if (outcome.noBackup) useUndoStore.getState().notify(`Loaded ${name}. ${noBackupNote()}`)
     return true
   }
 

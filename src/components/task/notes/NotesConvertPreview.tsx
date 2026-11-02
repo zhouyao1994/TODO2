@@ -11,7 +11,7 @@ import { StatusIcon } from '../../shared/StatusIcon'
 import { TaskMarkers } from '../../shared/TaskMarkers'
 import { DialogFrame } from '../../shared/Dialog'
 import styles from './NotesConvert.module.css'
-import { t as tr } from '../../../i18n'
+import { t as tr, t } from '../../../i18n'
 
 export interface PreviewRow {
   key: number
@@ -182,8 +182,8 @@ export function NotesConvertPreview({
 
   const newPeople = [...new Set(rows.flatMap((r) => r.draft.newPeople))]
   const sourceName = fromSelection
-    ? (noteName ? `From your selection in "${noteName}"` : 'From your selection')
-    : (noteName ? `From the note "${noteName}"` : 'From the note')
+    ? (noteName ? t('ui.note_from_selection_in', { name: noteName }) : t('ui.note_from_selection'))
+    : (noteName ? t('ui.note_from_note_in', { name: noteName }) : t('ui.note_from_note'))
   const notes = [
     newPeople.length > 0 ? `New ${newPeople.length === 1 ? 'person' : 'people'}: ${newPeople.join(', ')} — created with the tasks` : null,
     leftOut > 0 ? `${plural(leftOut, 'line', 'lines')} left out` : null,

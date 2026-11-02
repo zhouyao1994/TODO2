@@ -1,3 +1,4 @@
+import { translateText, t } from '../i18n'
 import { emptyPredicate, type PersistedTodoItem, type Person, type Status, type Tag } from '../models'
 import type { PersistedListDefinition } from '../models/list-definition'
 import type { TodoGroupBy, TodoSortBy, TodoSortDirection } from '../models/todo-sort-group'
@@ -154,7 +155,7 @@ function groupsOfList(list: ListContents): TaskDialogRowGroup[] {
   }))
 }
 
-const SCREEN_DIALOG_TITLE = 'Filtered tasks'
+const SCREEN_DIALOG_TITLE = (): string => t('ui.filtered_tasks')
 
 /** What the screen filter's tasks are matched against: every open task (the filter's Show completed adds the rest). */
 const OPEN_TASKS = emptyPredicate()
@@ -167,7 +168,7 @@ const OPEN_TASKS = emptyPredicate()
 function screenListDefinition(view: NewListView): PersistedListDefinition {
   return {
     id: 0,
-    name: SCREEN_DIALOG_TITLE,
+    name: SCREEN_DIALOG_TITLE(),
     sortOrder: 0,
     membership: { kind: 'custom', predicate: OPEN_TASKS },
     sort: view.sort,
@@ -212,7 +213,7 @@ export function personTaskDialog(person: Pick<Person, 'id' | 'name'>): TaskDialo
   return {
     title: person.name,
     glyph: 'people',
-    description: `Open tasks assigned to ${person.name}.`,
+    description: t('ui.person_drill_desc', { name: person.name }),
     source: {
       kind: 'predicate',
       predicate: { ...emptyPredicate(), personIds: [person.id!] },
@@ -227,9 +228,9 @@ export function personTaskDialog(person: Pick<Person, 'id' | 'name'>): TaskDialo
 /** A Tags row: that tag's open tasks; `null` = the No tag row. */
 export function tagSectionDialog(tag: Pick<Tag, 'id' | 'name'> | null, todoIds: readonly number[]): TaskDialogPayload {
   return {
-    title: tag ? `#${tag.name}` : 'No tag',
+    title: tag ? `#${tag.name}` : t('ui.no_tag'),
     glyph: 'tag',
-    description: tag ? `Open tasks tagged #${tag.name}.` : 'Open tasks with no tag.',
+    description: tag ? t('ui.tagged_drill_desc', { name: tag.name }) : t('ui.no_tag_drill_desc'),
     source: { kind: 'todos', todoIds },
   }
 }
@@ -237,9 +238,9 @@ export function tagSectionDialog(tag: Pick<Tag, 'id' | 'name'> | null, todoIds: 
 /** The Tags count: every row under its own heading. */
 export function tagsSectionDialog(rows: ReadonlyArray<{ tag: Tag | null; todoIds: readonly number[] }>): TaskDialogPayload {
   return {
-    title: 'Tagged tasks',
+    title: t('ui.tagged_tasks'),
     glyph: 'tag',
-    description: 'Open tasks by tag. A task with several tags shows under each.',
+    description: t('ui.by_tag_desc'),
     source: {
       kind: 'groups',
       groups: rows.map(({ tag, todoIds }) => (tag
@@ -251,34 +252,34 @@ export function tagsSectionDialog(rows: ReadonlyArray<{ tag: Tag | null; todoIds
 
 export function staleTasksDialog(todoIds: readonly number[], days: number): TaskDialogPayload {
   return {
-    title: 'Stale tasks',
+    title: t('ui.sec_stale'),
     glyph: 'stale',
-    description: `Open tasks not changed in ${days} days or more, oldest first.`,
+    description: t('ui.stale_drill_desc', { n: days }),
     source: { kind: 'todos', todoIds },
   }
 }
 
 export function recentlyCompletedDialog(todoIds: readonly number[], days: number): TaskDialogPayload {
   return {
-    title: 'Recently completed',
+    title: t('ui.sec_recent'),
     glyph: 'done',
-    description: `Tasks completed in the last ${days} days, newest first.`,
+    description: t('ui.recent_drill_desc', { n: days }),
     source: { kind: 'todos', todoIds },
   }
 }
 
-const QUADRANT_WORDS: Record<EisenhowerQuadrant, string> = {
-  do: 'urgent and important',
-  schedule: 'important, not urgent',
-  delegate: 'urgent, not important',
-  drop: 'neither urgent nor important',
+const QUADRANT_WORDS: Record<EisenhowerQuadrant, 'ui.qw_do' | 'ui.qw_schedule' | 'ui.qw_delegate' | 'ui.qw_drop'> = {
+  do: 'ui.qw_do',
+  schedule: 'ui.qw_schedule',
+  delegate: 'ui.qw_delegate',
+  drop: 'ui.qw_drop',
 }
 
 /** What the app-wide urgent range adds to Urgent, as a sentence (empty when it's off). */
 function urgentIncludes(range: UrgentDueWithinDays): string {
   if (range == null) return ''
-  if (range === 0) return ' Urgent includes tasks due today or earlier.'
-  return ` Urgent includes tasks due within ${urgentRangeLabel(range)}.`
+  if (range === 0) return t('ui.urgent_includes_today')
+  return t('ui.urgent_includes_range', { range: urgentRangeLabel(range) })
 }
 
 /** What the Eisenhower counts are taken from, for a dialog's description. */
@@ -291,7 +292,7 @@ export interface EisenhowerDialogSource {
 
 /** ` of “Team”` for a list source, else nothing. */
 function ofList(listName: string | null): string {
-  return listName == null ? '' : ` of “${listName}”`
+  return listName == null ? '' : t('ui.of_list', { name: listName })
 }
 
 /**
@@ -306,10 +307,10 @@ export function eisenhowerQuadrantDialog(
   { urgentRange, listName }: EisenhowerDialogSource,
 ): TaskDialogPayload {
   const description = pane.customFilter
-    ? `Open tasks${ofList(listName)} in “${pane.name}” (${subtitle}) — the first pane each matches.`
-    : `Open tasks${ofList(listName)} that are ${QUADRANT_WORDS[pane.id]}.${urgentIncludes(urgentRange)}`
+    ? t('ui.pane_drill_desc_custom', { ofList: ofList(listName), name: translateText(pane.name), subtitle })
+    : t('ui.pane_drill_desc', { ofList: ofList(listName), words: t(QUADRANT_WORDS[pane.id] as 'ui.qw_do'), urgent: urgentIncludes(urgentRange) })
   return {
-    title: pane.name,
+    title: translateText(pane.name),
     glyph: 'matrix',
     description,
     source: { kind: 'todos', todoIds },
@@ -324,14 +325,14 @@ export function eisenhowerSummaryDialog(
 ): TaskDialogPayload {
   const custom = panes.some((p) => p.customFilter)
   return {
-    title: 'Eisenhower',
+    title: t('ui.eisenhower'),
     glyph: 'matrix',
     description: custom
-      ? `Open tasks${ofList(listName)} by pane, each in the first pane it matches.${urgentIncludes(urgentRange)}`
-      : `Open tasks${ofList(listName)} by urgent × important.${urgentIncludes(urgentRange)}`,
+      ? t('ui.eisenhower_drill_desc_panes', { ofList: ofList(listName), urgent: urgentIncludes(urgentRange) })
+      : t('ui.eisenhower_drill_desc', { ofList: ofList(listName), urgent: urgentIncludes(urgentRange) }),
     source: {
       kind: 'groups',
-      groups: panes.map((p) => ({ key: p.id, label: p.name, color: QUADRANT_COLOR[p.id], todoIds: ids[p.id] })),
+      groups: panes.map((p) => ({ key: p.id, label: translateText(p.name), color: QUADRANT_COLOR[p.id], todoIds: ids[p.id] })),
     },
   }
 }
@@ -339,7 +340,7 @@ export function eisenhowerSummaryDialog(
 /** The screen filter's tasks (the top bar's Show N tasks, the palette); the dialog edits that filter live. */
 export function screenTaskDialog(): TaskDialogPayload {
   return {
-    title: SCREEN_DIALOG_TITLE,
+    title: SCREEN_DIALOG_TITLE(),
     glyph: 'filter',
     description: screenTaskDialogDescription(useFilterStore.getState().filters),
     source: { kind: 'screen' },
@@ -353,8 +354,8 @@ export function showTasksLabel(n: number): string {
 
 /** What the screen filter's dialog shows, in words, for the filter as it is (the dialog keeps it current). */
 export function screenTaskDialogDescription(screen: FilterCriteria): string {
-  if (countActiveFilters(screen) === 0) return 'Every open task: no screen filter is on. A filter set here applies to every widget.'
-  const what = screen.showCompleted ? 'Tasks matching the screen filter, completed ones included.' : 'Open tasks matching the screen filter.'
+  if (countActiveFilters(screen) === 0) return t('ui.no_screen_desc')
+  const what = screen.showCompleted ? t('ui.screen_with_completed') : t('ui.screen_desc')
   return `${what} A change here applies to every widget.`
 }
 
@@ -363,7 +364,7 @@ export function tagTaskDialog(tag: Pick<Tag, 'id' | 'name'>): TaskDialogPayload 
   return {
     title: `#${tag.name}`,
     glyph: 'tag',
-    description: `Open tasks tagged #${tag.name}.`,
+    description: t('ui.tagged_drill_desc', { name: tag.name }),
     source: {
       kind: 'predicate',
       predicate: { ...emptyPredicate(), tags: [tag.id!] },
@@ -374,9 +375,9 @@ export function tagTaskDialog(tag: Pick<Tag, 'id' | 'name'>): TaskDialogPayload 
 /** An Eisenhower tab's open tasks that no pane's filter matches (the line under its panes). */
 export function noPaneTaskDialog(todoIds: readonly number[]): TaskDialogPayload {
   return {
-    title: 'In no pane',
+    title: t('ui.in_no_pane_title'),
     glyph: 'matrix',
-    description: 'Open tasks the Eisenhower considers that match none of its panes’ filters.',
+    description: t('ui.in_no_pane_desc'),
     source: { kind: 'todos', todoIds },
   }
 }

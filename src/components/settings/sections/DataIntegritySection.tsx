@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFlashMessage } from '../../../hooks/use-flash-message'
 import { useFileOpsStore } from '../../../stores/file-ops-store'
 import { useUIStore } from '../../../stores/ui-store'
-import { NO_BACKUP_NOTE } from '../../../stores/safety-snapshot'
+import { noBackupNote } from '../../../stores/safety-snapshot'
 import type { AuditIssue } from '../../../data/audit'
 import { AuditIssueDetailDialog } from '../../overlays/AuditIssueDetailDialog'
 import { SettingRow } from './SettingRow'
@@ -25,11 +25,11 @@ export function DataIntegritySection() {
   const runCleanup = async () => {
     const outcome = await cleanupCurrentAudit()
     if (outcome.status === 'cancelled') {
-      flash('Nothing was cleaned up.', 4000)
+      flash(t('ui.nothing_cleaned'), 4000)
       return
     }
     const { cleaned, noBackup } = outcome
-    flash(`Cleaned up ${cleaned} orphaned record${cleaned !== 1 ? 's' : ''}.${noBackup ? ` ${NO_BACKUP_NOTE}` : ''}`, 4000)
+    flash(`Cleaned up ${cleaned} orphaned record${cleaned !== 1 ? 's' : ''}.${noBackup ? ` ${noBackupNote()}` : ''}`, 4000)
   }
 
   const secondary = `${styles.button} ${styles.buttonSecondary}`
@@ -90,9 +90,9 @@ export function DataIntegritySection() {
                 const hasDropStore = auditReport.issues.some((i) => i.fix === 'drop-store')
                 if (hasDropStore) {
                   showBulkConfirmation('custom', [], {
-                    title: 'Confirm destructive cleanup',
-                    message: `Cleaning will permanently delete ${auditReport.totalOrphans} record${auditReport.totalOrphans !== 1 ? 's' : ''} this build doesn't recognize. This is irreversible.`,
-                    confirmLabel: 'Confirm',
+                    title: t('ui.confirm_destructive'),
+                    message: t('ui.destructive_msg', { n: auditReport.totalOrphans }),
+                    confirmLabel: t('ui.confirm'),
                     onConfirm: () => { void runCleanup() },
                   })
                 } else {

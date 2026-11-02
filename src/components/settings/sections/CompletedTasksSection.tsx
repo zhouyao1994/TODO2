@@ -1,9 +1,10 @@
+import { t as tr, t } from '../../../i18n'
 import { useCallback, useMemo, useState } from 'react'
 import { useFlashMessage } from '../../../hooks/use-flash-message'
 import { useSettingsStore } from '../../../stores/settings-store'
 import { useTodoStore } from '../../../stores/todo-store'
 import { doneMessage, exportAndPurgeCompleted, keptMessage } from '../../../services/purge-completed'
-import { NO_BACKUP_NOTE } from '../../../stores/safety-snapshot'
+import { noBackupNote } from '../../../stores/safety-snapshot'
 import {
   PURGE_PROMPT_INTERVAL_MAX_DAYS,
   isExpiredCompleted,
@@ -18,7 +19,6 @@ import { SettingRow } from './SettingRow'
 import { useStackedLayer } from './settings-layer'
 import { plural } from './plural'
 import styles from './sections.module.css'
-import { t as tr } from '../../../i18n'
 
 const RETENTION_OPTIONS: ReadonlyArray<{ value: string; label: string }> = [
   { value: '', label: 'Keep forever' },
@@ -99,11 +99,11 @@ export function CompletedTasksSection() {
     try {
       const outcome = await purgeCompleted(matches.map((t) => t.id))
       if (outcome.status === 'cancelled') {
-        setError('Nothing was deleted — the backup could not be saved.')
+        setError(t('ui.nothing_deleted'))
         return
       }
       closeCleanup()
-      showMessage(`Deleted ${plural(outcome.deleted, 'completed task')}.${outcome.noBackup ? ` ${NO_BACKUP_NOTE}` : ''}`)
+      showMessage(`Deleted ${plural(outcome.deleted, 'completed task')}.${outcome.noBackup ? ` ${noBackupNote()}` : ''}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -128,7 +128,7 @@ export function CompletedTasksSection() {
         return
       }
       closeCleanup()
-      showMessage(`${doneMessage(result)}${result.noBackup ? ` ${NO_BACKUP_NOTE}` : ''}`)
+      showMessage(`${doneMessage(result)}${result.noBackup ? ` ${noBackupNote()}` : ''}`)
     } catch (err) {
       setError(`Nothing was deleted — ${err instanceof Error ? err.message : String(err)}`)
     } finally {
@@ -208,7 +208,7 @@ export function CompletedTasksSection() {
             <div className={styles.cleanupCount}>
               {matchCount > 0
                 ? `${plural(matchCount, 'task')} will be deleted. A backup will be created. Export & delete also saves them to a file you can add back with "Import tasks (append)…".`
-                : 'No matching tasks.'}
+                : t('ui.no_matching_tasks')}
             </div>
             {error && <div className={styles.errorMsg} role="alert">{error}</div>}
             <div className={styles.buttonRow}>

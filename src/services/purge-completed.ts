@@ -1,4 +1,5 @@
 import type { PersistedTodoItem } from '../models'
+import { locale, t } from '../i18n'
 import { todoRepository } from '../data/todo-repository'
 import { useTodoStore } from '../stores/todo-store'
 import { useUIStore } from '../stores/ui-store'
@@ -73,7 +74,7 @@ function plural(n: number, word: string): string {
 export async function exportAndPurgeCompleted(ids: readonly number[]): Promise<ExportAndPurgeResult> {
   const now = new Date()
   const archive = await buildTaskArchive(ids, now)
-  if (archive.todos.length === 0) return { status: 'error', message: 'Those tasks no longer exist.' }
+  if (archive.todos.length === 0) return { status: 'error', message: t('ui.purge_missing') }
 
   const json = JSON.stringify(archive, null, 2)
   const problem = selfCheckTaskArchiveJson(json)
@@ -94,12 +95,11 @@ export async function exportAndPurgeCompleted(ids: readonly number[]): Promise<E
 
   const archivedIds = archive.todos.map((t) => t.id).filter((id): id is number => id != null)
   if (saved === 'downloaded') {
-    const count = plural(archivedIds.length, 'task')
+    const count = locale() === 'zh-CN' ? t('ui.tasks_word', { n: archivedIds.length }) : plural(archivedIds.length, 'task')
     const confirmed = await useUIStore.getState().askConfirmation({
-      title: 'Did the file save?',
-      message: `${fileName} was handed to the browser as a download, so TODO2 can't tell whether it was saved. `
-        + `Check your downloads before deleting ${count}.`,
-      confirmLabel: `Delete ${count}`,
+      title: t('ui.did_file_save'),
+      message: t('ui.file_download_msg', { file: fileName, count }),
+      confirmLabel: t('ui.purge_delete_confirm', { count }),
       danger: true,
       cancelIsDefault: true,
     })

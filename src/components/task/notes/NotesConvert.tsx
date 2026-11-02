@@ -1,3 +1,4 @@
+import { t } from '../../../i18n'
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { EditorView } from '@codemirror/view'
@@ -245,7 +246,7 @@ export function useNotesConvert({ viewRef, getText, setText, flush, onToast }: N
     const id = await createTaskFromDraft(draft)
     if (id == null) return null
     useUIStore.getState().showRecentlyCreated(id)
-    if (markConverted([{ line, title: draft.title }]) > 0) onToast?.('Task created — its line changed, so it was left as it is')
+    if (markConverted([{ line, title: draft.title }]) > 0) onToast?.(t('ui.task_created_line_kept'))
     return id
   }, [editorCtx, markConverted, onToast])
 
@@ -255,7 +256,7 @@ export function useNotesConvert({ viewRef, getText, setText, flush, onToast }: N
     setState({ ...state, busy: true })
     try {
       const created = await createTasksFromDrafts(rows.map((r) => r.draft), {
-        description: `Created ${plural(rows.length, 'task', 'tasks')}`,
+        description: t('ui.created_tasks', { n: rows.length }),
         snackbar: true,
       })
       setState({
@@ -268,7 +269,7 @@ export function useNotesConvert({ viewRef, getText, setText, flush, onToast }: N
       })
     } catch {
       // Nothing was created: the drafts stay, no remove / keep prompt.
-      onToast?.('Failed to create the tasks')
+      onToast?.(t('ui.fail_create_tasks'))
       setState({ ...state, busy: false })
     }
   }, [state, onToast])
@@ -289,7 +290,7 @@ export function useNotesConvert({ viewRef, getText, setText, flush, onToast }: N
     } else {
       missing = markConverted(items)
     }
-    if (missing > 0) onToast?.(`${plural(missing, 'line was', 'lines were')} changed meanwhile and left as ${missing === 1 ? 'it is' : 'they are'}`)
+    if (missing > 0) onToast?.(t('ui.lines_changed_kept', { n: missing }))
     close()
   }, [state, applyToNote, markConverted, onToast, close])
 
@@ -377,7 +378,7 @@ export function useNotesConvert({ viewRef, getText, setText, flush, onToast }: N
     content = (
       <ConfirmDialog
         open
-        title={`Remove ${plural(n, 'converted line', 'converted lines')} from the note?`}
+        title={t('ui.remove_converted_title', { n })}
         message={`Keep marks ${n === 1 ? 'it' : 'them'} ✓ so ${n === 1 ? "it isn't" : "they aren't"} converted again.${
           state.leftOut > 0 ? ` The ${state.leftOut === 1 ? 'line you left out stays as it is' : 'lines you left out stay as they are'}.` : ''}`}
         confirmLabel={`Remove ${plural(n, 'line', 'lines')}`}

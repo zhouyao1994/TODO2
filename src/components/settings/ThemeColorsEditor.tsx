@@ -8,19 +8,19 @@ import { EditorModal } from './EditorModal'
 import editorStyles from './ThemeColorsEditor.module.css'
 import { t } from '../../i18n'
 
-const colorLabels: Record<keyof ThemeColors, string> = {
-  accent: 'Accent',
-  appBg: 'App background',
-  surface: 'Surface',
-  border: 'Border',
-  header: 'Header',
-  danger: 'Danger accent',
-  warning: 'Warning accent',
-  star: 'Follow up',
-  deadline: 'Due date',
+const colorLabels: Record<keyof ThemeColors, 'ui.color_accent' | 'ui.color_app_bg' | 'ui.color_surface' | 'ui.color_border' | 'ui.color_header' | 'ui.color_danger' | 'ui.color_warning' | 'ui.color_star' | 'ui.due_date'> = {
+  accent: 'ui.color_accent',
+  appBg: 'ui.color_app_bg',
+  surface: 'ui.color_surface',
+  border: 'ui.color_border',
+  header: 'ui.color_header',
+  danger: 'ui.color_danger',
+  warning: 'ui.color_warning',
+  star: 'ui.color_star',
+  deadline: 'ui.due_date',
 }
 
-const themeLabel: Record<ThemeName, string> = { dark: 'Dark', light: 'Light' }
+const themeLabel: Record<ThemeName, 'ui.theme_dark' | 'ui.theme_light'> = { dark: 'ui.theme_dark', light: 'ui.theme_light' }
 
 interface ThemeColorsEditorProps {
   onClose: () => void
@@ -37,7 +37,7 @@ export function ThemeColorsEditor({ onClose }: ThemeColorsEditorProps) {
   const workingColors = colors[workingTheme]
 
   return (
-    <EditorModal title={<>{t('ui.theme_colors')}{' '}{themeLabel[workingTheme]}</>} onClose={onClose}>
+    <EditorModal title={<>{t('ui.theme_colors')}{' '}{t(themeLabel[workingTheme])}</>} onClose={onClose}>
       <div className={editorStyles.themeToggle} role="tablist" aria-label={t('ui.working_theme')}>
         {(['dark', 'light'] as const).map((theme) => (
           <button
@@ -48,7 +48,7 @@ export function ThemeColorsEditor({ onClose }: ThemeColorsEditorProps) {
             className={`${editorStyles.themeToggleBtn} ${workingTheme === theme ? editorStyles.themeToggleBtnActive : ''}`}
             onClick={() => setWorkingTheme(theme)}
           >
-            {themeLabel[theme]}
+            {t(themeLabel[theme])}
           </button>
         ))}
       </div>
@@ -56,7 +56,7 @@ export function ThemeColorsEditor({ onClose }: ThemeColorsEditorProps) {
       <div className={styles.list}>
         {(Object.keys(colorLabels) as Array<keyof ThemeColors>).map((key) => (
           <div key={key} className={settingsStyles.colorRow}>
-            <span className={settingsStyles.colorLabel}>{colorLabels[key]}</span>
+            <span className={settingsStyles.colorLabel}>{t(colorLabels[key])}</span>
             <ColorInput value={workingColors[key]} onChange={(color) => setColor(workingTheme, key, color)} />
           </div>
         ))}
@@ -64,7 +64,7 @@ export function ThemeColorsEditor({ onClose }: ThemeColorsEditorProps) {
 
       <div className={settingsStyles.buttonRow}>
         <button className={`${settingsStyles.button} ${settingsStyles.buttonSecondary}`} onClick={() => resetColors(workingTheme)}>
-          {t('ui.reset')}{' '}{themeLabel[workingTheme]} {t('ui.to_defaults')}</button>
+          {t('ui.reset')} {t(themeLabel[workingTheme])} {t('ui.to_defaults')}</button>
       </div>
     </EditorModal>
   )

@@ -1,3 +1,4 @@
+import { t, translateText } from '../../i18n'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import type { KeyCombo, ShortcutChord, ShortcutId } from '../../models/keyboard-shortcut'
@@ -6,7 +7,6 @@ import { useSettingsStore } from '../../stores/settings-store'
 import { shortcutListSections, type ShortcutListRow } from '../../utils/shortcut-bindings'
 import { chordLabel, comboFromEvent, comboLabel, isModifierOnly, isSequenceKey } from '../../utils/shortcut-chord'
 import styles from './ShortcutEditor.module.css'
-import { t, translateText } from '../../i18n'
 
 interface Recording {
   id: ShortcutId
@@ -124,7 +124,7 @@ function ShortcutRow({ row, recording, onRecord }: ShortcutRowProps) {
       return
     }
     if (!combo) {
-      onRecord({ ...recording, error: "That key can't be used for a shortcut." })
+      onRecord({ ...recording, error: t('ui.key_not_usable') })
       return
     }
     // A plain key may start a sequence — unless the shortcut works while

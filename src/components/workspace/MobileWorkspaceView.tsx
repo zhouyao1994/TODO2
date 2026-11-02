@@ -33,7 +33,7 @@ const PAGER_GAP_PX = 8
 /** The strip underline sits under the name, inside the button's side padding. */
 const STRIP_ITEM_PADDING_PX = 12
 
-const WIDER_SCREEN_HINT = 'To create or edit layouts, use a wider screen.'
+const WIDER_SCREEN_HINT = (): string => tr('ui.wider_screen_hint')
 
 /** One pager page: a column, or a band (the top band first, the bottom band last). */
 type PagerPage =
@@ -116,7 +116,7 @@ function LayoutSheet({ onClose }: { onClose: () => void }) {
             )
           })}
         </div>
-        <p className={styles.sheetFooter}>{WIDER_SCREEN_HINT}</p>
+        <p className={styles.sheetFooter}>{WIDER_SCREEN_HINT()}</p>
       </DialogFrame>
       {pending && (
         <UnsavedPrompt
@@ -265,9 +265,9 @@ function ListTabSheet({ tabId, listDefinitionId, result, onClose }: {
   onClose: () => void
 }) {
   const rows: Array<{ label: string; run: () => void }> = [
-    { label: 'Edit list…', run: () => openEditList(tabId, listDefinitionId) },
+    { label: tr('ui.edit_list_menu'), run: () => openEditList(tabId, listDefinitionId) },
     ...(result ? [{
-      label: 'Copy tasks',
+      label: tr('ui.copy_tasks'),
       run: () => {
         const labelled = !(result.sections.length === 1 && result.sections[0]?.key === 'all')
         void copyTasks(result.sections.map((sec) => ({ label: labelled ? sec.label : undefined, todos: [...sec.todos] })))
@@ -307,7 +307,7 @@ function ListTabSheet({ tabId, listDefinitionId, result, onClose }: {
  * list tab's long-press opens its list sheet. No layout editing.
  */
 function MobileCell({ cell, fill, band = false }: { cell: LayoutPanel; fill: boolean; band?: boolean }) {
-  const noun = band ? 'band' : 'cell'
+  const noun = tr(band ? 'ui.noun_band' : 'ui.noun_cell')
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab)
   const setCellCollapsed = useWorkspaceStore((s) => s.setCellCollapsed)
   const active = getActiveTab(cell)
@@ -323,7 +323,7 @@ function MobileCell({ cell, fill, band = false }: { cell: LayoutPanel; fill: boo
     return (
       <section className={styles.emptyCell} data-ws-cell={cell.id} data-empty="true" aria-label={tr('ui.empty_cell')}>
         <span className={styles.emptyTitle}>{tr('ui.empty_cell')}</span>
-        <span className={styles.emptyHint}>{WIDER_SCREEN_HINT}</span>
+        <span className={styles.emptyHint}>{WIDER_SCREEN_HINT()}</span>
       </section>
     )
   }
@@ -372,7 +372,7 @@ function MobileCell({ cell, fill, band = false }: { cell: LayoutPanel; fill: boo
             ref={moreRef}
             type="button"
             className={`${styles.cellAction} ${menuOpen ? styles.cellActionPressed : ''}`}
-            aria-label={band ? 'Band options' : 'Cell options'}
+            aria-label={band ? tr('ui.band_options') : tr('ui.cell_options')}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((o) => !o)}
@@ -409,7 +409,7 @@ function MobileCell({ cell, fill, band = false }: { cell: LayoutPanel; fill: boo
         <MenuPopover
           anchorRef={moreRef}
           placement="bottom-end"
-          label={band ? 'Band options' : 'Cell options'}
+          label={band ? tr('ui.band_options') : tr('ui.cell_options')}
           entries={menuEntries}
           onClose={() => setMenuOpen(false)}
         />
@@ -616,7 +616,7 @@ export function MobileWorkspaceView({ layout, status }: { layout: WorkspaceLayou
       {pages.length === 0 ? (
         <div className={styles.emptyLayout} data-ws-area>
           <p className={styles.emptyLayoutTitle}>{tr('ui.this_layout_is_empty')}</p>
-          <p className={styles.emptyHint}>{WIDER_SCREEN_HINT}</p>
+          <p className={styles.emptyHint}>{WIDER_SCREEN_HINT()}</p>
           <p className={styles.emptyHint}>{tr('ui.or_choose_a_saved_layout_from')}</p>
         </div>
       ) : (

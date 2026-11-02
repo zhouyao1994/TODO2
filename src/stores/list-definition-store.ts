@@ -1,3 +1,4 @@
+import { t } from '../i18n'
 import { create } from 'zustand'
 import { listDefinitionRepository } from '../data/list-definition-repository'
 import {
@@ -66,7 +67,7 @@ export const useListDefinitionStore = create<ListDefinitionState>((set, get) => 
 
   async add({ name, membership, sort, sortDirection, grouping, runtimeFilter, showFilterLine, owner }) {
     const trimmed = name.trim()
-    if (!trimmed) throw new Error('Name is required')
+    if (!trimmed) throw new Error(t('ui.list_name_required'))
     // What isn't given starts as Settings' new-list defaults (the
     // Eisenhower's own list, whose sort and grouping nothing reads, as none).
     const defaults = isEisenhowerOwner(owner)
@@ -91,7 +92,7 @@ export const useListDefinitionStore = create<ListDefinitionState>((set, get) => 
         set({ listDefinitions: [...get().listDefinitions, { ...entry, sortOrder, id }] })
         return id
       },
-      'Failed to add list',
+      t('ui.fail_add_list'),
     )
   },
 
@@ -105,7 +106,7 @@ export const useListDefinitionStore = create<ListDefinitionState>((set, get) => 
       () => listDefinitionRepository.update(def),
       // Only this list, and only while it still holds this edit.
       () => { if (prev && get().listDefinitions.find(d => d.id === def.id) === applied) put(prev) },
-      'Failed to update list',
+      t('ui.fail_update_list'),
     )
   },
 

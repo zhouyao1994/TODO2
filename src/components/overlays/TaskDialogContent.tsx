@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../i18n'
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { useIsMobile } from '../../hooks/use-is-mobile'
 import { sendPersonCheckin } from '../../services/checkin-email/person-checkin'
@@ -27,7 +28,6 @@ import { TaskRowGrid } from '../task/TaskRowGrid'
 import { DashGlyph } from '../shared/DashGlyph'
 import { EnvelopeIcon } from '../shared/icons'
 import styles from './TaskDialog.module.css'
-import { t as tr } from '../../i18n'
 
 interface Resolved {
   payload: TaskDialogPayload
@@ -181,7 +181,7 @@ export function TaskDialogContent({ payload, titleId, panelRef, onClose, filterB
       <div className={styles.footer}>
         <button type="button" className={styles.ghostBtn} onClick={() => { void copy() }} disabled={count === 0}>
           <CopyIcon />
-          {copied ? 'Copied' : 'Copy tasks'}
+          {copied ? t('ui.copied') : t('ui.copy_tasks')}
         </button>
         {personId != null && (
           <button

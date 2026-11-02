@@ -1,3 +1,4 @@
+import { t as tr, t } from '../../../i18n'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { PersistedListDefinition } from '../../../models/list-definition'
@@ -19,7 +20,6 @@ import { CloseIcon, LinkIcon } from '../../shared/icons'
 import { EDIT_LIST_KEEP_ATTR } from './edit-list-keep'
 import styles from './EditList.module.css'
 import { shortcutScope } from '../../../utils/dom-contract'
-import { t as tr } from '../../../i18n'
 
 /** The side popover's width (px) and its gap to the panel. */
 const POPOVER_WIDTH_PX = 340
@@ -383,7 +383,7 @@ function Footer({ model, className, buttonClass, saveClass, children }: {
         type="button"
         className={`${buttonClass} ${saveClass}`}
         disabled={!model.canSave}
-        title={model.dirty && !model.canSave ? 'Name the list to save it' : undefined}
+        title={model.dirty && !model.canSave ? t('ui.name_list_to_save') : undefined}
         onClick={model.save}
       >
         {tr('ui.save_list')}</button>

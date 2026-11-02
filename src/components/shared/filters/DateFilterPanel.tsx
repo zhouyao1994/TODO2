@@ -1,3 +1,4 @@
+import { t as tr, t, translateText } from '../../../i18n'
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { DATE_FIELD_VALUES, type DateAnchor, type DateFilters } from '../../../models'
 import type { DateField } from '../../../models/app-view'
@@ -15,15 +16,14 @@ import { DateAnchorInput } from '../DateAnchorInput'
 import styles from './DateFilterPanel.module.css'
 import sheetStyles from './FilterChipBarMobile.module.css'
 import { shortcutScope } from '../../../utils/dom-contract'
-import { t, translateText } from '../../../i18n'
 
 /** Which tasks a Due / Follow-up clause keeps. */
 type ShowMode = 'range' | 'set' | 'unset'
 
-const SHOW_CHOICES: readonly { mode: ShowMode; label: string }[] = [
-  { mode: 'range', label: 'In range' },
-  { mode: 'set', label: 'Has a date' },
-  { mode: 'unset', label: 'No date' },
+const SHOW_CHOICES: readonly { mode: ShowMode; label: 'ui.mode_in_range' | 'ui.mode_has_date' | 'ui.mode_no_date' }[] = [
+  { mode: 'range', label: 'ui.mode_in_range' },
+  { mode: 'set', label: 'ui.mode_has_date' },
+  { mode: 'unset', label: 'ui.mode_no_date' },
 ]
 
 /** "Also tasks with no …" and the Has a date / No date lines, per type that offers them. */
@@ -201,7 +201,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
                     onClick={() => setShow(c.mode)}
                     onKeyDown={onShowKeyDown}
                   >
-                    {c.label}
+                    {tr(c.label)}
                   </button>
                 )
               })}
@@ -255,7 +255,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
           {t('ui.clear')}{' '}{shortName}
         </button>
         <button type="button" className={styles.ghost} disabled={!hasDateFilters(dates)} onClick={clearAll}>
-          {sheet ? 'Clear all dates' : 'Clear all'}
+          {sheet ? tr('ui.clear_all_dates') : tr('ui.clear_all')}
         </button>
       </div>
     </div>

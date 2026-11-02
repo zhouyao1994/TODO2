@@ -6,6 +6,7 @@
  * for Ctrl+minus), a sequence is two plain keys separated by a space (`g s`).
  */
 import type { KeyCombo, ShortcutChord } from '../models/keyboard-shortcut'
+import { t } from '../i18n'
 import { isMacLike } from './platform'
 
 /** The named (non-character) keys a shortcut may use, in their stored spelling. */
@@ -120,7 +121,7 @@ export function comboLabel(c: KeyCombo): string {
 
 /** A chord as the user reads it: `Ctrl+K`, `G then S`. */
 export function chordLabel(chord: ShortcutChord): string {
-  return chord.map(comboLabel).join(' then ')
+  return chord.map(comboLabel).join(t('ui.chord_then'))
 }
 
 /**
