@@ -98,10 +98,10 @@ export function EisenhowerSection() {
         <p className={styles.noPane} data-testid="customize-panes-no-pane">
           {noneOpen === 0
             ? tr('ui.every_open_task_is_in_a_pane')
-            : `${noneOpen} open ${noneOpen === 1 ? 'task is' : 'tasks are'} in no pane — hidden from the matrix, counted under it.`}
+            : t('ui.no_pane_some', { n: noneOpen, noun: noneOpen === 1 ? t('ui.task_is') : t('ui.tasks_are') })}
           {screenFilters > 0 && (
             <span data-testid="eisenhower-settings-filter-note">
-              {` The counts leave out what the screen filter hides (${screenFilters} ${screenFilters === 1 ? 'filter' : 'filters'} on).`}
+              {t('ui.filter_note', { n: `${screenFilters} ${screenFilters === 1 ? t('ui.filter_one') : t('ui.filters_many')}` })}
             </span>
           )}
         </p>
@@ -176,7 +176,7 @@ function PaneCard({ pane, names, count, onRename, onFilter, onReset }: PaneCardP
           className={styles.count}
           data-testid="customize-pane-count"
           role="img"
-          aria-label={`${count} open ${count === 1 ? 'task' : 'tasks'} now`}
+          aria-label={t('ui.pane_open_now_aria', { n: count, noun: count === 1 ? t('ui.task_word') : t('ui.tasks_word') })}
         >
           {count} {tr('ui.now')}</span>
       </div>

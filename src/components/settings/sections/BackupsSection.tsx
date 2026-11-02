@@ -8,12 +8,12 @@ import { noBackupNote } from '../../../stores/safety-snapshot'
 import styles from './sections.module.css'
 import { restoreBackup } from '../../../services/replace-data'
 
-const TRIGGER_LABEL: Record<BackupTrigger, string> = {
-  auto: 'auto',
-  manual: 'manual',
-  'pre-destructive': 'pre-op',
-  'sync-file': 'sync file',
-  'sync-file-original': 'sync file, older version',
+const TRIGGER_LABEL: Record<BackupTrigger, 'ui.backup_auto' | 'ui.backup_manual' | 'ui.backup_pre_op' | 'ui.backup_sync_file' | 'ui.backup_sync_file_old'> = {
+  auto: 'ui.backup_auto',
+  manual: 'ui.backup_manual',
+  'pre-destructive': 'ui.backup_pre_op',
+  'sync-file': 'ui.backup_sync_file',
+  'sync-file-original': 'ui.backup_sync_file_old',
 }
 
 /** Automatic and manual snapshots of the database: restore, delete, create. */

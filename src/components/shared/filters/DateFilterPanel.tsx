@@ -27,9 +27,9 @@ const SHOW_CHOICES: readonly { mode: ShowMode; label: 'ui.mode_in_range' | 'ui.m
 ]
 
 /** "Also tasks with no …" and the Has a date / No date lines, per type that offers them. */
-const NO_DATE_NAME: Partial<Record<DateField, string>> = {
-  deadline: 'due date',
-  followup: 'follow-up',
+const NO_DATE_NAME: Partial<Record<DateField, 'ui.no_name_due' | 'ui.no_name_followup'>> = {
+  deadline: 'ui.no_name_due',
+  followup: 'ui.no_name_followup',
 }
 
 interface HiddenRange {
@@ -147,7 +147,7 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
 
   const tabId = (f: DateField) => `${id}-tab-${f}`
   const panelId = `${id}-panel`
-  const noDateLabel = noDateName ? `Also tasks with no ${noDateName}` : undefined
+  const noDateLabel = noDateName ? t('ui.also_no_date', { name: t(noDateName) }) : undefined
 
   return (
     <div ref={rootRef} className={`${styles.panel} ${sheet ? styles.sheet : ''}`} {...shortcutScope('none')}>
@@ -246,7 +246,9 @@ export function DateFilterPanel({ dates, initialField, onChange, variant = 'popo
           </>
         ) : (
           <p className={styles.explain}>
-            {show === 'set' ? `Only tasks that have a ${noDateName ?? ''}.` : `Only tasks with no ${noDateName ?? ''}.`}
+            {show === 'set'
+              ? t('ui.only_have', { name: noDateName == null ? '' : t(noDateName) })
+              : t('ui.only_have_none', { name: noDateName == null ? '' : t(noDateName) })}
           </p>
         )}
       </div>

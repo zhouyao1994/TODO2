@@ -103,7 +103,7 @@ export function CompletedTasksSection() {
         return
       }
       closeCleanup()
-      showMessage(`Deleted ${plural(outcome.deleted, 'completed task')}.${outcome.noBackup ? ` ${noBackupNote()}` : ''}`)
+      showMessage(`${t('ui.deleted_completed', { count: plural(outcome.deleted, 'completed task') })}${outcome.noBackup ? ` ${noBackupNote()}` : ''}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -157,9 +157,9 @@ export function CompletedTasksSection() {
           <>
             {retentionStats.expired > 0 && (
               <span className={styles.warningText}>
-                {plural(retentionStats.expired, 'completed task')} {tr('ui.past_retention')}{nextAsk
-                  ? `you'll be asked at a launch from ${formatDateShort(nextAsk)}`
-                  : 'you\'ll be asked on next launch'})
+                {nextAsk
+                  ? tr('ui.retention_line', { count: plural(retentionStats.expired, 'completed task'), date: formatDateShort(nextAsk) })
+                  : tr('ui.retention_line_next', { count: plural(retentionStats.expired, 'completed task') })}
               </span>
             )}
             {retentionStats.expiringThisWeek > 0 && (

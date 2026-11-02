@@ -193,7 +193,7 @@ function LayoutTabView({ layout, active, dirty, focusable, onActivate, onOpenMen
       }}
     >
       <span className={styles.tabIcon}><LayoutIcon size={12} /></span>
-      <span className={styles.tabName}>{layout.name}</span>
+      <span className={styles.tabName}>{translateText(layout.name)}</span>
       {dirty && <span className={styles.unsavedDot} role="img" aria-label={t('ui.unsaved_changes')} />}
     </div>
   )

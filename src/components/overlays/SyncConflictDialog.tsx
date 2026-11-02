@@ -10,13 +10,13 @@ interface SyncConflictDialogProps {
 }
 
 function formatTime(iso: string | null): string {
-  if (!iso) return 'unknown'
+  if (!iso) return t('ui.unknown_time')
   const d = new Date(iso)
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString()
 }
 
 function tasks(n: number): string {
-  return `${n} task${n === 1 ? '' : 's'}`
+  return n === 1 ? t('ui.n_tasks_one', { n }) : t('ui.n_tasks', { n })
 }
 
 type Side = Exclude<SyncConflictChoice, 'cancel'>
@@ -73,7 +73,7 @@ export function SyncConflictDialog({ info, onChoose }: SyncConflictDialogProps) 
               <span className={styles.sideLine}>{tasks(browser.taskCount)}</span>
               <span className={styles.sideLine}>
                 {browser.unsyncedSince
-                  ? `Unsaved changes since ${formatTime(browser.unsyncedSince)}`
+                  ? t('ui.unsaved_since', { time: formatTime(browser.unsyncedSince) })
                   : t('ui.no_unsaved_recorded')}
               </span>
               <span className={styles.sideLine}>{t('ui.schema_v')}{browser.schemaVersion}</span>

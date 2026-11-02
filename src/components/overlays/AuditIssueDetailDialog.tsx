@@ -21,7 +21,7 @@ export function AuditIssueDetailDialog({ issue, onClose }: AuditIssueDetailDialo
 
   const samples = issue.samples ?? []
   const truncated = samples.length < issue.count
-  const noun = issue.count === 1 ? 'record' : 'records'
+  const noun = issue.count === 1 ? t('ui.record_one') : t('ui.records_many')
   const fixCopy = describeFix(issue)
 
   return (
@@ -37,7 +37,7 @@ export function AuditIssueDetailDialog({ issue, onClose }: AuditIssueDetailDialo
           <span className={styles.tablePill}>{issue.table}</span>
           <span className={styles.metaText}>
             {truncated
-              ? `Showing first ${samples.length} of ${issue.count} ${noun}`
+              ? t('ui.showing_first_of', { shown: samples.length, total: issue.count, noun: '' })
               : `${issue.count} ${noun}`}
           </span>
         </div>

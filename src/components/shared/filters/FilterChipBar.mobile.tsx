@@ -15,7 +15,7 @@ import {
 } from './FilterChipBar.shared'
 import { byName } from '../../../utils/sort-order'
 import { splitOnTop, usePickerOrder } from '../../../hooks/use-picker-order'
-import { t } from '../../../i18n'
+import { t as tr, t } from '../../../i18n'
 
 type MobileSection = EntityKey | 'markers' | 'toggles' | 'date'
 
@@ -342,7 +342,7 @@ export function FilterChipBarMobile({
       {/* Dates: the date panel at touch sizes */}
       <AccordionSection
         label={t('ui.dates')}
-        value={dates ?? 'Any'}
+        value={dates ?? tr('ui.dates_any')}
         valueOn={dates != null}
         open={openSection === 'date'}
         onToggle={() => handleSection('date')}
